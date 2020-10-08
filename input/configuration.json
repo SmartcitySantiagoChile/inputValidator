@@ -1,0 +1,58 @@
+{
+  "path": {
+    "type": "root",
+    "name": ""
+  },
+  "rules": [],
+  "children": [
+    {
+      "path": {
+        "type": "name",
+        "name": "DiccionariosServicios"
+      },
+      "rules": {
+        "formatRules": [],
+        "semanticRules": []
+      },
+      "children": [
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionarios"
+          },
+          "rules": {
+            "formatRules": [],
+            "semanticRules": []
+          },
+          "children": [
+            {
+              "path": {
+                "type": "name",
+                "name": "Diccionario-Comunas.csv"
+              },
+              "rules": {
+                "formatRules": [
+                  {
+                    "function": "max_cols",
+                    "args": 20
+                  }
+                ],
+                "semanticRules": [
+                  {
+                    "function": "date_time_cols",
+                    "args": [
+                      1,
+                      2,
+                      3,
+                      4
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
