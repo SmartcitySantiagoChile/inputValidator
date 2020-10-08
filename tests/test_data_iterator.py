@@ -18,4 +18,4 @@ class DataIteratorTest(TestCase):
         data = DataIterator(
             data_path=file_list, config_path=self.configuration_path, file_list=True
         )
-        data.print_configuration_tree()
+        data.start_iteration_over_configuration_tree()
