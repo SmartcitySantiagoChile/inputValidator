@@ -1,6 +1,7 @@
 import glob
 import json
 import os
+from collections import defaultdict
 
 
 def check_name_file(path, name):
@@ -46,7 +47,7 @@ class DataValidator:
         with open(config_path) as json_config:
             self.config = json.loads(json_config.read())
         self.data_path = data_path
-        self.report_errors = []
+        self.report_errors = defaultdict(list)
         self.report = []
 
     def start_iteration_over_configuration_tree(self):
@@ -57,9 +58,9 @@ class DataValidator:
         type_name = node["path"]["type"]
         new_path = os.path.join(path, name)
         if check_name_functions[type_name](os.path.join(self.data_path, path), name):
+            if name:
+                self.report.append([name, new_path])
             for child in node.get("children", []):
                 self.iterate_over_configuration_tree(child, new_path)
         else:
-            self.report_errors.append([name, file_errors[1]])
-        if name:
-            self.report.append([name, new_path])
+            self.report_errors[name].append(file_errors[1])
