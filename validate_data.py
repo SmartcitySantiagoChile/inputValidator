@@ -36,17 +36,19 @@ def main(argv):
         default=None,
         help="path where report will be saved, if it is not provided we will use output path",
     )
+    parser.add_argument("--path-list", help="Path is a path list.", action="store_true")
     args = parser.parse_args(argv[1:])
+    is_path_list = args.path_list
     input_path = os.path.join(DIR_PATH, args.path)
     # output_path = args.output if args.output else OUTPUT_PATH
 
-    with zipfile.ZipFile(input_path, "r") as zip_ref:
-        temporal_path = os.path.join(INPUTS_PATH, "tmp")
-        zip_ref.extractall(temporal_path)
-        input_path = os.path.join(temporal_path, zip_ref.namelist()[0])
-        print(input_path)
+    if not is_path_list:
+        with zipfile.ZipFile(input_path, "r") as zip_ref:
+            temporal_path = os.path.join(INPUTS_PATH, "tmp")
+            zip_ref.extractall(temporal_path)
+            input_path = os.path.join(temporal_path, zip_ref.namelist()[0])
 
-    validator = DataValidator(CONFIG_PATH, input_path)
+    validator = DataValidator(CONFIG_PATH, input_path, path_list=is_path_list)
     validator.start_iteration_over_configuration_tree()
 
     for success in validator.report:

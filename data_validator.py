@@ -43,12 +43,15 @@ file_errors = {
 class DataValidator:
     """A class to iterate over a tree configuration json file and validate data"""
 
-    def __init__(self, config_path, data_path, file_list=False):
+    def __init__(self, config_path, data_path, path_list=False):
         with open(config_path) as json_config:
             self.config = json.loads(json_config.read())
-        self.data_path = data_path
         self.report_errors = defaultdict(list)
         self.report = []
+        if path_list:
+            self.path_list = data_path
+        else:
+            self.data_path = data_path
 
     def start_iteration_over_configuration_tree(self):
         self.iterate_over_configuration_tree(self.config, "")
