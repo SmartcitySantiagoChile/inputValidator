@@ -4,7 +4,7 @@ from unittest import TestCase
 from data_validator import DataValidator, check_name_file, check_regex_file
 
 
-class DataIteratorTest(TestCase):
+class DataValidatorTest(TestCase):
     def setUp(self):
         path = os.path.dirname(os.path.realpath(__file__))
         self.input_path = os.path.join(path, "input")

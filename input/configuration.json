@@ -8,7 +8,7 @@
     {
       "path": {
         "type": "name",
-        "name": "DiccionariosServicios"
+        "name": "Diccionario"
       },
       "rules": {
         "formatRules": [],
@@ -18,39 +18,92 @@
         {
           "path": {
             "type": "name",
-            "name": "Diccionarios"
+            "name": "Diccionario-Comunas.csv"
           },
           "rules": {
             "formatRules": [],
             "semanticRules": []
+          }
+        },
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-DetalleServicioZP_*_*.csv"
           },
-          "children": [
-            {
-              "path": {
-                "type": "name",
-                "name": "Diccionario-Comunas.csv"
-              },
-              "rules": {
-                "formatRules": [
-                  {
-                    "function": "max_cols",
-                    "args": 20
-                  }
-                ],
-                "semanticRules": [
-                  {
-                    "function": "date_time_cols",
-                    "args": [
-                      1,
-                      2,
-                      3,
-                      4
-                    ]
-                  }
-                ]
-              }
-            }
-          ]
+          "rules": {
+            "formatRules": [],
+            "semanticRules": []
+          }
+        },
+        {
+          "path": {
+            "type": "regex",
+            "name": "Diccionario-DetalleServicioZP_*_*.csv"
+          },
+          "rules": {
+            "formatRules": [],
+            "semanticRules": []
+          }
+        },
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-EstacionesMetro"
+          },
+          "rules": {
+            "formatRules": [],
+            "semanticRules": []
+          }
+        },
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-EstacionesMetroTren.csv"
+          },
+          "rules": {
+            "formatRules": [],
+            "semanticRules": []
+          }
+        },
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-Patentes.csv"
+          },
+          "rules": {
+            "formatRules": [],
+            "semanticRules": []
+          }
+        },
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-PeriodosTS.csv"
+          },
+          "rules": {
+            "formatRules": [],
+            "semanticRules": []
+          }
+        },
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-Servicios"
+          },
+          "rules": {
+            "formatRules": [],
+            "semanticRules": []
+          }
+        },
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-Zonificaciones"
+          },
+          "rules": {
+            "formatRules": [],
+            "semanticRules": []
+          }
         }
       ]
     }
