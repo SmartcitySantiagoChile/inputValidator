@@ -27,7 +27,7 @@ file_errors = {
 }
 
 
-class DataIterator:
+class DataValidator:
     """A class to iterate over a tree configuration json file"""
 
     def __init__(self, config_path, data_path, file_list=False):

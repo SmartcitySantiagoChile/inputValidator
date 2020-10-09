@@ -1,7 +1,7 @@
 import os
 from unittest import TestCase
 
-from data_iterator import DataIterator, check_name_file, check_regex_file
+from data_validator import DataValidator, check_name_file, check_regex_file
 
 
 class DataIteratorTest(TestCase):
@@ -39,7 +39,7 @@ class DataIteratorTest(TestCase):
         )
 
     def test_file_iterator(self):
-        data = DataIterator(
+        data = DataValidator(
             data_path=self.data_path, config_path=self.configuration_path
         )
         data.start_iteration_over_configuration_tree()
