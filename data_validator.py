@@ -4,17 +4,29 @@ import os
 
 
 def check_name_file(path, name):
+    """
+    Check if file exists in path
+    :param path: path to check
+    :param name: file name
+    :return: bool
+    """
     real_path = os.path.join(path, name)
     return os.path.exists(real_path)
 
 
 def check_regex_file(path, regex):
+    """
+    Check if regex file exists in path
+    :param path: path to check
+    :param regex: regular expression
+    :return: bool
+    """
     return True if len(glob.glob(os.path.join(path, regex))) > 0 else False
 
 
 check_name_functions = {
     "name": check_name_file,
-    "regex": lambda x, y: True,
+    "regex": check_regex_file,
     "root": lambda x, y: True,
 }
 
@@ -28,7 +40,7 @@ file_errors = {
 
 
 class DataValidator:
-    """A class to iterate over a tree configuration json file"""
+    """A class to iterate over a tree configuration json file and validate data"""
 
     def __init__(self, config_path, data_path, file_list=False):
         with open(config_path) as json_config:
@@ -48,6 +60,6 @@ class DataValidator:
             for child in node.get("children", []):
                 self.iterate_over_configuration_tree(child, new_path)
         else:
-            self.report_errors.append([new_path, file_errors[1]])
+            self.report_errors.append([name, file_errors[1]])
         if name:
-            self.report.append(new_path)
+            self.report.append([name, new_path])
