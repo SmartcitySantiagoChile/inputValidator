@@ -27,16 +27,6 @@
         },
         {
           "path": {
-            "type": "name",
-            "name": "Diccionario-DetalleServicioZP_*_*.csv"
-          },
-          "rules": {
-            "formatRules": [],
-            "semanticRules": []
-          }
-        },
-        {
-          "path": {
             "type": "regex",
             "name": "Diccionario-DetalleServicioZP_*_*.csv"
           },
@@ -48,7 +38,7 @@
         {
           "path": {
             "type": "name",
-            "name": "Diccionario-EstacionesMetro"
+            "name": "Diccionario-EstacionesMetro.csv"
           },
           "rules": {
             "formatRules": [],
@@ -88,7 +78,7 @@
         {
           "path": {
             "type": "name",
-            "name": "Diccionario-Servicios"
+            "name": "Diccionario-Servicios.csv"
           },
           "rules": {
             "formatRules": [],
@@ -98,7 +88,7 @@
         {
           "path": {
             "type": "name",
-            "name": "Diccionario-Zonificaciones"
+            "name": "Diccionario-Zonificaciones.csv"
           },
           "rules": {
             "formatRules": [],
