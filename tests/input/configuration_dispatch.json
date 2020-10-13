@@ -28,15 +28,6 @@
               }
             ],
             "semanticRules": [
-              {
-                "function": "date_time_cols",
-                "args": [
-                  1,
-                  2,
-                  3,
-                  4
-                ]
-              }
             ]
           }
         }
