@@ -1,3 +1,4 @@
+import csv
 import glob
 import json
 import os
@@ -136,7 +137,45 @@ class DataValidator:
         return rules_dict
 
     def check_rules(self, rules_dict, path, name):
-        return []
+        """
+        Check all rules over a csv file
+        :param rules_dict: rules to check
+        :param path: path of file
+        :param name: name of file
+        :return: report list with errors
+        """
+        report = []
+        count_rules_list = rules_dict.get("count", [])
+        # header_rules_list = rules_dict.get("header", [])
+        # row_rules_list = rules_dict.get("row", [])
+        count_rules = [
+            {
+                "count": 0,
+                "fun": rule["fun"],
+                "args": rule["args"],
+                "error": rule["error"],
+                "answer": False,
+            }
+            for rule in count_rules_list
+        ]
+        with open(os.path.join(path, name)) as file:
+            csv_reader = csv.reader(file, delimiter=";")
+            # header = next(csv_reader)
+            next(csv_reader)  # TODO: delete
+            # TODO: apply header rules
+            for row in csv_reader:
+                # TODO: apply row rules list
+                # apply count rules
+                for count_rule in count_rules:
+                    count_rule["count"], count_rule["answer"] = count_rule["fun"](
+                        count_rule["count"], row, count_rule["args"]
+                    )
+        # check all count rules errors
+        for count_rule in count_rules:
+            if not count_rule["answer"]:
+                report.append(file_errors[count_rule["error"]])
+
+        return report
 
     def validate_node_rules(self, path, name, rules):
         report = []

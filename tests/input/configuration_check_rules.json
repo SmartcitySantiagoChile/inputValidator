@@ -1,0 +1,37 @@
+{
+  "path": {
+    "type": "root",
+    "name": ""
+  },
+  "rules": [],
+  "children": [
+    {
+      "path": {
+        "type": "name",
+        "name": "Diccionario"
+      },
+      "rules": {
+        "formatRules": [],
+        "semanticRules": []
+      },
+      "children": [
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-Comunas.csv"
+          },
+          "rules": {
+            "formatRules": [
+              {
+                "function": "min_rows",
+                "args": 42
+              }
+            ],
+            "semanticRules": [
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
