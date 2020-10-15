@@ -79,25 +79,24 @@ class DataValidatorTest(TestCase):
             expected_error, data_validator.check_rules(rules_dict, path, name)
         )
 
+    def test_file_iterator_name(self):
+        data = DataValidator(
+            data_path=self.data_path,
+            config_path=os.path.join(self.input_path, "configuration_check_name.json"),
+        )
+        data.start_iteration_over_configuration_tree()
+        self.assertEqual({}, data.report_errors)
 
-# def test_file_iterator(self):
-#    data = DataValidator(
-#        data_path=self.data_path, config_path=self.configuration_path
-#    )
-#    data.start_iteration_over_configuration_tree()
+    def test_validate_nodes_rules_empty_case(self):
+        data_validator = DataValidator(self.configuration_path, self.data_path)
+        path = self.data_path
+        name = self.configuration_file["path"]["name"]
+        rules = self.configuration_file["rules"]
+        self.assertEqual([], data_validator.validate_node_rules(path, name, rules))
 
-
-def test_validate_nodes_rules_empty_case(self):
-    data_validator = DataValidator(self.configuration_path, self.data_path)
-    path = self.data_path
-    name = self.configuration_file["path"]["name"]
-    rules = self.configuration_file["rules"]
-    self.assertEqual([], data_validator.validate_node_rules(path, name, rules))
-
-
-def test_validate_nodes_rules_format_rule(self):
-    data_validator = DataValidator(self.configuration_path, self.data_path)
-    path = self.data_path
-    name = self.configuration_file["path"]["name"]
-    rules = self.configuration_file["rules"]
-    self.assertEqual([], data_validator.validate_node_rules(path, name, rules))
+    def test_validate_nodes_rules_format_rule(self):
+        data_validator = DataValidator(self.configuration_path, self.data_path)
+        path = self.data_path
+        name = self.configuration_file["path"]["name"]
+        rules = self.configuration_file["rules"]
+        self.assertEqual([], data_validator.validate_node_rules(path, name, rules))

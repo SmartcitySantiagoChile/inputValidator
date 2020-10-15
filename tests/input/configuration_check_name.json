@@ -1,0 +1,32 @@
+{
+  "path": {
+    "type": "root",
+    "name": ""
+  },
+  "rules": {},
+  "children": [
+    {
+      "path": {
+        "type": "name",
+        "name": "Diccionario"
+      },
+      "rules": {},
+      "children": [
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-Comunas.csv"
+          },
+          "rules": {}
+        },
+        {
+          "path": {
+            "type": "regex",
+            "name": "Diccionario-DetalleServicioZP_*_*.csv"
+          },
+          "rules": {}
+        }
+      ]
+    }
+  ]
+}

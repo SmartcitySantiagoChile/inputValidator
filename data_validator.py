@@ -4,6 +4,8 @@ import json
 import os
 from collections import defaultdict
 
+from validators import NameValidator, RegexNameValidator, RootValidator
+
 
 def check_name_file(path, name):
     """
@@ -39,9 +41,9 @@ def min_rows(count, row, n):
 
 
 check_name_functions = {
-    "name": check_name_file,
-    "regex": check_regex_file,
-    "root": lambda x, y: True,
+    "name": NameValidator,
+    "regex": RegexNameValidator,
+    "root": RootValidator,
 }
 
 # Funciones por ahora
@@ -51,15 +53,15 @@ check_name_functions = {
 format_functions = {"min_rows": {"function": min_rows, "type": "count", "error": 2}}
 
 file_errors = {
-    1: {
-        "name": "Nombre incorrecto",
-        "type": "formato",
-        "message": "El nombre del directorio o archivo no está en el formato correcto.",
-    },
     2: {
         "name": "Número de filas menor al correcto",
         "type": "formato",
         "message": "El archivo posee menos filas de las que debería.",
+    },
+    3: {
+        "name": "Archivo no es UTF-8",
+        "type": "formato",
+        "message": "El archivo no posee enconding UTF-8.",
     },
 }
 
@@ -98,7 +100,10 @@ class DataValidator:
         rules = node["rules"]
 
         # check name and path format
-        if check_name_functions[type_name](absolute_path, name):
+        validator = check_name_functions[type_name](
+            {"path": absolute_path, "name": name}
+        )
+        if validator.apply():
             # if name correct check rules and report errors
             status = self.validate_node_rules(absolute_path, name, rules)
             for error in status:
@@ -112,7 +117,7 @@ class DataValidator:
                 self.iterate_over_configuration_tree(child, new_path)
         else:
             # report name and path errors
-            self.report_errors[name].append(file_errors[1])
+            self.report_errors[name].append(validator.get_error())
 
     def dispatch_rules(self, rules):
         """
@@ -158,18 +163,19 @@ class DataValidator:
             }
             for rule in count_rules_list
         ]
-        with open(os.path.join(path, name)) as file:
-            csv_reader = csv.reader(file, delimiter=";")
-            # header = next(csv_reader)
-            next(csv_reader)  # TODO: delete
-            # TODO: apply header rules
-            for row in csv_reader:
-                # TODO: apply row rules list
-                # apply count rules
-                for count_rule in count_rules:
-                    count_rule["count"], count_rule["answer"] = count_rule["fun"](
-                        count_rule["count"], row, count_rule["args"]
-                    )
+        file = open(os.path.join(path, name), encoding="ASCII", errors="strict")
+        csv_reader = csv.reader(file, delimiter=";")
+        # header = next(csv_reader)
+        next(csv_reader)  # TODO: delete
+        # TODO: apply header rules
+        for row in csv_reader:
+            # TODO: apply row rules list
+            # apply count rules
+            for count_rule in count_rules:
+                count_rule["count"], count_rule["answer"] = count_rule["fun"](
+                    count_rule["count"], row, count_rule["args"]
+                )
+        file.close()
         # check all count rules errors
         for count_rule in count_rules:
             if not count_rule["answer"]:
