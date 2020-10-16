@@ -1,23 +1,15 @@
-import csv
-import glob
 import json
 import os
 from collections import defaultdict
 
-from validators import NameValidator, RegexNameValidator, RootValidator
-
-
-def min_rows(count, row, n):
-    """
-    Check if a row has n columns as minimal
-    :param: count: count of rows
-    :param row: row to check
-    :param n: min number of columns
-    :return:
-    """
-    count += 1
-    return count, count >= n
-
+from validators import (
+    ASCIIColValidator,
+    DuplicateValueValidator,
+    MinRowsValidator,
+    NameValidator,
+    RegexNameValidator,
+    RootValidator,
+)
 
 check_name_functions = {
     "name": NameValidator,
@@ -25,23 +17,10 @@ check_name_functions = {
     "root": RootValidator,
 }
 
-# Funciones por ahora
-# count -> se aplica en cada fila, se va contando y al final se retorna True o False según el conteo
-# se puede hacer para el duplicado
-# row -> se aplica a cada fila, cuando falla en una, se agrega al report
-format_functions = {"min_rows": {"function": min_rows, "type": "count", "error": 2}}
-
-file_errors = {
-    2: {
-        "name": "Número de filas menor al correcto",
-        "type": "formato",
-        "message": "El archivo posee menos filas de las que debería.",
-    },
-    3: {
-        "name": "Archivo no es UTF-8",
-        "type": "formato",
-        "message": "El archivo no posee enconding UTF-8.",
-    },
+file_functions = {
+    "min_rows": MinRowsValidator,
+    "ascii": ASCIIColValidator,
+    "duplicate": DuplicateValueValidator,
 }
 
 
@@ -98,9 +77,9 @@ class DataValidator:
             # report name and path errors
             self.report_errors[name].append(validator.get_error())
 
-    def dispatch_rules(self, rules):
+    def dispatch_rules(self, rules: dict) -> dict:
         """
-        Split in diferent type of rules
+        Split kind of rules
         :param rules:
         :return: dict of rules
         """
@@ -111,13 +90,9 @@ class DataValidator:
         for rule in rules_list:
             rule_name = rule["function"]
             rule_args = rule["args"]
-            rule_type = format_functions[rule_name]["type"]
-            rule_fun = format_functions[rule_name]["function"]
-            rule_error = format_functions[rule_name]["error"]
-            rules_dict[rule_type].append(
-                {"fun": rule_fun, "args": rule_args, "error": rule_error}
-            )
-
+            fun_object = file_functions[rule_name](rule_args)
+            fun_type = fun_object.get_fun_type()
+            rules_dict[fun_type].append(fun_object)
         return rules_dict
 
     def check_rules(self, rules_dict, path, name):
@@ -128,38 +103,37 @@ class DataValidator:
         :param name: name of file
         :return: report list with errors
         """
-        report = []
-        count_rules_list = rules_dict.get("count", [])
-        # header_rules_list = rules_dict.get("header", [])
-        # row_rules_list = rules_dict.get("row", [])
-        count_rules = [
-            {
-                "count": 0,
-                "fun": rule["fun"],
-                "args": rule["args"],
-                "error": rule["error"],
-                "answer": False,
-            }
-            for rule in count_rules_list
-        ]
-        file = open(os.path.join(path, name), encoding="ASCII", errors="strict")
-        csv_reader = csv.reader(file, delimiter=";")
-        # header = next(csv_reader)
-        next(csv_reader)  # TODO: delete
-        # TODO: apply header rules
-        for row in csv_reader:
-            # TODO: apply row rules list
-            # apply count rules
-            for count_rule in count_rules:
-                count_rule["count"], count_rule["answer"] = count_rule["fun"](
-                    count_rule["count"], row, count_rule["args"]
-                )
-        file.close()
-        # check all count rules errors
-        for count_rule in count_rules:
-            if not count_rule["answer"]:
-                report.append(file_errors[count_rule["error"]])
-
+        report = [self.report]
+        # count_rules_list = rules_dict.get("count", [])
+        # # header_rules_list = rules_dict.get("header", [])
+        # # row_rules_list = rules_dict.get("row", [])
+        # count_rules = [
+        #     {
+        #         "count": 0,
+        #         "fun": rule["fun"],
+        #         "args": rule["args"],
+        #         "error": rule["error"],
+        #         "answer": False,
+        #     }
+        #     for rule in count_rules_list
+        # ]
+        # file = open(os.path.join(path, name), encoding="UTF-8", errors="strict")
+        # csv_reader = csv.reader(file, delimiter=";")
+        # # header = next(csv_reader)
+        # next(csv_reader)  # TODO: delete
+        # # TODO: apply header rules
+        # for row in csv_reader:
+        #     # TODO: apply row rules list
+        #     # apply count rules
+        #     for count_rule in count_rules:
+        #         count_rule["count"], count_rule["answer"] = count_rule["fun"](
+        #             count_rule["count"], row, count_rule["args"]
+        #         )
+        # file.close()
+        # # check all count rules errors
+        # for count_rule in count_rules:
+        #     if not count_rule["answer"]:
+        #         pass
         return report
 
     def validate_node_rules(self, path, name, rules):
