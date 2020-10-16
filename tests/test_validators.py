@@ -86,7 +86,7 @@ class DataValidatorTest(TestCase):
         self.assertFalse(validator.apply())
         self.assertEqual(error_message, validator.get_error())
         self.assertFalse(validator.apply())
-        self.assertEqual("format", validator.get_fun_type())
+        self.assertEqual("file", validator.get_fun_type())
 
         # get condition
         self.assertTrue(validator.apply())
@@ -118,13 +118,16 @@ class DataValidatorTest(TestCase):
         }
         self.assertEqual(error_message, validator.get_error())
 
-        self.assertEqual("format", validator.get_fun_type())
+        self.assertEqual("row", validator.get_fun_type())
 
     def test_duplicate_value_validator(self):
+        # base case
         header = ["ID", "COMUNA"]
         row = ["0", "NUNOA"]
         validator = DuplicateValueValidator({"header": header, "col_index": 0})
         self.assertTrue(validator.apply(row))
+
+        # wrong case
         row = ["0", "NUNOA"]
         self.assertFalse(validator.apply(row))
         error_message = {
@@ -134,4 +137,4 @@ class DataValidatorTest(TestCase):
         }
         self.assertEqual(error_message, validator.get_error())
 
-        self.assertEqual("format", validator.get_fun_type())
+        self.assertEqual("row", validator.get_fun_type())
