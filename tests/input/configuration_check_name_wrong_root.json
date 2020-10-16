@@ -1,0 +1,16 @@
+{
+  "path": {
+    "type": "root",
+    "name": ""
+  },
+  "rules": {},
+  "children": [
+    {
+      "path": {
+        "type": "name",
+        "name": "asd"
+      },
+      "rules": {}
+    }
+  ]
+}
