@@ -40,7 +40,12 @@ class DataValidatorTest(TestCase):
         validator = NameValidator({"path": path, "name": "Diccionario-Comunas.csv"})
         self.assertTrue(validator.apply())
 
+        # wrong case
+        validator = NameValidator({"path": path, "name": "wrong.csv"})
+        self.assertFalse(validator.apply())
+
     def test_regex_name_validator(self):
+        # base case
         path = os.path.join(self.check_name_data_path, "Diccionario")
         validator = RegexNameValidator(
             {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv"}
@@ -53,3 +58,7 @@ class DataValidatorTest(TestCase):
         self.assertTrue(validator.apply())
         self.assertEqual("name", validator.get_fun_type())
         self.assertEqual(error_message, validator.get_error())
+
+        # wrong case
+        validator = RegexNameValidator({"path": path, "name": "wrong.csv"})
+        self.assertFalse(validator.apply())
