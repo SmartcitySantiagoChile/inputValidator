@@ -26,7 +26,11 @@ class RootValidator(Validator):
         return True
 
     def get_error(self):
-        pass
+        return {
+            "title": "Raiz incorrecta",
+            "type": "formato",
+            "message": "La raíz del directorio debe tener un nombre vacío en la configuración.",
+        }
 
     def get_fun_type(self):
         return "name"

@@ -4,8 +4,6 @@ from unittest import TestCase
 
 from data_validator import (
     DataValidator,
-    check_name_file,
-    check_regex_file,
     min_rows,
     file_errors,
 )
@@ -20,32 +18,6 @@ class DataValidatorTest(TestCase):
         self.check_name_data_path = os.path.join(self.input_path, "check_name_data")
         with open(self.configuration_path) as json_config:
             self.configuration_file = json.loads(json_config.read())
-
-    def test_check_name_file_folder(self):
-        self.assertTrue(check_name_file(self.check_name_data_path, "Diccionario"))
-
-    def test_check_name_file_file(self):
-        diccionario_comunas_folder = os.path.join(self.check_name_data_path, "")
-        self.assertTrue(diccionario_comunas_folder, "Diccionario-Comunas.csv")
-
-    def test_check_name_file_doesnt_exist(self):
-        self.assertFalse(check_name_file(self.check_name_data_path, "Wrongname"))
-
-    def test_check_regex_file(self):
-        regex = "Diccionario-DetalleServicioZP_*_*.csv"
-        self.assertTrue(
-            check_regex_file(
-                os.path.join(self.check_name_data_path, "Diccionario"), regex
-            )
-        )
-
-    def test_check_regex_file_wrong(self):
-        regex = "Diccionario*Detallel.csv"
-        self.assertFalse(
-            check_regex_file(
-                os.path.join(self.check_name_data_path, "Diccionario"), regex
-            )
-        )
 
     def test_min_rows(self):
         self.assertEqual((2, True), min_rows(1, [], 1))
