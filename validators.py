@@ -9,7 +9,7 @@ class Validator(object, metaclass=ABCMeta):
         super().__init__()
 
     @abstractmethod
-    def apply(self):
+    def apply(self, args=None):
         pass
 
     @abstractmethod
@@ -22,7 +22,7 @@ class Validator(object, metaclass=ABCMeta):
 
 
 class RootValidator(Validator):
-    def apply(self) -> bool:
+    def apply(self, args=None) -> bool:
         """
         Return alwasy true
         :return: bool
@@ -41,7 +41,7 @@ class RootValidator(Validator):
 
 
 class NameValidator(Validator):
-    def apply(self) -> bool:
+    def apply(self, args=None) -> bool:
         """
         Check if file exists in path
         :return: bool
@@ -65,7 +65,7 @@ class NameValidator(Validator):
 
 
 class RegexNameValidator(Validator):
-    def apply(self) -> bool:
+    def apply(self, args=None) -> bool:
         """
         Check if regex file exist in path
         :return: bool
@@ -90,7 +90,7 @@ class RegexNameValidator(Validator):
 class MinRowsValidator(Validator):
     counter = 0
 
-    def apply(self) -> bool:
+    def apply(self, args=None) -> bool:
         """
         Apply row counter and check if it has the minimal
         :return: bool
@@ -115,15 +115,15 @@ class MinRowsValidator(Validator):
 class ASCIIColValidator(Validator):
     row_counter = 0
 
-    def apply(self) -> bool:
+    def apply(self, args=None) -> bool:
         """
         Check if col is in ASCII
         :return: bool
         """
         self.row_counter += 1
-        row = self.args["row"]
+        self.args["row"] = args
         col_to_check = self.args["col_index"]
-        return row[col_to_check].isascii()
+        return self.args["row"][col_to_check].isascii()
 
     def get_error(self):
         index = self.args["col_index"]
@@ -135,6 +135,43 @@ class ASCIIColValidator(Validator):
             "name": "Valor contiene ñ o acentos",
             "type": "formato",
             "message": "La variable {0} posee ñ o acentos en la fila {1}, columna {2}.".format(
+                var, self.row_counter, col_name
+            ),
+        }
+
+    def get_fun_type(self):
+        return "format"
+
+
+class DuplicateValueValidator(Validator):
+    row_counter = 0
+    values = []
+
+    def apply(self, args=None) -> bool:
+        """
+        Check if col has duplicated value
+        :return: bool
+        """
+        self.row_counter += 1
+        self.args["row"] = args
+        col_to_check = self.args["col_index"]
+        value = self.args["row"][col_to_check]
+        if value in self.values:
+            return False
+        else:
+            self.values.append(value)
+        return True
+
+    def get_error(self):
+        index = self.args["col_index"]
+        var = self.args["row"][index]
+        header = self.args["header"]
+        col_name = header[index]
+
+        return {
+            "name": "Valor duplicado",
+            "type": "formato",
+            "message": "La variable {0} está duplicada en la fila {1}, columna {2}.".format(
                 var, self.row_counter, col_name
             ),
         }

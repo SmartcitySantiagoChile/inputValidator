@@ -19,10 +19,6 @@ class DataValidatorTest(TestCase):
         with open(self.configuration_path) as json_config:
             self.configuration_file = json.loads(json_config.read())
 
-    def test_min_rows(self):
-        self.assertEqual((2, True), min_rows(1, [], 1))
-        self.assertEqual((2, False), min_rows(1, [], 3))
-
     def test_dispatch_rules(self):
         data_validator = DataValidator(self.configuration_path, self.data_path)
         configuration_path = os.path.join(

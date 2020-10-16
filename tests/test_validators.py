@@ -7,6 +7,7 @@ from validators import (
     RegexNameValidator,
     MinRowsValidator,
     ASCIIColValidator,
+    DuplicateValueValidator,
 )
 
 
@@ -94,28 +95,42 @@ class DataValidatorTest(TestCase):
         # base case
         row = ["0", "NUNOA"]
         header = ["ID", "COMUNA"]
-        validator = ASCIIColValidator({"header": header, "col_index": 1, "row": row})
-        self.assertTrue(validator.apply())
+        validator = ASCIIColValidator({"header": header, "col_index": 1})
+        self.assertTrue(validator.apply(row))
 
         # Ñ case
         row = [0, "ÑUÑOA"]
-        validator = ASCIIColValidator({"header": header, "col_index": 1, "row": row})
-        self.assertFalse(validator.apply())
+        self.assertFalse(validator.apply(row))
         error_message = {
             "name": "Valor contiene ñ o acentos",
             "type": "formato",
-            "message": "La variable ÑUÑOA posee ñ o acentos en la fila 1, columna COMUNA.",
+            "message": "La variable ÑUÑOA posee ñ o acentos en la fila 2, columna COMUNA.",
         }
         self.assertEqual(error_message, validator.get_error())
 
         # accent case
         row = [0, "Pucón"]
-        validator = ASCIIColValidator({"header": header, "col_index": 1, "row": row})
-        self.assertFalse(validator.apply())
+        self.assertFalse(validator.apply(row))
         error_message = {
             "name": "Valor contiene ñ o acentos",
             "type": "formato",
-            "message": "La variable Pucón posee ñ o acentos en la fila 1, columna COMUNA.",
+            "message": "La variable Pucón posee ñ o acentos en la fila 3, columna COMUNA.",
+        }
+        self.assertEqual(error_message, validator.get_error())
+
+        self.assertEqual("format", validator.get_fun_type())
+
+    def test_duplicate_value_validator(self):
+        header = ["ID", "COMUNA"]
+        row = ["0", "NUNOA"]
+        validator = DuplicateValueValidator({"header": header, "col_index": 0})
+        self.assertTrue(validator.apply(row))
+        row = ["0", "NUNOA"]
+        self.assertFalse(validator.apply(row))
+        error_message = {
+            "name": "Valor duplicado",
+            "type": "formato",
+            "message": "La variable 0 está duplicada en la fila 2, columna ID.",
         }
         self.assertEqual(error_message, validator.get_error())
 
