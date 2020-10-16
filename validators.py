@@ -109,7 +109,7 @@ class MinRowsValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "format"
+        return "file"
 
 
 class ASCIIColValidator(Validator):
@@ -140,7 +140,7 @@ class ASCIIColValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "format"
+        return "row"
 
 
 class DuplicateValueValidator(Validator):
@@ -177,4 +177,4 @@ class DuplicateValueValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "format"
+        return "row"
