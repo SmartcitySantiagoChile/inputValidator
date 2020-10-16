@@ -7,27 +7,6 @@ from collections import defaultdict
 from validators import NameValidator, RegexNameValidator, RootValidator
 
 
-def check_name_file(path, name):
-    """
-    Check if file exists in path
-    :param path: path to check
-    :param name: file name
-    :return: bool
-    """
-    real_path = os.path.join(path, name)
-    return os.path.exists(real_path)
-
-
-def check_regex_file(path, regex):
-    """
-    Check if regex file exists in path
-    :param path: path to check
-    :param regex: regular expression
-    :return: bool
-    """
-    return True if len(glob.glob(os.path.join(path, regex))) > 0 else False
-
-
 def min_rows(count, row, n):
     """
     Check if a row has n columns as minimal

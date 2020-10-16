@@ -24,7 +24,7 @@
             "formatRules": [
               {
                 "function": "min_rows",
-                "args": 42
+                "args": {"min":  42},
               }
             ],
             "semanticRules": [

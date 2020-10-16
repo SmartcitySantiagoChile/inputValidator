@@ -1,7 +1,13 @@
 import os
 from unittest import TestCase
 
-from validators import RootValidator, NameValidator, RegexNameValidator
+from validators import (
+    RootValidator,
+    NameValidator,
+    RegexNameValidator,
+    MinRowsValidator,
+    ASCIIColValidator,
+)
 
 
 class DataValidatorTest(TestCase):
@@ -23,13 +29,14 @@ class DataValidatorTest(TestCase):
 
     def test_name_validator(self):
         # folder case
-        validator = NameValidator(
-            {"path": self.check_name_data_path, "name": "Diccionario"}
-        )
+        args = {"path": self.check_name_data_path, "name": "Diccionario"}
+        validator = NameValidator(args)
         error_message = {
             "title": "Nombre incorrecto",
             "type": "formato",
-            "message": "El nombre del directorio o archivo no está en el formato correcto.",
+            "message": "El nombre del directorio o archivo {0} no se encuentra en el directorio {1}.".format(
+                args["name"], args["path"]
+            ),
         }
         self.assertTrue(validator.apply())
         self.assertEqual("name", validator.get_fun_type())
@@ -47,13 +54,15 @@ class DataValidatorTest(TestCase):
     def test_regex_name_validator(self):
         # base case
         path = os.path.join(self.check_name_data_path, "Diccionario")
-        validator = RegexNameValidator(
-            {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv"}
-        )
+        args = {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv"}
+        validator = RegexNameValidator(args)
+
         error_message = {
             "title": "No existe archivo con expresión regular",
             "type": "formato",
-            "message": "No existe directorio o archivo con la expresión regular buscada.",
+            "message": "No existe directorio o archivo con la expresión regular {0} en el directorio {1} .".format(
+                args["name"], args["path"]
+            ),
         }
         self.assertTrue(validator.apply())
         self.assertEqual("name", validator.get_fun_type())
@@ -62,3 +71,52 @@ class DataValidatorTest(TestCase):
         # wrong case
         validator = RegexNameValidator({"path": path, "name": "wrong.csv"})
         self.assertFalse(validator.apply())
+
+    def test_min_rows_validator(self):
+        # base case
+        validator = MinRowsValidator({"min": 3})
+        error_message = {
+            "name": "Número de filas menor al correcto",
+            "type": "formato",
+            "message": "El archivo posee {0} filas, cuando debería tener {1} filas como mínimo".format(
+                1, 3
+            ),
+        }
+        self.assertFalse(validator.apply())
+        self.assertEqual(error_message, validator.get_error())
+        self.assertFalse(validator.apply())
+        self.assertEqual("format", validator.get_fun_type())
+
+        # get condition
+        self.assertTrue(validator.apply())
+
+    def test_ascci_col_validator(self):
+        # base case
+        row = ["0", "NUNOA"]
+        header = ["ID", "COMUNA"]
+        validator = ASCIIColValidator({"header": header, "col_index": 1, "row": row})
+        self.assertTrue(validator.apply())
+
+        # Ñ case
+        row = [0, "ÑUÑOA"]
+        validator = ASCIIColValidator({"header": header, "col_index": 1, "row": row})
+        self.assertFalse(validator.apply())
+        error_message = {
+            "name": "Valor contiene ñ o acentos",
+            "type": "formato",
+            "message": "La variable ÑUÑOA posee ñ o acentos en la fila 1, columna COMUNA.",
+        }
+        self.assertEqual(error_message, validator.get_error())
+
+        # accent case
+        row = [0, "Pucón"]
+        validator = ASCIIColValidator({"header": header, "col_index": 1, "row": row})
+        self.assertFalse(validator.apply())
+        error_message = {
+            "name": "Valor contiene ñ o acentos",
+            "type": "formato",
+            "message": "La variable Pucón posee ñ o acentos en la fila 1, columna COMUNA.",
+        }
+        self.assertEqual(error_message, validator.get_error())
+
+        self.assertEqual("format", validator.get_fun_type())
