@@ -128,4 +128,14 @@ class DataValidatorTest(TestCase):
             data_path=self.data_path,
             config_path=os.path.join(self.input_path, "configuration_check_name.json"),
         )
-        print(data_validator.check_rules({}, path, empty_row_name))
+        expected_error = [
+            {
+                "name": "Fila vacía",
+                "type": "formato",
+                "message": "El archivo posee una linea vacía en la fila 1.",
+            }
+        ]
+
+        self.assertEqual(
+            expected_error, data_validator.check_rules({}, path, empty_row_name)
+        )

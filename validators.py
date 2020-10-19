@@ -185,14 +185,14 @@ class EmptyRowValidator(Validator):
 
     def apply(self, args=None) -> bool:
         """
-        Check if col has duplicated value
+        Check if is empty row
         :return: bool
         """
         self.row_counter += 1
         if args:
-            return False
-        else:
             return True
+        else:
+            return False
 
     def get_error(self):
         return {
