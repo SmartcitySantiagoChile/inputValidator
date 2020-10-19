@@ -89,6 +89,7 @@ class RegexNameValidator(Validator):
 
 class MinRowsValidator(Validator):
     counter = 0
+    status = False
 
     def apply(self, args=None) -> bool:
         """
@@ -97,7 +98,10 @@ class MinRowsValidator(Validator):
         """
         self.counter += 1
         min_rows = self.args["min"]
-        return self.counter >= min_rows
+        res = self.counter >= min_rows
+        if res:
+            self.status = True
+        return res
 
     def get_error(self):
         return {
@@ -149,13 +153,15 @@ class DuplicateValueValidator(Validator):
 
     def apply(self, args=None) -> bool:
         """
-        Check if col has duplicated value
+        Check if col has not duplicated value
         :return: bool
         """
         self.row_counter += 1
         self.args["row"] = args
         col_to_check = self.args["col_index"]
         value = self.args["row"][col_to_check]
+        print(value)
+        print(self.values)
         if value in self.values:
             return False
         else:
@@ -185,7 +191,7 @@ class EmptyRowValidator(Validator):
 
     def apply(self, args=None) -> bool:
         """
-        Check if is empty row
+        Check if is not empty row
         :return: bool
         """
         self.row_counter += 1

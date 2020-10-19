@@ -98,7 +98,8 @@ class DataValidatorTest(TestCase):
         with open(configuration_path) as json_config:
             configuration_file = json.loads(json_config.read())
             rules = configuration_file["children"][0]["children"][0]["rules"]
-            rules_dict = data_validator.dispatch_rules(rules)
+            header = ["ID", "COMUNA"]
+            rules_dict = data_validator.dispatch_rules(rules, header)
             self.assertEqual(1, len(rules_dict["file"]))
             self.assertEqual(3, len(rules_dict["row"]))
 
@@ -165,3 +166,32 @@ class DataValidatorTest(TestCase):
         self.assertEqual(
             expected_error, data_validator.check_rules({}, path, empty_row_name, header)
         )
+
+    def test_diccionario_comunas(self):
+        # base case
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_diccionario_comunas"),
+            config_path=os.path.join(self.input_path, "configuration.json"),
+        )
+        data.start_iteration_over_configuration_tree()
+        expected_report = [
+            ["Diccionario", "Diccionario"],
+            ["Diccionario-Comunas.csv", "Diccionario/Diccionario-Comunas.csv"],
+        ]
+        self.assertEqual(expected_report, data.report)
+        self.assertEqual({}, data.report_errors)
+
+        # wrong case
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_diccionario_comunas"),
+            config_path=os.path.join(
+                self.input_path, "configuration_diccionario_comunas_wrong.json"
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+        expected_report = [
+            ["Diccionario", "Diccionario"],
+            ["Diccionario-Comunas.csv", "Diccionario/Diccionario-Comunas.csv"],
+        ]
+        print(data.report)
+        print(data.report_errors)

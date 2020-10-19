@@ -15,7 +15,7 @@
         {
           "path": {
             "type": "name",
-            "name": "Diccionario-Comunas.csv",
+            "name": "Diccionario-Comunas-Wrong.csv",
             "header": ["ID", "NOMBRE"]
           },
           "rules": {

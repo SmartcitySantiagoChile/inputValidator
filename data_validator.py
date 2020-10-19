@@ -67,10 +67,11 @@ class DataValidator:
         )
         if validator.apply():
             # if name correct check rules and report errors
-            status = self.validate_node_rules(absolute_path, name, rules, header)
-            for error in status:
-                self.report_errors[name].append(error)
-            # if not root case
+            if rules:
+                status = self.validate_node_rules(absolute_path, name, rules, header)
+                for error in status:
+                    self.report_errors[name].append(error)
+                # if not root case
             if name:
                 self.report.append([name, new_path])
 
@@ -81,10 +82,11 @@ class DataValidator:
             # report name and path errors
             self.report_errors[name].append(validator.get_error())
 
-    def dispatch_rules(self, rules: dict) -> dict:
+    def dispatch_rules(self, rules: dict, header: list) -> dict:
         """
         Split kind of rules
         :param rules:
+        :param header:
         :return: dict of rules
         """
         format_rules = rules.get("formatRules", [])
@@ -94,6 +96,7 @@ class DataValidator:
         for rule in rules_list:
             rule_name = rule["function"]
             rule_args = rule["args"]
+            rule_args["header"] = header
             fun_object = file_functions[rule_name](rule_args)
             fun_type = fun_object.get_fun_type()
             rules_dict[fun_type].append(fun_object)
@@ -103,32 +106,44 @@ class DataValidator:
         """
         Check all rules over a csv file
         :param rules_dict: rules to check
-        :param path: path of file
-        :param name: name of file
-        :return: report list with errors
+        :param path: file path
+        :param name: file name
+        ;param header: file header
+        :return: list
         """
         report = []
-        # files_rules_list = rules_dict.get("file", [])
-        # row_rules_list = rules_dict.get("row", [])
+        files_rules_list = rules_dict.get("file", [])
+        row_rules_list = rules_dict.get("row", [])
 
         header_validator = HeaderValidator({"header": header})
         empty_row_validator = EmptyRowValidator({})
+
+        # open file
         file = open(os.path.join(path, name), encoding="UTF-8", errors="strict")
         csv_reader = csv.reader(file, delimiter=";")
         try:
+            # check header
             if not header_validator.apply(next(csv_reader)):
                 report.append(header_validator.get_error())
+                file.close()
+                report.append(header_validator.get_error())
+                return report
+
+            # check rules
             for row in csv_reader:
                 if empty_row_validator.apply(row):
                     report.append(empty_row_validator.get_error())
                     continue
 
-            #     # TODO: apply row rules list
-            #     # apply count rules
-            #     for count_rule in count_rules:
-            #         count_rule["count"], count_rule["answer"] = count_rule["fun"](
-            #             count_rule["count"], row, count_rule["args"]
-            #         )
+                # check row fun
+                for row_fun in row_rules_list:
+                    if not row_fun.apply(row):
+                        report.append(row_fun.get_error())
+
+                # apply file fun
+                for file_fun in files_rules_list:
+                    file_fun.apply(row)
+
         except UnicodeDecodeError:
             error = {
                 "name": "Error de encoding",
@@ -137,15 +152,16 @@ class DataValidator:
             }
             report.append(error)
         file.close()
-        # # check all count rules errors
-        # for count_rule in count_rules:
-        #     if not count_rule["answer"]:
-        #         pass
+
+        # check all file rules errors
+        for file_fun in files_rules_list:
+            if not file_fun.status:
+                report.append(file_fun.get_error())
         return report
 
     def validate_node_rules(self, path, name, rules, header):
         report = []
         if rules:
-            rules_dict = self.dispatch_rules(rules)
+            rules_dict = self.dispatch_rules(rules, header)
             report = self.check_rules(rules_dict, path, name, header)
         return report
