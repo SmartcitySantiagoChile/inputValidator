@@ -178,3 +178,30 @@ class DuplicateValueValidator(Validator):
 
     def get_fun_type(self):
         return "row"
+
+
+class EmptyRowValidator(Validator):
+    row_counter = 0
+
+    def apply(self, args=None) -> bool:
+        """
+        Check if col has duplicated value
+        :return: bool
+        """
+        self.row_counter += 1
+        if args:
+            return False
+        else:
+            return True
+
+    def get_error(self):
+        return {
+            "name": "Fila vacía",
+            "type": "formato",
+            "message": "El archivo posee una linea vacía en la fila {0}.".format(
+                self.row_counter
+            ),
+        }
+
+    def get_fun_type(self):
+        return "row"

@@ -1,3 +1,4 @@
+import csv
 import json
 import os
 from collections import defaultdict
@@ -5,6 +6,7 @@ from collections import defaultdict
 from validators import (
     ASCIIColValidator,
     DuplicateValueValidator,
+    EmptyRowValidator,
     MinRowsValidator,
     NameValidator,
     RegexNameValidator,
@@ -103,33 +105,36 @@ class DataValidator:
         :param name: name of file
         :return: report list with errors
         """
-        report = [self.report]
-        # count_rules_list = rules_dict.get("count", [])
-        # # header_rules_list = rules_dict.get("header", [])
-        # # row_rules_list = rules_dict.get("row", [])
-        # count_rules = [
-        #     {
-        #         "count": 0,
-        #         "fun": rule["fun"],
-        #         "args": rule["args"],
-        #         "error": rule["error"],
-        #         "answer": False,
-        #     }
-        #     for rule in count_rules_list
-        # ]
-        # file = open(os.path.join(path, name), encoding="UTF-8", errors="strict")
-        # csv_reader = csv.reader(file, delimiter=";")
-        # # header = next(csv_reader)
-        # next(csv_reader)  # TODO: delete
-        # # TODO: apply header rules
-        # for row in csv_reader:
-        #     # TODO: apply row rules list
-        #     # apply count rules
-        #     for count_rule in count_rules:
-        #         count_rule["count"], count_rule["answer"] = count_rule["fun"](
-        #             count_rule["count"], row, count_rule["args"]
-        #         )
-        # file.close()
+        report = []
+        # files_rules_list = rules_dict.get("count", [])
+        # header_rules_list = rules_dict.get("header", [])
+        # row_rules_list = rules_dict.get("row", [])
+        file = open(os.path.join(path, name), encoding="UTF-8", errors="strict")
+        csv_reader = csv.reader(file, delimiter=";")
+        empty_row_validator = EmptyRowValidator({})
+        try:
+            # # header = next(csv_reader)
+            next(csv_reader)  # TODO: delete
+            # # TODO: apply header rules
+            for row in csv_reader:
+                if not empty_row_validator.apply(row):
+                    report.append(empty_row_validator.get_error())
+                    continue
+
+            #     # TODO: apply row rules list
+            #     # apply count rules
+            #     for count_rule in count_rules:
+            #         count_rule["count"], count_rule["answer"] = count_rule["fun"](
+            #             count_rule["count"], row, count_rule["args"]
+            #         )
+        except UnicodeDecodeError:
+            error = {
+                "name": "Error de encoding",
+                "type": "formato",
+                "message": "El archivo {0} no se encuentra en UTF-8.".format(name),
+            }
+            report.append(error)
+        file.close()
         # # check all count rules errors
         # for count_rule in count_rules:
         #     if not count_rule["answer"]:

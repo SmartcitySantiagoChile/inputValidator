@@ -98,3 +98,34 @@ class DataValidatorTest(TestCase):
             rules_dict = data_validator.dispatch_rules(rules)
             self.assertEqual(1, len(rules_dict["file"]))
             self.assertEqual(3, len(rules_dict["row"]))
+
+    def test_check_rules_utf8(self):
+        path = os.path.join(self.input_path, "utf8_data")
+        latin1_name = "Diccionario-Servicios-Latin1.csv"
+        data_validator = DataValidator(
+            data_path=self.data_path,
+            config_path=os.path.join(self.input_path, "configuration_check_name.json"),
+        )
+        expected_error = [
+            {
+                "name": "Error de encoding",
+                "type": "formato",
+                "message": "El archivo Diccionario-Servicios-Latin1.csv no se encuentra en UTF-8.",
+            }
+        ]
+
+        self.assertEqual(
+            expected_error, data_validator.check_rules({}, path, latin1_name)
+        )
+
+        utf8_name = "Diccionario-Servicios-UTF-8.csv"
+        self.assertEqual([], data_validator.check_rules({}, path, utf8_name))
+
+    def test_check_rules_empty_row(self):
+        path = os.path.join(self.input_path, "empty_row_data")
+        empty_row_name = "Diccionario-Comunas-Empty-Row.csv"
+        data_validator = DataValidator(
+            data_path=self.data_path,
+            config_path=os.path.join(self.input_path, "configuration_check_name.json"),
+        )
+        print(data_validator.check_rules({}, path, empty_row_name))
