@@ -8,6 +8,8 @@ from validators import (
     MinRowsValidator,
     ASCIIColValidator,
     DuplicateValueValidator,
+    EmptyRowValidator,
+    HeaderValidator,
 )
 
 
@@ -134,6 +136,43 @@ class DataValidatorTest(TestCase):
             "name": "Valor duplicado",
             "type": "formato",
             "message": "La variable 0 está duplicada en la fila 2, columna ID.",
+        }
+        self.assertEqual(error_message, validator.get_error())
+
+        self.assertEqual("row", validator.get_fun_type())
+
+    def test_empty_row_validator(self):
+        # base case
+        row = ["0", "NUNOA"]
+        validator = EmptyRowValidator({})
+        self.assertFalse(validator.apply(row))
+
+        # wrong case
+        row = []
+        self.assertTrue(validator.apply(row))
+        error_message = {
+            "name": "Fila vacía",
+            "type": "formato",
+            "message": "El archivo posee una linea vacía en la fila 2.",
+        }
+        self.assertEqual(error_message, validator.get_error())
+
+        self.assertEqual("row", validator.get_fun_type())
+
+    def test_header_validator(self):
+        # base case
+        header = ["ID", "COMUNA"]
+        validator = HeaderValidator({"header": header})
+        self.assertTrue(validator.apply(header))
+
+        # wrong case
+        header = ["COMUNA", "ID"]
+        self.assertFalse(validator.apply(header))
+
+        error_message = {
+            "name": "Header incorrecto",
+            "type": "formato",
+            "message": "El header no corresponde al archivo.",
         }
         self.assertEqual(error_message, validator.get_error())
 

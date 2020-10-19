@@ -190,9 +190,9 @@ class EmptyRowValidator(Validator):
         """
         self.row_counter += 1
         if args:
-            return True
-        else:
             return False
+        else:
+            return True
 
     def get_error(self):
         return {
@@ -201,6 +201,25 @@ class EmptyRowValidator(Validator):
             "message": "El archivo posee una linea vacía en la fila {0}.".format(
                 self.row_counter
             ),
+        }
+
+    def get_fun_type(self):
+        return "row"
+
+
+class HeaderValidator(Validator):
+    def apply(self, args=None) -> bool:
+        """
+        Check header
+        :return: bool
+        """
+        return self.args["header"] == args
+
+    def get_error(self):
+        return {
+            "name": "Header incorrecto",
+            "type": "formato",
+            "message": "El header no corresponde al archivo.",
         }
 
     def get_fun_type(self):

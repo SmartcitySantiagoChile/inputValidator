@@ -7,6 +7,7 @@ from validators import (
     ASCIIColValidator,
     DuplicateValueValidator,
     EmptyRowValidator,
+    HeaderValidator,
     MinRowsValidator,
     NameValidator,
     RegexNameValidator,
@@ -55,6 +56,7 @@ class DataValidator:
         # get variables
         name = node["path"]["name"]
         type_name = node["path"]["type"]
+        header = node["path"].get("header", "")
         new_path = os.path.join(path, name)
         absolute_path = os.path.join(self.data_path, path)
         rules = node["rules"]
@@ -65,7 +67,7 @@ class DataValidator:
         )
         if validator.apply():
             # if name correct check rules and report errors
-            status = self.validate_node_rules(absolute_path, name, rules)
+            status = self.validate_node_rules(absolute_path, name, rules, header)
             for error in status:
                 self.report_errors[name].append(error)
             # if not root case
@@ -97,7 +99,7 @@ class DataValidator:
             rules_dict[fun_type].append(fun_object)
         return rules_dict
 
-    def check_rules(self, rules_dict, path, name):
+    def check_rules(self, rules_dict, path, name, header):
         """
         Check all rules over a csv file
         :param rules_dict: rules to check
@@ -106,18 +108,17 @@ class DataValidator:
         :return: report list with errors
         """
         report = []
-        # files_rules_list = rules_dict.get("count", [])
-        # header_rules_list = rules_dict.get("header", [])
+        # files_rules_list = rules_dict.get("file", [])
         # row_rules_list = rules_dict.get("row", [])
         file = open(os.path.join(path, name), encoding="UTF-8", errors="strict")
         csv_reader = csv.reader(file, delimiter=";")
+        header_validator = HeaderValidator(header)
         empty_row_validator = EmptyRowValidator({})
         try:
-            # # header = next(csv_reader)
-            next(csv_reader)  # TODO: delete
-            # # TODO: apply header rules
+            if not header_validator.apply(next(csv_reader)):
+                report.append(header_validator.get_error())
             for row in csv_reader:
-                if not empty_row_validator.apply(row):
+                if empty_row_validator.apply(row):
                     report.append(empty_row_validator.get_error())
                     continue
 
@@ -141,9 +142,9 @@ class DataValidator:
         #         pass
         return report
 
-    def validate_node_rules(self, path, name, rules):
+    def validate_node_rules(self, path, name, rules, header):
         report = []
         if rules:
             rules_dict = self.dispatch_rules(rules)
-            report = self.check_rules(rules_dict, path, name)
+            report = self.check_rules(rules_dict, path, name, header)
         return report
