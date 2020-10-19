@@ -110,10 +110,11 @@ class DataValidator:
         report = []
         # files_rules_list = rules_dict.get("file", [])
         # row_rules_list = rules_dict.get("row", [])
+
+        header_validator = HeaderValidator({"header": header})
+        empty_row_validator = EmptyRowValidator({})
         file = open(os.path.join(path, name), encoding="UTF-8", errors="strict")
         csv_reader = csv.reader(file, delimiter=";")
-        header_validator = HeaderValidator(header)
-        empty_row_validator = EmptyRowValidator({})
         try:
             if not header_validator.apply(next(csv_reader)):
                 report.append(header_validator.get_error())

@@ -73,7 +73,7 @@ class DataValidatorTest(TestCase):
         path = self.data_path
         name = self.configuration_file["path"]["name"]
         rules = self.configuration_file["rules"]
-        self.assertEqual([], data_validator.validate_node_rules(path, name, rules))
+        self.assertEqual([], data_validator.validate_node_rules(path, name, rules, ""))
 
     @mock.patch("data_validator.DataValidator.dispatch_rules")
     @mock.patch("data_validator.DataValidator.check_rules")
@@ -85,7 +85,10 @@ class DataValidatorTest(TestCase):
         name = self.configuration_file["children"][0]["children"][0]["path"]["name"]
 
         rules = self.configuration_file["children"][0]["children"][0]["rules"]
-        self.assertEqual([], data_validator.validate_node_rules(path, name, rules))
+        header = ["ID", "NOMBRE"]
+        self.assertEqual(
+            [], data_validator.validate_node_rules(path, name, rules, header)
+        )
 
     def test_dispatch_rules(self):
         data_validator = DataValidator(self.configuration_path, self.data_path)
@@ -102,6 +105,30 @@ class DataValidatorTest(TestCase):
     def test_check_rules_utf8(self):
         path = os.path.join(self.input_path, "utf8_data")
         latin1_name = "Diccionario-Servicios-Latin1.csv"
+        header = [
+            "ROUTE_ID",
+            "ROUTE_NAME",
+            "SERVICE_NA",
+            "UN",
+            "OP_NOC",
+            "DIST",
+            "PO_MOD",
+            "SENTIDO",
+            "COD_USUARI",
+            "COD_TS",
+            "COD_SINSER",
+            "COD_SINRUT",
+            "COD_USUSEN",
+            "TIPO_SERV",
+            "FREC_PM",
+            "FREC_PT",
+            "PLAZAS_PM",
+            "PLAZAS_PT",
+            "SEL_PM",
+            "SEL_PT",
+            "SEN1",
+            "VALIDA",
+        ]
         data_validator = DataValidator(
             data_path=self.data_path,
             config_path=os.path.join(self.input_path, "configuration_check_name.json"),
@@ -115,11 +142,10 @@ class DataValidatorTest(TestCase):
         ]
 
         self.assertEqual(
-            expected_error, data_validator.check_rules({}, path, latin1_name)
+            expected_error, data_validator.check_rules({}, path, latin1_name, header)
         )
-
         utf8_name = "Diccionario-Servicios-UTF-8.csv"
-        self.assertEqual([], data_validator.check_rules({}, path, utf8_name))
+        self.assertEqual([], data_validator.check_rules({}, path, utf8_name, header))
 
     def test_check_rules_empty_row(self):
         path = os.path.join(self.input_path, "empty_row_data")
@@ -135,7 +161,7 @@ class DataValidatorTest(TestCase):
                 "message": "El archivo posee una linea vacía en la fila 1.",
             }
         ]
-
+        header = ["ID", "NOMBRE"]
         self.assertEqual(
-            expected_error, data_validator.check_rules({}, path, empty_row_name)
+            expected_error, data_validator.check_rules({}, path, empty_row_name, header)
         )

@@ -18,7 +18,8 @@
         {
           "path": {
             "type": "name",
-            "name": "Diccionario-Comunas.csv"
+            "name": "Diccionario-Comunas.csv",
+            "header": ["ID", "COMUNA"]
           },
           "rules": {
             "formatRules": [
