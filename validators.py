@@ -117,7 +117,9 @@ class MinRowsValidator(Validator):
 
 
 class ASCIIColValidator(Validator):
-    row_counter = 0
+    def __init__(self, args):
+        self.row_counter = 0
+        super().__init__(args)
 
     def apply(self, args=None) -> bool:
         """
@@ -148,8 +150,10 @@ class ASCIIColValidator(Validator):
 
 
 class DuplicateValueValidator(Validator):
-    row_counter = 0
-    values = []
+    def __init__(self, args):
+        self.row_counter = 0
+        self.values = []
+        super().__init__(args)
 
     def apply(self, args=None) -> bool:
         """
@@ -160,8 +164,6 @@ class DuplicateValueValidator(Validator):
         self.args["row"] = args
         col_to_check = self.args["col_index"]
         value = self.args["row"][col_to_check]
-        print(value)
-        print(self.values)
         if value in self.values:
             return False
         else:

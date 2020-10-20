@@ -191,7 +191,25 @@ class DataValidatorTest(TestCase):
         data.start_iteration_over_configuration_tree()
         expected_report = [
             ["Diccionario", "Diccionario"],
-            ["Diccionario-Comunas.csv", "Diccionario/Diccionario-Comunas.csv"],
+            [
+                "Diccionario-Comunas-Wrong.csv",
+                "Diccionario/Diccionario-Comunas-Wrong.csv",
+            ],
         ]
-        print(data.report)
-        print(data.report_errors)
+
+        expected_error_report = {
+            "Diccionario-Comunas-Wrong.csv": [
+                {
+                    "name": "Valor duplicado",
+                    "type": "formato",
+                    "message": "La variable 0 está duplicada en la fila 2, columna ID.",
+                },
+                {
+                    "name": "Valor duplicado",
+                    "type": "formato",
+                    "message": "La variable LAMPA está duplicada en la fila 2, columna NOMBRE.",
+                },
+            ]
+        }
+        self.assertEqual(expected_report, data.report)
+        self.assertEqual(expected_error_report, data.report_errors)
