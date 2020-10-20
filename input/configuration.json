@@ -10,89 +10,35 @@
         "type": "name",
         "name": "Diccionario"
       },
-      "rules": {
-        "formatRules": [],
-        "semanticRules": []
-      },
+      "rules": [],
       "children": [
         {
           "path": {
             "type": "name",
-            "name": "Diccionario-Comunas.csv"
+            "name": "Diccionario-Comunas.csv",
+            "header": ["ID", "NOMBRE"]
           },
           "rules": {
-            "formatRules": [],
-            "semanticRules": []
-          }
-        },
-        {
-          "path": {
-            "type": "regex",
-            "name": "Diccionario-DetalleServicioZP_*_*.csv"
-          },
-          "rules": {
-            "formatRules": [],
-            "semanticRules": []
-          }
-        },
-        {
-          "path": {
-            "type": "name",
-            "name": "Diccionario-EstacionesMetro.csv"
-          },
-          "rules": {
-            "formatRules": [],
-            "semanticRules": []
-          }
-        },
-        {
-          "path": {
-            "type": "name",
-            "name": "Diccionario-EstacionesMetroTren.csv"
-          },
-          "rules": {
-            "formatRules": [],
-            "semanticRules": []
-          }
-        },
-        {
-          "path": {
-            "type": "name",
-            "name": "Diccionario-Patentes.csv"
-          },
-          "rules": {
-            "formatRules": [],
-            "semanticRules": []
-          }
-        },
-        {
-          "path": {
-            "type": "name",
-            "name": "Diccionario-PeriodosTS.csv"
-          },
-          "rules": {
-            "formatRules": [],
-            "semanticRules": []
-          }
-        },
-        {
-          "path": {
-            "type": "name",
-            "name": "Diccionario-Servicios.csv"
-          },
-          "rules": {
-            "formatRules": [],
-            "semanticRules": []
-          }
-        },
-        {
-          "path": {
-            "type": "name",
-            "name": "Diccionario-Zonificaciones.csv"
-          },
-          "rules": {
-            "formatRules": [],
-            "semanticRules": []
+            "formatRules": [
+              {
+                "function": "min_rows",
+                "args": {"min": 42}
+              },
+              {
+                "function": "ascii",
+                "args": {"col_index":  1}
+              },
+              {
+                "function": "duplicate",
+                "args": {"col_index":  0}
+              },
+              {
+                "function": "duplicate",
+                "args": {"col_index":  1}
+              }
+            ],
+            "semanticRules": [
+            ]
           }
         }
       ]

@@ -35,10 +35,8 @@ class DataValidator:
             self.config = json.loads(json_config.read())
         self.report_errors = defaultdict(list)
         self.report = []
-        if path_list:
-            self.path_list = data_path
-        else:
-            self.data_path = data_path
+        self.path_list = path_list
+        self.data_path = data_path
 
     def start_iteration_over_configuration_tree(self):
         """
@@ -60,6 +58,10 @@ class DataValidator:
         new_path = os.path.join(path, name)
         absolute_path = os.path.join(self.data_path, path)
         rules = node["rules"]
+
+        # path list case
+        if self.path_list:
+            print(self.data_path)
 
         # check name and path format
         validator = check_name_functions[type_name](
@@ -108,7 +110,7 @@ class DataValidator:
         :param rules_dict: rules to check
         :param path: file path
         :param name: file name
-        ;param header: file header
+        :param header: file header
         :return: list
         """
         report = []
@@ -165,3 +167,9 @@ class DataValidator:
             rules_dict = self.dispatch_rules(rules, header)
             report = self.check_rules(rules_dict, path, name, header)
         return report
+
+    def check_in_path_list(self, name):
+        if not self.path_list:
+            return name
+        else:
+            return name in self.da
