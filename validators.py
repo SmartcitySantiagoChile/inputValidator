@@ -237,6 +237,7 @@ class HeaderValidator(Validator):
 class NotEmptyValueValidator(Validator):
     def __init__(self, args):
         self.row_counter = 0
+        self.cols_error = []
         super().__init__(args)
 
     def apply(self, args=None) -> bool:
@@ -244,25 +245,33 @@ class NotEmptyValueValidator(Validator):
         Check if col has not empty value
         :return: bool
         """
+        self.cols_error = []
         self.row_counter += 1
         self.args["row"] = args
-        col_to_check = self.args["col_index"]
-        value = self.args["row"][col_to_check]
-        if not value:
-            return False
-        else:
+        cols_to_check = self.args["col_indexes"]
+        for col in cols_to_check:
+            value = self.args["row"][col]
+            if not value:
+                self.cols_error.append(col)
+        if len(self.cols_error) == 0:
             return True
+        else:
+            return False
 
     def get_error(self):
-        index = self.args["col_index"]
         header = self.args["header"]
-        col_name = header[index]
+        cols_names = [header[index] for index in self.cols_error]
+        head = "Existe un valor vacío"
+        tail = "columna"
+        if len(cols_names) > 1:
+            head = "Existen valores vacíos"
+            tail = "columnas"
 
         return {
             "name": "Valor vacío",
             "type": "formato",
-            "message": "Existe un valor vacío en en la fila {0}, columna {1}.".format(
-                self.row_counter, col_name
+            "message": "{0} en la fila {1}, {2} {3}.".format(
+                head, self.row_counter, tail, " ".join(cols_names)
             ),
         }
 
