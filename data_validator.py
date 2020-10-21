@@ -176,7 +176,6 @@ class DataValidator:
             path_list_dict_name[name] = os.path.dirname(path)
 
         self.create_path_dict(self.config, path_list_names)
-
         for node in self.path_list_dict:
             # get variable
             name = node["path"]["name"]

@@ -30,7 +30,7 @@ def main(argv):
     # Arguments and description
     parser = argparse.ArgumentParser(description="validate Trasantiago data.")
 
-    parser.add_argument("path", help="Path for .zip data")
+    parser.add_argument("path", help="Path for .zip data or list of paths", nargs="+")
     parser.add_argument(
         "--output",
         default=None,
@@ -39,17 +39,23 @@ def main(argv):
     parser.add_argument("--path-list", help="Path is a path list.", action="store_true")
     args = parser.parse_args(argv[1:])
     is_path_list = args.path_list
-    input_path = os.path.join(DIR_PATH, args.path)
-    # output_path = args.output if args.output else OUTPUT_PATH
-
-    if not is_path_list:
+    if is_path_list:
+        input_path = args.path
+    else:
+        input_path = os.path.join(DIR_PATH, args.path[0])
         with zipfile.ZipFile(input_path, "r") as zip_ref:
             temporal_path = os.path.join(INPUTS_PATH, "tmp")
             zip_ref.extractall(temporal_path)
             input_path = os.path.join(temporal_path, zip_ref.namelist()[0])
 
     validator = DataValidator(CONFIG_PATH, input_path, path_list=is_path_list)
-    validator.start_iteration_over_configuration_tree()
+
+    if is_path_list:
+        validator.start_iteration_over_path_list()
+    else:
+        validator.start_iteration_over_configuration_tree()
+
+    # output_path = args.output if args.output else OUTPUT_PATH
 
     for success in validator.report:
         logger.info("{0} found in {1}".format(success[0], success[1]))
@@ -58,7 +64,8 @@ def main(argv):
         for error in value:
             logger.error(error)
 
-    shutil.rmtree(os.path.join(INPUTS_PATH, "tmp"))
+    if not is_path_list:
+        shutil.rmtree(os.path.join(INPUTS_PATH, "tmp"))
 
 
 if __name__ == "__main__":
