@@ -8,8 +8,9 @@ from validators import (
     MinRowsValidator,
     ASCIIColValidator,
     DuplicateValueValidator,
-    EmptyRowValidator,
+    NotEmptyRowValidator,
     HeaderValidator,
+    NotEmptyValueValidator,
 )
 
 
@@ -141,10 +142,10 @@ class DataValidatorTest(TestCase):
 
         self.assertEqual("row", validator.get_fun_type())
 
-    def test_empty_row_validator(self):
+    def test_not_empty_row_validator(self):
         # base case
         row = ["0", "NUNOA"]
-        validator = EmptyRowValidator({})
+        validator = NotEmptyRowValidator({})
         self.assertFalse(validator.apply(row))
 
         # wrong case
@@ -174,6 +175,73 @@ class DataValidatorTest(TestCase):
             "type": "formato",
             "message": "El header no corresponde al archivo.",
         }
+        self.assertEqual(error_message, validator.get_error())
+
+        self.assertEqual("row", validator.get_fun_type())
+
+    def test_not_empty_value_validator(self):
+        # base case
+        header = [
+            "ROUTE_ID",
+            "ROUTE_NAME",
+            "SERVICE_NA",
+            "UN",
+            "OP_NOC",
+            "DIST",
+            "PO_MOD",
+            "SENTIDO",
+            "COD_USUARI",
+            "COD_TS",
+            "COD_SINSER",
+            "COD_SINRUT",
+            "COD_USUSEN",
+            "TIPO_SERV",
+            "FREC_PM",
+            "FREC_PT",
+            "PLAZAS_PM",
+            "PLAZAS_PT",
+            "SEL_PM",
+            "SEL_PT",
+            "SEN1",
+            "VALIDA",
+        ]
+        validator = NotEmptyValueValidator({"header": header, "col_index": 1})
+        self.assertTrue(validator.apply(header))
+
+        # wrong case
+        row = [
+            "ROUTE_ID",
+            "",
+            "SERVICE_NA",
+            "UN",
+            "OP_NOC",
+            "DIST",
+            "PO_MOD",
+            "SENTIDO",
+            "COD_USUARI",
+            "COD_TS",
+            "COD_SINSER",
+            "COD_SINRUT",
+            "COD_USUSEN",
+            "TIPO_SERV",
+            "FREC_PM",
+            "FREC_PT",
+            "PLAZAS_PM",
+            "PLAZAS_PT",
+            "SEL_PM",
+            "SEL_PT",
+            "SEN1",
+            "VALIDA",
+        ]
+
+        self.assertFalse(validator.apply(row))
+
+        error_message = {
+            "name": "Valor vacío",
+            "type": "formato",
+            "message": "Existe un valor vacío en en la fila 2, columna ROUTE_NAME.",
+        }
+
         self.assertEqual(error_message, validator.get_error())
 
         self.assertEqual("row", validator.get_fun_type())

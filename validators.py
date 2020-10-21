@@ -188,7 +188,7 @@ class DuplicateValueValidator(Validator):
         return "row"
 
 
-class EmptyRowValidator(Validator):
+class NotEmptyRowValidator(Validator):
     row_counter = 0
 
     def apply(self, args=None) -> bool:
@@ -228,6 +228,42 @@ class HeaderValidator(Validator):
             "name": "Header incorrecto",
             "type": "formato",
             "message": "El header no corresponde al archivo.",
+        }
+
+    def get_fun_type(self):
+        return "row"
+
+
+class NotEmptyValueValidator(Validator):
+    def __init__(self, args):
+        self.row_counter = 0
+        super().__init__(args)
+
+    def apply(self, args=None) -> bool:
+        """
+        Check if col has not empty value
+        :return: bool
+        """
+        self.row_counter += 1
+        self.args["row"] = args
+        col_to_check = self.args["col_index"]
+        value = self.args["row"][col_to_check]
+        if not value:
+            return False
+        else:
+            return True
+
+    def get_error(self):
+        index = self.args["col_index"]
+        header = self.args["header"]
+        col_name = header[index]
+
+        return {
+            "name": "Valor vacío",
+            "type": "formato",
+            "message": "Existe un valor vacío en en la fila {0}, columna {1}.".format(
+                self.row_counter, col_name
+            ),
         }
 
     def get_fun_type(self):

@@ -6,10 +6,10 @@ from collections import defaultdict
 from validators import (
     ASCIIColValidator,
     DuplicateValueValidator,
-    EmptyRowValidator,
     HeaderValidator,
     MinRowsValidator,
     NameValidator,
+    NotEmptyRowValidator,
     RegexNameValidator,
     RootValidator,
 )
@@ -77,7 +77,6 @@ class DataValidator:
                 self.iterate_over_configuration_tree(child, new_path)
         else:
             # report name and path errors
-            print(name)
             self.report_errors[name].append(validator.get_error())
 
     def dispatch_rules(self, rules: dict, header: list) -> dict:
@@ -114,7 +113,7 @@ class DataValidator:
         row_rules_list = rules_dict.get("row", [])
 
         header_validator = HeaderValidator({"header": header})
-        empty_row_validator = EmptyRowValidator({})
+        empty_row_validator = NotEmptyRowValidator({})
 
         # open file
         file = open(os.path.join(path, name), encoding="UTF-8", errors="strict")
