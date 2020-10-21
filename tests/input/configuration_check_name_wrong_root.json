@@ -10,7 +10,8 @@
         "type": "name",
         "name": "asd"
       },
-      "rules": {}
+      "rules": {},
+      "children": []
     }
   ]
 }

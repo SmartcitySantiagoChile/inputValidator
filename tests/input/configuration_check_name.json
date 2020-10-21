@@ -50,14 +50,16 @@
             ],
             "semanticRules": [
             ]
-          }
+          },
+          "children": []
         },
         {
           "path": {
             "type": "regex",
             "name": "Diccionario-DetalleServicioZP_*_*.csv"
           },
-          "rules": {}
+          "rules": {},
+          "children": []
         }
       ]
     }

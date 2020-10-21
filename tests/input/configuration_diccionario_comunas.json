@@ -3,41 +3,41 @@
     "type": "root",
     "name": ""
   },
-  "rules": {},
+  "rules": [],
   "children": [
     {
       "path": {
         "type": "name",
         "name": "Diccionario"
       },
-      "rules": {
-        "formatRules": [],
-        "semanticRules": []
-      },
+      "rules": [],
       "children": [
         {
           "path": {
             "type": "name",
             "name": "Diccionario-Comunas.csv",
-            "header": ["ID", "COMUNA"]
+            "header": ["ID", "NOMBRE"]
           },
           "rules": {
             "formatRules": [
               {
-                "function": "max_cols",
-                "args": 20
+                "function": "min_rows",
+                "args": {"min": 42}
+              },
+              {
+                "function": "ascii",
+                "args": {"col_index":  1}
+              },
+              {
+                "function": "duplicate",
+                "args": {"col_index":  0}
+              },
+              {
+                "function": "duplicate",
+                "args": {"col_index":  1}
               }
             ],
             "semanticRules": [
-              {
-                "function": "date_time_cols",
-                "args": [
-                  1,
-                  2,
-                  3,
-                  4
-                ]
-              }
             ]
           },
           "children": []

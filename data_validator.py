@@ -37,6 +37,7 @@ class DataValidator:
         self.report = []
         self.path_list = path_list
         self.data_path = data_path
+        self.path_list_dict = []
 
     def start_iteration_over_configuration_tree(self):
         """
@@ -50,19 +51,13 @@ class DataValidator:
         :param node: configuration node
         :param path: node path
         """
-
         # get variables
         name = node["path"]["name"]
         type_name = node["path"]["type"]
         header = node["path"].get("header", "")
         new_path = os.path.join(path, name)
-        absolute_path = os.path.join(self.data_path, path)
         rules = node["rules"]
-
-        # path list case
-        if self.path_list:
-            print(self.data_path)
-
+        absolute_path = os.path.join(self.data_path, path)
         # check name and path format
         validator = check_name_functions[type_name](
             {"path": absolute_path, "name": name}
@@ -82,6 +77,7 @@ class DataValidator:
                 self.iterate_over_configuration_tree(child, new_path)
         else:
             # report name and path errors
+            print(name)
             self.report_errors[name].append(validator.get_error())
 
     def dispatch_rules(self, rules: dict, header: list) -> dict:
@@ -168,8 +164,54 @@ class DataValidator:
             report = self.check_rules(rules_dict, path, name, header)
         return report
 
-    def check_in_path_list(self, name):
-        if not self.path_list:
-            return name
-        else:
-            return name in self.da
+    def start_iteration_over_path_list(self):
+        """
+        Start iteration over a path list
+        """
+        path_list_names = []
+        path_list_dict_name = {}
+        for path in self.data_path:
+            name = os.path.basename(path)
+            path_list_names.append(name)
+            path_list_dict_name[name] = os.path.dirname(path)
+
+        self.create_path_dict(self.config, path_list_names)
+
+        for node in self.path_list_dict:
+            # get variable
+            name = node["path"]["name"]
+            absolute_path = path_list_dict_name[name]
+            type_name = node["path"]["type"]
+            header = node["path"].get("header", "")
+            rules = node["rules"]
+            # check name and path format
+            validator = check_name_functions[type_name](
+                {"path": absolute_path, "name": name}
+            )
+            if validator.apply():
+                # if name correct check rules and report errors
+                if rules:
+                    status = self.validate_node_rules(
+                        absolute_path, name, rules, header
+                    )
+                    for error in status:
+                        self.report_errors[name].append(error)
+                    # if not root case
+                if name:
+                    self.report.append([name, absolute_path])
+
+            else:
+                # report name and path errors
+                self.report_errors[name].append(validator.get_error())
+
+    def create_path_dict(self, node, name_list):
+        """
+        Iterate over path_dict and create
+        :param node:
+        :param name_list:
+        """
+        name = node["path"]["name"]
+        if name in name_list:
+            self.path_list_dict.append(node)
+        for child in node["children"]:
+            self.create_path_dict(child, name_list)

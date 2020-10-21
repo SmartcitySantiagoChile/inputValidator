@@ -3,14 +3,14 @@
     "type": "root",
     "name": ""
   },
-  "rules": [],
+  "rules": {},
   "children": [
     {
       "path": {
         "type": "name",
         "name": "Diccionario"
       },
-      "rules": [],
+      "rules": {},
       "children": [
         {
           "path": {
@@ -38,7 +38,8 @@
               }
             ],
             "semanticRules": [
-            ]
+            ],
+            "children": []
           }
         }
       ]

@@ -56,10 +56,7 @@ class DataValidatorTest(TestCase):
     def test_file_iterator_rules_error(self, validate_node_rules):
         validate_node_rules.return_value = [{"error1", "error2"}]
         expected_errors = {
-            "": [{"error1", "error2"}],
-            "Diccionario": [{"error1", "error2"}],
             "Diccionario-Comunas.csv": [{"error1", "error2"}],
-            "Diccionario-DetalleServicioZP_*_*.csv": [{"error1", "error2"}],
         }
         data = DataValidator(
             data_path=self.data_path,
@@ -171,7 +168,9 @@ class DataValidatorTest(TestCase):
         # base case
         data = DataValidator(
             data_path=os.path.join(self.input_path, "check_diccionario_comunas"),
-            config_path=os.path.join(self.input_path, "configuration.json"),
+            config_path=os.path.join(
+                self.input_path, "configuration_diccionario_comunas.json"
+            ),
         )
         data.start_iteration_over_configuration_tree()
         expected_report = [
@@ -213,3 +212,74 @@ class DataValidatorTest(TestCase):
         }
         self.assertEqual(expected_report, data.report)
         self.assertEqual(expected_error_report, data.report_errors)
+
+    def test_iterate_over_configuration_tree_path_list(self):
+        path_list_data = os.path.join(self.input_path, "path_list_data")
+        comunas_path = os.path.join(path_list_data, "Diccionario-Comunas.csv")
+        estaciones_path = os.path.join(
+            path_list_data, "Diccionario-EstacionesMetro.csv"
+        )
+        path_list = [comunas_path, estaciones_path]
+        data = DataValidator(
+            data_path=path_list,
+            path_list=True,
+            config_path=os.path.join(self.input_path, "configuration.json"),
+        )
+        data.start_iteration_over_path_list()
+        expected_report = [
+            ["Diccionario-Comunas.csv", path_list_data],
+            ["Diccionario-EstacionesMetro.csv", path_list_data],
+        ]
+        self.assertEqual(expected_report, data.report)
+
+    def test_get_path_list_nodes(self):
+        path_list_data = os.path.join(self.input_path, "path_list_data")
+        comunas_path = os.path.join(path_list_data, "Diccionario-Comunas.csv")
+        estaciones_path = os.path.join(
+            path_list_data, "Diccionario-EstacionesMetro.csv"
+        )
+        path_list = [comunas_path, estaciones_path]
+        data = DataValidator(
+            data_path=path_list,
+            path_list=True,
+            config_path=os.path.join(self.input_path, "configuration_path_list.json"),
+        )
+        path_list_name = ["Diccionario-Comunas.csv", "Diccionario-EstacionesMetro.csv"]
+        expected_dict = [
+            {
+                "path": {
+                    "type": "name",
+                    "name": "Diccionario-Comunas.csv",
+                    "header": ["ID", "NOMBRE"],
+                },
+                "rules": {
+                    "formatRules": [
+                        {"function": "min_rows", "args": {"min": 42}},
+                        {"function": "ascii", "args": {"col_index": 1}},
+                        {"function": "duplicate", "args": {"col_index": 0}},
+                        {"function": "duplicate", "args": {"col_index": 1}},
+                    ],
+                    "semanticRules": [],
+                },
+                "children": [],
+            },
+            {
+                "path": {
+                    "type": "name",
+                    "name": "Diccionario-EstacionesMetro.csv",
+                    "header": ["ID", "NOMBRE"],
+                },
+                "rules": {
+                    "formatRules": [
+                        {"function": "ascii", "args": {"col_index": 1}},
+                        {"function": "duplicate", "args": {"col_index": 0}},
+                        {"function": "duplicate", "args": {"col_index": 1}},
+                    ],
+                    "semanticRules": [],
+                },
+                "children": [],
+            },
+        ]
+
+        data.create_path_dict(data.config, path_list_name)
+        self.assertEqual(expected_dict, data.path_list_dict)
