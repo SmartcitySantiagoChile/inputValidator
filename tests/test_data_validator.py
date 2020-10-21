@@ -13,10 +13,12 @@ class DataValidatorTest(TestCase):
     def setUp(self):
         path = os.path.dirname(os.path.realpath(__file__))
         self.input_path = os.path.join(path, "input")
-        self.configuration_path = os.path.join(self.input_path, "configuration.json")
+        self.configuration_path = os.path.join(self.input_path, "configuration_files")
         self.data_path = os.path.join(self.input_path, "data")
         self.check_name_data_path = os.path.join(self.input_path, "check_name_data")
-        with open(self.configuration_path) as json_config:
+        with open(
+            os.path.join(self.configuration_path, "configuration.json")
+        ) as json_config:
             self.configuration_file = json.loads(json_config.read())
 
     @mock.patch("data_validator.DataValidator.validate_node_rules")
@@ -24,7 +26,9 @@ class DataValidatorTest(TestCase):
         validate_node_rules.return_value = []
         data = DataValidator(
             data_path=self.data_path,
-            config_path=os.path.join(self.input_path, "configuration_check_name.json"),
+            config_path=os.path.join(
+                self.configuration_path, "configuration_check_name.json"
+            ),
         )
         data.start_iteration_over_configuration_tree()
         self.assertEqual({}, data.report_errors)
@@ -46,7 +50,7 @@ class DataValidatorTest(TestCase):
         data = DataValidator(
             data_path=self.data_path,
             config_path=os.path.join(
-                self.input_path, "configuration_check_name_wrong_root.json"
+                self.configuration_path, "configuration_check_name_wrong_root.json"
             ),
         )
         data.start_iteration_over_configuration_tree()
@@ -60,13 +64,17 @@ class DataValidatorTest(TestCase):
         }
         data = DataValidator(
             data_path=self.data_path,
-            config_path=os.path.join(self.input_path, "configuration_check_name.json"),
+            config_path=os.path.join(
+                self.configuration_path, "configuration_check_name.json"
+            ),
         )
         data.start_iteration_over_configuration_tree()
         self.assertEqual(expected_errors, data.report_errors)
 
     def test_validate_nodes_rules_empty_case(self):
-        data_validator = DataValidator(self.configuration_path, self.data_path)
+        data_validator = DataValidator(
+            os.path.join(self.configuration_path, "configuration.json"), self.data_path
+        )
         path = self.data_path
         name = self.configuration_file["path"]["name"]
         rules = self.configuration_file["rules"]
@@ -77,7 +85,9 @@ class DataValidatorTest(TestCase):
     def test_validate_nodes_rules_format_rule(self, check_rules, dispatch_rules):
         check_rules.return_value = []
         dispatch_rules.return_value = []
-        data_validator = DataValidator(self.configuration_path, self.data_path)
+        data_validator = DataValidator(
+            os.path.join(self.configuration_path, "configuration.json"), self.data_path
+        )
         path = os.path.join(self.data_path, "Diccionario")
         name = self.configuration_file["children"][0]["children"][0]["path"]["name"]
 
@@ -88,9 +98,11 @@ class DataValidatorTest(TestCase):
         )
 
     def test_dispatch_rules(self):
-        data_validator = DataValidator(self.configuration_path, self.data_path)
+        data_validator = DataValidator(
+            os.path.join(self.configuration_path, "configuration.json"), self.data_path
+        )
         configuration_path = os.path.join(
-            self.input_path, "configuration_dispatch.json"
+            self.configuration_path, "configuration_dispatch.json"
         )
         with open(configuration_path) as json_config:
             configuration_file = json.loads(json_config.read())
@@ -129,7 +141,9 @@ class DataValidatorTest(TestCase):
         ]
         data_validator = DataValidator(
             data_path=self.data_path,
-            config_path=os.path.join(self.input_path, "configuration_check_name.json"),
+            config_path=os.path.join(
+                self.configuration_path, "configuration_check_name.json"
+            ),
         )
         expected_error = [
             {
@@ -150,7 +164,9 @@ class DataValidatorTest(TestCase):
         empty_row_name = "Diccionario-Comunas-Empty-Row.csv"
         data_validator = DataValidator(
             data_path=self.data_path,
-            config_path=os.path.join(self.input_path, "configuration_check_name.json"),
+            config_path=os.path.join(
+                self.configuration_path, "configuration_check_name.json"
+            ),
         )
         expected_error = [
             {
@@ -164,55 +180,6 @@ class DataValidatorTest(TestCase):
             expected_error, data_validator.check_rules({}, path, empty_row_name, header)
         )
 
-    def test_diccionario_comunas(self):
-        # base case
-        data = DataValidator(
-            data_path=os.path.join(self.input_path, "check_diccionario_comunas"),
-            config_path=os.path.join(
-                self.input_path, "configuration_diccionario_comunas.json"
-            ),
-        )
-        data.start_iteration_over_configuration_tree()
-        expected_report = [
-            ["Diccionario", "Diccionario"],
-            ["Diccionario-Comunas.csv", "Diccionario/Diccionario-Comunas.csv"],
-        ]
-        self.assertEqual(expected_report, data.report)
-        self.assertEqual({}, data.report_errors)
-
-        # wrong case
-        data = DataValidator(
-            data_path=os.path.join(self.input_path, "check_diccionario_comunas"),
-            config_path=os.path.join(
-                self.input_path, "configuration_diccionario_comunas_wrong.json"
-            ),
-        )
-        data.start_iteration_over_configuration_tree()
-        expected_report = [
-            ["Diccionario", "Diccionario"],
-            [
-                "Diccionario-Comunas-Wrong.csv",
-                "Diccionario/Diccionario-Comunas-Wrong.csv",
-            ],
-        ]
-
-        expected_error_report = {
-            "Diccionario-Comunas-Wrong.csv": [
-                {
-                    "name": "Valor duplicado",
-                    "type": "formato",
-                    "message": "La variable 0 está duplicada en la fila 2, columna ID.",
-                },
-                {
-                    "name": "Valor duplicado",
-                    "type": "formato",
-                    "message": "La variable LAMPA está duplicada en la fila 2, columna NOMBRE.",
-                },
-            ]
-        }
-        self.assertEqual(expected_report, data.report)
-        self.assertEqual(expected_error_report, data.report_errors)
-
     def test_iterate_over_configuration_tree_path_list(self):
         path_list_data = os.path.join(self.input_path, "path_list_data")
         comunas_path = os.path.join(path_list_data, "Diccionario-Comunas.csv")
@@ -223,7 +190,7 @@ class DataValidatorTest(TestCase):
         data = DataValidator(
             data_path=path_list,
             path_list=True,
-            config_path=os.path.join(self.input_path, "configuration.json"),
+            config_path=os.path.join(self.configuration_path, "configuration.json"),
         )
         data.start_iteration_over_path_list()
         expected_report = [
@@ -242,7 +209,9 @@ class DataValidatorTest(TestCase):
         data = DataValidator(
             data_path=path_list,
             path_list=True,
-            config_path=os.path.join(self.input_path, "configuration_path_list.json"),
+            config_path=os.path.join(
+                self.configuration_path, "configuration_path_list.json"
+            ),
         )
         path_list_name = ["Diccionario-Comunas.csv", "Diccionario-EstacionesMetro.csv"]
         expected_dict = [
@@ -283,3 +252,52 @@ class DataValidatorTest(TestCase):
 
         data.create_path_dict(data.config, path_list_name)
         self.assertEqual(expected_dict, data.path_list_dict)
+
+    def test_diccionario_comunas(self):
+        # base case
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_diccionario_comunas"),
+            config_path=os.path.join(
+                self.configuration_path, "configuration_diccionario_comunas.json"
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+        expected_report = [
+            ["Diccionario", "Diccionario"],
+            ["Diccionario-Comunas.csv", "Diccionario/Diccionario-Comunas.csv"],
+        ]
+        self.assertEqual(expected_report, data.report)
+        self.assertEqual({}, data.report_errors)
+
+        # wrong case
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_diccionario_comunas"),
+            config_path=os.path.join(
+                self.configuration_path, "configuration_diccionario_comunas_wrong.json"
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+        expected_report = [
+            ["Diccionario", "Diccionario"],
+            [
+                "Diccionario-Comunas-Wrong.csv",
+                "Diccionario/Diccionario-Comunas-Wrong.csv",
+            ],
+        ]
+
+        expected_error_report = {
+            "Diccionario-Comunas-Wrong.csv": [
+                {
+                    "name": "Valor duplicado",
+                    "type": "formato",
+                    "message": "La variable 0 está duplicada en la fila 2, columna ID.",
+                },
+                {
+                    "name": "Valor duplicado",
+                    "type": "formato",
+                    "message": "La variable LAMPA está duplicada en la fila 2, columna NOMBRE.",
+                },
+            ]
+        }
+        self.assertEqual(expected_report, data.report)
+        self.assertEqual(expected_error_report, data.report_errors)
