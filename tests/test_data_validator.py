@@ -301,3 +301,21 @@ class DataValidatorTest(TestCase):
         }
         self.assertEqual(expected_report, data.report)
         self.assertEqual(expected_error_report, data.report_errors)
+
+    # TODO: a revisar
+    # def test_diccionario_servicios(self):
+    #     # base case
+    #     data = DataValidator(
+    #         data_path=os.path.join(self.input_path, "check_diccionario_servicios"),
+    #         config_path=os.path.join(
+    #             self.configuration_path, "configuration_diccionario_servicios.json"
+    #         ),
+    #     )
+    #     data.start_iteration_over_configuration_tree()
+    #     expected_report = [
+    #         ["Diccionario", "Diccionario"],
+    #         ["Diccionario-Servicios.csv", "Diccionario/Diccionario-Servicios.csv"],
+    #     ]
+    #     self.assertEqual(expected_report, data.report)
+    #     print(data.report_errors)
+    #     self.assertEqual({}, data.report_errors)

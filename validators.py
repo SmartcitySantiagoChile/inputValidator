@@ -213,7 +213,7 @@ class NotEmptyRowValidator(Validator):
         :return: bool
         """
         self.row_counter += 1
-        if args:
+        if not args:
             return False
         else:
             return True

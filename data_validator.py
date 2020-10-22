@@ -12,6 +12,7 @@ from validators import (
     NotEmptyRowValidator,
     RegexNameValidator,
     RootValidator,
+    StringDomainValueValidator,
 )
 
 check_name_functions = {
@@ -24,6 +25,8 @@ file_functions = {
     "min_rows": MinRowsValidator,
     "ascii": ASCIIColValidator,
     "duplicate": DuplicateValueValidator,
+    "not_empty": NotEmptyRowValidator,
+    "string_domain": StringDomainValueValidator,
 }
 
 
@@ -128,7 +131,7 @@ class DataValidator:
 
             # check rules
             for row in csv_reader:
-                if empty_row_validator.apply(row):
+                if not empty_row_validator.apply(row):
                     report.append(empty_row_validator.get_error())
                     continue
 
