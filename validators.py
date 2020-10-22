@@ -119,6 +119,7 @@ class MinRowsValidator(Validator):
 class ASCIIColValidator(Validator):
     def __init__(self, args):
         self.row_counter = 0
+        self.cols_error = []
         super().__init__(args)
 
     def apply(self, args=None) -> bool:
@@ -126,22 +127,37 @@ class ASCIIColValidator(Validator):
         Check if col is in ASCII
         :return: bool
         """
+        self.cols_error = []
         self.row_counter += 1
         self.args["row"] = args
-        col_to_check = self.args["col_index"]
-        return self.args["row"][col_to_check].isascii()
+        cols_to_check = self.args["col_indexes"]
+        for col in cols_to_check:
+            value = self.args["row"][col]
+            if not value.isascii():
+                self.cols_error.append(col)
+
+        if len(self.cols_error) == 0:
+            return True
+        else:
+            return False
 
     def get_error(self):
-        index = self.args["col_index"]
-        var = self.args["row"][index]
+        var = [self.args["row"][index] for index in self.cols_error]
         header = self.args["header"]
-        col_name = header[index]
+        cols_names = [header[index] for index in self.cols_error]
+        head = "La variable"
+        mid = "posee ñ o acentos en la fila"
+        tail = "columna"
+        if len(cols_names) > 1:
+            head = "Las variables"
+            mid = "poseen ñ o acentos en la fila"
+            tail = "columnas"
 
         return {
-            "name": "Valor contiene ñ o acentos",
+            "name": "Valores contienen ñ o acentos",
             "type": "formato",
-            "message": "La variable {0} posee ñ o acentos en la fila {1}, columna {2}.".format(
-                var, self.row_counter, col_name
+            "message": "{0} {1} {2} {3} {4} {5}.".format(
+                head, var, mid, self.row_counter, tail, ", ".join(cols_names)
             ),
         }
 
@@ -271,7 +287,54 @@ class NotEmptyValueValidator(Validator):
             "name": "Valor vacío",
             "type": "formato",
             "message": "{0} en la fila {1}, {2} {3}.".format(
-                head, self.row_counter, tail, " ".join(cols_names)
+                head, self.row_counter, tail, ", ".join(cols_names)
+            ),
+        }
+
+    def get_fun_type(self):
+        return "row"
+
+
+class StringDomainValueValidator(Validator):
+    def __init__(self, args):
+        self.row_counter = 0
+        self.cols_error = []
+        super().__init__(args)
+
+    def apply(self, args=None) -> bool:
+        """
+        Check if col has domain values
+        :return: bool
+        """
+        self.cols_error = []
+        self.row_counter += 1
+        self.args["row"] = args
+        domain = self.args["domain"]
+        cols_to_check = self.args["col_indexes"]
+        for col in cols_to_check:
+            value = self.args["row"][col]
+            if value not in domain:
+                self.cols_error.append(col)
+
+        if len(self.cols_error) == 0:
+            return True
+        else:
+            return False
+
+    def get_error(self):
+        header = self.args["header"]
+        cols_names = [header[index] for index in self.cols_error]
+        head = "Existe un valor incorrecto"
+        tail = "columna"
+        if len(cols_names) > 1:
+            head = "Existen valores incorrectos"
+            tail = "columnas"
+
+        return {
+            "name": "Valores incorrectos",
+            "type": "formato",
+            "message": "{0} en la fila {1}, {2} {3}. Los valores solo pueden ser {4}".format(
+                head, self.row_counter, tail, ", ".join(cols_names), self.args["domain"]
             ),
         }
 

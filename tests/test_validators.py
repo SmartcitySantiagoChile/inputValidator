@@ -11,6 +11,7 @@ from validators import (
     NotEmptyRowValidator,
     HeaderValidator,
     NotEmptyValueValidator,
+    StringDomainValueValidator,
 )
 
 
@@ -98,16 +99,17 @@ class DataValidatorTest(TestCase):
         # base case
         row = ["0", "NUNOA"]
         header = ["ID", "COMUNA"]
-        validator = ASCIIColValidator({"header": header, "col_index": 1})
+        validator = ASCIIColValidator({"header": header, "col_indexes": [1]})
         self.assertTrue(validator.apply(row))
 
         # Ñ case
         row = [0, "ÑUÑOA"]
         self.assertFalse(validator.apply(row))
         error_message = {
-            "name": "Valor contiene ñ o acentos",
+            "message": "La variable ['ÑUÑOA'] posee ñ o acentos en la fila 2 columna "
+            "COMUNA.",
+            "name": "Valores contienen ñ o acentos",
             "type": "formato",
-            "message": "La variable ÑUÑOA posee ñ o acentos en la fila 2, columna COMUNA.",
         }
         self.assertEqual(error_message, validator.get_error())
 
@@ -115,9 +117,22 @@ class DataValidatorTest(TestCase):
         row = [0, "Pucón"]
         self.assertFalse(validator.apply(row))
         error_message = {
-            "name": "Valor contiene ñ o acentos",
+            "message": "La variable ['Pucón'] posee ñ o acentos en la fila 3 columna "
+            "COMUNA.",
+            "name": "Valores contienen ñ o acentos",
             "type": "formato",
-            "message": "La variable Pucón posee ñ o acentos en la fila 3, columna COMUNA.",
+        }
+        self.assertEqual(error_message, validator.get_error())
+
+        # multiple case
+        validator = ASCIIColValidator({"header": header, "col_indexes": [0, 1]})
+        row = ["Ñuñoa", "Pucón"]
+        self.assertFalse(validator.apply(row))
+        error_message = {
+            "message": "Las variables ['Ñuñoa', 'Pucón'] poseen ñ o acentos en la fila 1 "
+            "columnas ID, COMUNA.",
+            "name": "Valores contienen ñ o acentos",
+            "type": "formato",
         }
         self.assertEqual(error_message, validator.get_error())
 
@@ -270,9 +285,142 @@ class DataValidatorTest(TestCase):
         ]
 
         error_message = {
-            "message": "Existen valores vacíos en la fila 3, columnas ROUTE_NAME "
+            "message": "Existen valores vacíos en la fila 3, columnas ROUTE_NAME, "
             "SERVICE_NA.",
             "name": "Valor vacío",
+            "type": "formato",
+        }
+        self.assertFalse(validator.apply(row))
+
+        self.assertEqual(error_message, validator.get_error())
+
+        self.assertEqual("row", validator.get_fun_type())
+
+    def test_string_domain_value_validator(self):
+        # base case
+        header = [
+            "ROUTE_ID",
+            "ROUTE_NAME",
+            "SERVICE_NA",
+            "UN",
+            "OP_NOC",
+            "DIST",
+            "PO_MOD",
+            "SENTIDO",
+            "COD_USUARI",
+            "COD_TS",
+            "COD_SINSER",
+            "COD_SINRUT",
+            "COD_USUSEN",
+            "TIPO_SERV",
+            "FREC_PM",
+            "FREC_PT",
+            "PLAZAS_PM",
+            "PLAZAS_PT",
+            "SEL_PM",
+            "SEL_PT",
+            "SEN1",
+            "VALIDA",
+        ]
+        row = [
+            "ROUTE_ID",
+            "ROUTE_NAME",
+            "SERVICE_NA",
+            "UN",
+            "OP_NOC",
+            "DIST",
+            "PO_MOD",
+            "I",
+            "COD_USUARI",
+            "COD_TS",
+            "COD_SINSER",
+            "COD_SINRUT",
+            "COD_USUSEN",
+            "TIPO_SERV",
+            "FREC_PM",
+            "FREC_PT",
+            "PLAZAS_PM",
+            "PLAZAS_PT",
+            "SEL_PM",
+            "SEL_PT",
+            "SEN1",
+            "VALIDA",
+        ]
+        validator = StringDomainValueValidator(
+            {"header": header, "col_indexes": [7], "domain": ["I", "R"]}
+        )
+        self.assertTrue(validator.apply(row))
+
+        # wrong case
+        row = [
+            "ROUTE_ID",
+            "",
+            "SERVICE_NA",
+            "UN",
+            "OP_NOC",
+            "DIST",
+            "PO_MOD",
+            "SENTIDO",
+            "COD_USUARI",
+            "COD_TS",
+            "COD_SINSER",
+            "COD_SINRUT",
+            "COD_USUSEN",
+            "TIPO_SERV",
+            "FREC_PM",
+            "FREC_PT",
+            "PLAZAS_PM",
+            "PLAZAS_PT",
+            "SEL_PM",
+            "SEL_PT",
+            "SEN1",
+            "VALIDA",
+        ]
+
+        self.assertFalse(validator.apply(row))
+
+        error_message = {
+            "message": "Existe un valor incorrecto en la fila 2, columna SENTIDO. Los "
+            "valores solo pueden ser ['I', 'R']",
+            "name": "Valores incorrectos",
+            "type": "formato",
+        }
+
+        self.assertEqual(error_message, validator.get_error())
+
+        row = [
+            "ROUTE_ID",
+            "",
+            "SERVICE_NA",
+            "UN",
+            "OP_NOC",
+            "DIST",
+            "PO_MOD",
+            "SENTIDO",
+            "COD_USUARI",
+            "COD_TS",
+            "COD_SINSER",
+            "COD_SINRUT",
+            "COD_USUSEN",
+            "TIPO_SERV",
+            "FREC_PM",
+            "FREC_PT",
+            "PLAZAS_PM",
+            "PLAZAS_PT",
+            "SEL_PM",
+            "SEL_PT",
+            "SEN1",
+            "VALIDA",
+        ]
+
+        validator = StringDomainValueValidator(
+            {"header": header, "col_indexes": [7, 8], "domain": ["I", "R"]}
+        )
+
+        error_message = {
+            "message": "Existen valores incorrectos en la fila 1, columnas SENTIDO, "
+            "COD_USUARI. Los valores solo pueden ser ['I', 'R']",
+            "name": "Valores incorrectos",
             "type": "formato",
         }
         self.assertFalse(validator.apply(row))
