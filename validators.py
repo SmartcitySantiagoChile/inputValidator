@@ -1,5 +1,6 @@
 import glob
 import os
+import re
 from abc import ABCMeta, abstractmethod
 
 
@@ -335,6 +336,41 @@ class StringDomainValueValidator(Validator):
             "type": "formato",
             "message": "{0} en la fila {1}, {2} {3}. Los valores solo pueden ser {4}".format(
                 head, self.row_counter, tail, ", ".join(cols_names), self.args["domain"]
+            ),
+        }
+
+    def get_fun_type(self):
+        return "row"
+
+
+class RegexValueValidator(Validator):
+    def __init__(self, args):
+        self.row_counter = 0
+        super().__init__(args)
+
+    def apply(self, args=None) -> bool:
+        """
+        Check col value with regex
+        :return: bool
+        """
+        self.row_counter += 1
+        self.args["row"] = args
+        col_to_check = self.args["col_index"]
+        value = self.args["row"][col_to_check]
+        regex = self.args["regex"]
+        return True if re.search(regex, value) else False
+
+    def get_error(self):
+        index = self.args["col_index"]
+        var = self.args["row"][index]
+        header = self.args["header"]
+        col_name = header[index]
+
+        return {
+            "name": "El valor no cumple con la expresión regular",
+            "type": "formato",
+            "message": "La variable {0} no cumple con el formato {1} en la fila {2}, columna {3}.".format(
+                var, self.args["regex_name"], self.row_counter, col_name
             ),
         }
 

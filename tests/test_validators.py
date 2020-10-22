@@ -12,6 +12,7 @@ from validators import (
     HeaderValidator,
     NotEmptyValueValidator,
     StringDomainValueValidator,
+    RegexValueValidator,
 )
 
 
@@ -426,5 +427,56 @@ class DataValidatorTest(TestCase):
         self.assertFalse(validator.apply(row))
 
         self.assertEqual(error_message, validator.get_error())
+
+        self.assertEqual("row", validator.get_fun_type())
+
+    def test_regex_value_validator(self):
+        # base case
+        header = [
+            "FOLIO",
+            "UN",
+            "PLACA",
+            "PRIMERA",
+            "INGRESA",
+            "TIPO_FLOTA",
+            "MARCA",
+            "MODELO",
+            "MARCA_C",
+            "MODELO_C",
+            "AÑO",
+            "PLAZAS",
+            "TIPO_VEH",
+            "NORMA",
+            "Filtro_FAB_INC",
+            "Fecha_Instalación_Filtro_INC",
+            "Marca_Filtro_INC",
+        ]
+
+        validator = RegexValueValidator(
+            {
+                "header": header,
+                "col_index": 2,
+                "regex": "^[A-Z]{4}[0-9]{2}|[A-Z]{2}[0-9]{4}$",
+                "regex_name": "AAAA11 o AA1111",
+            }
+        )
+        row = [0, 1, "BC1111"]
+        self.assertTrue(validator.apply(row))
+
+        row = [0, 1, "BCBC11"]
+        self.assertTrue(validator.apply(row))
+
+        # wrong case
+        row = [0, 1, "BXBXBX"]
+        self.assertFalse(validator.apply(row))
+
+        expected_message = {
+            "message": "La variable BXBXBX no cumple con el formato AAAA11 o AA1111 en la "
+            "fila 3, columna PLACA.",
+            "name": "El valor no cumple con la expresión regular",
+            "type": "formato",
+        }
+
+        self.assertEqual(expected_message, validator.get_error())
 
         self.assertEqual("row", validator.get_fun_type())
