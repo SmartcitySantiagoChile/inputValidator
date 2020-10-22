@@ -376,3 +376,56 @@ class RegexValueValidator(Validator):
 
     def get_fun_type(self):
         return "row"
+
+
+class NumericRangeValueValidator(Validator):
+    def __init__(self, args):
+        self.row_counter = 0
+        self.cols_error = []
+        super().__init__(args)
+
+    def apply(self, args=None) -> bool:
+        """
+        Check if col is in numeric range
+        :return: bool
+        """
+        self.cols_error = []
+        self.row_counter += 1
+        self.args["row"] = args
+        lower_bound = self.args["lower_bound"]
+        upper_bound = self.args["upper_bound"]
+        cols_to_check = self.args["col_indexes"]
+        for col in cols_to_check:
+            value = self.args["row"][col]
+            if value < lower_bound or value > upper_bound:
+                self.cols_error.append(col)
+
+        if len(self.cols_error) == 0:
+            return True
+        else:
+            return False
+
+    def get_error(self):
+        header = self.args["header"]
+        cols_names = [header[index] for index in self.cols_error]
+        head = "Valor fuera de rango"
+        tail = "columna"
+        if len(cols_names) > 1:
+            head = "Valores fuera de rango"
+            tail = "columnas"
+
+        return {
+            "name": "Valores fuera de rango",
+            "type": "formato",
+            "message": "{0} {1} en la fila {2}, {3} {4}. Los valores solo pueden ser parte del rango {5}".format(
+                head,
+                self.cols_error,
+                self.row_counter,
+                tail,
+                ", ".join(cols_names),
+                [self.args["lower_bound"], self.args["upper_bound"]],
+            ),
+        }
+
+    def get_fun_type(self):
+        return "row"

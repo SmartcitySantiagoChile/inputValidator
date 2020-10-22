@@ -13,6 +13,7 @@ from validators import (
     NotEmptyValueValidator,
     StringDomainValueValidator,
     RegexValueValidator,
+    NumericRangeValueValidator,
 )
 
 
@@ -477,6 +478,52 @@ class DataValidatorTest(TestCase):
             "type": "formato",
         }
 
+        self.assertEqual(expected_message, validator.get_error())
+
+        self.assertEqual("row", validator.get_fun_type())
+
+    def test_numeric_domain_value_validator(self):
+        # base case
+        header = [
+            "FOLIO",
+            "UN",
+            "PLACA",
+            "PRIMERA",
+            "INGRESA",
+            "TIPO_FLOTA",
+            "MARCA",
+            "MODELO",
+            "MARCA_C",
+            "MODELO_C",
+            "AÑO",
+            "PLAZAS",
+            "TIPO_VEH",
+            "NORMA",
+            "Filtro_FAB_INC",
+            "Fecha_Instalación_Filtro_INC",
+            "Marca_Filtro_INC",
+        ]
+
+        validator = NumericRangeValueValidator(
+            {
+                "header": header,
+                "col_indexes": [11],
+                "lower_bound": 20,
+                "upper_bound": 200,
+            }
+        )
+        row = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32]
+        self.assertTrue(validator.apply(row))
+
+        row = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15]
+        self.assertFalse(validator.apply(row))
+
+        expected_message = {
+            "message": "Valor fuera de rango [11] en la fila 2, columna PLAZAS. Los "
+            "valores solo pueden ser parte del rango [20, 200]",
+            "name": "Valores fuera de rango",
+            "type": "formato",
+        }
         self.assertEqual(expected_message, validator.get_error())
 
         self.assertEqual("row", validator.get_fun_type())
