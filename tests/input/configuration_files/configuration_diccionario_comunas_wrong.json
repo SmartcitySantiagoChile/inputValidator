@@ -26,7 +26,7 @@
               },
               {
                 "function": "ascii",
-                "args": {"col_index":  1}
+                "args": {"col_indexes":  [1]}
               },
               {
                 "function": "duplicate",
