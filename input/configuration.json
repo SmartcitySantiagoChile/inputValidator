@@ -16,25 +16,114 @@
           "path": {
             "type": "name",
             "name": "Diccionario-Comunas.csv",
-            "header": ["ID", "NOMBRE"]
+            "header": [
+              "ID",
+              "NOMBRE"
+            ]
           },
           "rules": {
             "formatRules": [
               {
                 "function": "min_rows",
-                "args": {"min": 42}
+                "args": {
+                  "min": 42
+                }
               },
               {
                 "function": "ascii",
-                "args": {"col_index":  1}
+                "args": {
+                  "col_indexes": [
+                    1
+                  ]
+                }
               },
               {
                 "function": "duplicate",
-                "args": {"col_index":  0}
+                "args": {
+                  "col_index": 0
+                }
               },
               {
                 "function": "duplicate",
-                "args": {"col_index":  1}
+                "args": {
+                  "col_index": 1
+                }
+              }
+            ],
+            "semanticRules": [
+            ]
+          },
+          "children": []
+        },
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-Servicios.csv",
+            "header": [
+              "ROUTE_ID",
+              "ROUTE_NAME",
+              "SERVICE_NA",
+              "UN",
+              "OP_NOC",
+              "DIST",
+              "PO_MOD",
+              "SENTIDO",
+              "COD_USUARI",
+              "COD_TS",
+              "COD_SINSER",
+              "COD_SINRUT",
+              "COD_USUSEN",
+              "TIPO_SERV",
+              "FREC_PM",
+              "FREC_PT",
+              "PLAZAS_PM",
+              "PLAZAS_PT",
+              "SEL_PM",
+              "SEL_PT",
+              "SEN1",
+              "VALIDA"
+            ]
+          },
+          "rules": {
+            "formatRules": [
+              {
+                "function": "duplicate",
+                "args": {
+                  "col_index": 1
+                }
+              },
+              {
+                "function": "duplicate",
+                "args": {
+                  "col_index": 11
+                }
+              },
+              {
+                "function": "not_empty",
+                "args": {
+                  "col_indexes": [
+                    1,
+                    3,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12
+                  ]
+                }
+              },
+              {
+                "function": "string_domain",
+                "args": {
+                  "col_indexes": [
+                    7
+                  ],
+                  "domain": [
+                    "I",
+                    "R"
+                  ]
+                }
               }
             ],
             "semanticRules": [

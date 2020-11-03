@@ -405,3 +405,52 @@ class DataValidatorTest(TestCase):
         }
         self.assertEqual(expected_report, data.report)
         self.assertEqual(expected_report_error, data.report_errors)
+
+    def test_diccionario_patentes(self):
+        # base case
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_diccionario_patentes"),
+            config_path=os.path.join(
+                self.configuration_path, "configuration_diccionario_patentes.json"
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+        expected_report = [
+            ["Diccionario", "Diccionario"],
+            ["Diccionario-Patentes.csv", "Diccionario/Diccionario-Patentes.csv"],
+        ]
+        self.assertEqual(expected_report, data.report)
+        self.assertEqual({}, data.report_errors)
+
+        # wrong case
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_diccionario_patentes"),
+            config_path=os.path.join(
+                self.configuration_path, "configuration_diccionario_patentes_wrong.json"
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+        expected_report = [
+            ["Diccionario", "Diccionario"],
+            [
+                "Diccionario-Patentes-Wrong.csv",
+                "Diccionario/Diccionario-Patentes-Wrong.csv",
+            ],
+        ]
+
+        expected_report_error = {
+            "Diccionario-Patentes-Wrong.csv": [
+                {
+                    "message": "El header no " "corresponde al " "archivo.",
+                    "name": "Header incorrecto",
+                    "type": "formato",
+                },
+                {
+                    "message": "El header no " "corresponde al " "archivo.",
+                    "name": "Header incorrecto",
+                    "type": "formato",
+                },
+            ]
+        }
+        self.assertEqual(expected_report, data.report)
+        self.assertEqual(expected_report_error, data.report_errors)

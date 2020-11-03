@@ -10,7 +10,9 @@ from validators import (
     MinRowsValidator,
     NameValidator,
     NotEmptyRowValidator,
+    NumericRangeValueValidator,
     RegexNameValidator,
+    RegexValueValidator,
     RootValidator,
     StringDomainValueValidator,
 )
@@ -27,6 +29,8 @@ file_functions = {
     "duplicate": DuplicateValueValidator,
     "not_empty": NotEmptyRowValidator,
     "string_domain": StringDomainValueValidator,
+    "regex_value": RegexValueValidator,
+    "numeric_range": NumericRangeValueValidator,
 }
 
 

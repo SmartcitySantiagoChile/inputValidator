@@ -515,6 +515,7 @@ class DataValidatorTest(TestCase):
         row = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32]
         self.assertTrue(validator.apply(row))
 
+        # wrong case
         row = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15]
         self.assertFalse(validator.apply(row))
 
