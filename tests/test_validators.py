@@ -163,11 +163,11 @@ class DataValidatorTest(TestCase):
         # base case
         row = ["0", "NUNOA"]
         validator = NotEmptyRowValidator({})
-        self.assertFalse(validator.apply(row))
+        self.assertTrue(validator.apply(row))
 
         # wrong case
         row = []
-        self.assertTrue(validator.apply(row))
+        self.assertFalse(validator.apply(row))
         error_message = {
             "name": "Fila vacía",
             "type": "formato",
