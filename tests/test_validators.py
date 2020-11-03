@@ -14,6 +14,7 @@ from validators import (
     StringDomainValueValidator,
     RegexValueValidator,
     NumericRangeValueValidator,
+    TimeValueValidator,
 )
 
 
@@ -526,5 +527,33 @@ class DataValidatorTest(TestCase):
             "type": "formato",
         }
         self.assertEqual(expected_message, validator.get_error())
+
+        self.assertEqual("row", validator.get_fun_type())
+
+    def test_tome_value_validator(self):
+        # base case
+        header = ["ID", "TIPODIA", "PERIODO", "HORAINI", "HORAFIN", "HORAS"]
+
+        validator = TimeValueValidator(
+            {
+                "header": header,
+                "col_indexes": [3, 4],
+            }
+        )
+        row = ["30", "LABORAL", "01 - PRE NOCTURNO", "0:00:00", "0:59:59", "1"]
+
+        self.assertTrue(validator.apply(row))
+
+        # wrong case
+        row = ["30", "LABORAL", "01 - PRE NOCTURNO", "30:00:00", "70:89:59", "1"]
+
+        self.assertFalse(validator.apply(row))
+
+        expected_error = {
+            "name": "Formato de hora incorrecto",
+            "type": "formato",
+            "message": "Existen valores en formato de hora incorrecto en la fila 2, columnas HORAINI, HORAFIN.",
+        }
+        self.assertEqual(expected_error, validator.get_error())
 
         self.assertEqual("row", validator.get_fun_type())

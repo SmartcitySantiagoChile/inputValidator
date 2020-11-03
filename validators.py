@@ -1,3 +1,4 @@
+import datetime
 import glob
 import os
 import re
@@ -424,6 +425,55 @@ class NumericRangeValueValidator(Validator):
                 tail,
                 ", ".join(cols_names),
                 [self.args["lower_bound"], self.args["upper_bound"]],
+            ),
+        }
+
+    def get_fun_type(self):
+        return "row"
+
+
+class TimeValueValidator(Validator):
+    def __init__(self, args):
+        self.row_counter = 0
+        self.cols_error = []
+        super().__init__(args)
+
+    def apply(self, args=None) -> bool:
+        """
+        Check if col has time value (HH:MM:SS)
+        :return: bool
+        """
+        time_format = "%H:%M:%S"
+        self.cols_error = []
+        self.row_counter += 1
+        self.args["row"] = args
+        cols_to_check = self.args["col_indexes"]
+        for col in cols_to_check:
+            value = self.args["row"][col]
+            try:
+                datetime.datetime.strptime(value, time_format)
+            except ValueError:
+                self.cols_error.append(col)
+
+        if len(self.cols_error) == 0:
+            return True
+        else:
+            return False
+
+    def get_error(self):
+        header = self.args["header"]
+        cols_names = [header[index] for index in self.cols_error]
+        head = "Existe un valor en formato de hora incorrecto"
+        tail = "columna"
+        if len(cols_names) > 1:
+            head = "Existen valores en formato de hora incorrecto"
+            tail = "columnas"
+
+        return {
+            "name": "Formato de hora incorrecto",
+            "type": "formato",
+            "message": "{0} en la fila {1}, {2} {3}.".format(
+                head, self.row_counter, tail, ", ".join(cols_names)
             ),
         }
 
