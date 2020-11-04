@@ -479,3 +479,45 @@ class TimeValueValidator(Validator):
 
     def get_fun_type(self):
         return "row"
+
+
+class GreaterThanValueValidator(Validator):
+    def __init__(self, args):
+        self.row_counter = 0
+        super().__init__(args)
+
+    def apply(self, args=None) -> bool:
+        """
+        Check if upper_col is greater than lower_col
+        :return: bool
+        """
+        self.row_counter += 1
+        self.args["row"] = args
+        upper_col = args[self.args["upper_col"]]
+        lower_col = args[self.args["lower_col"]]
+        comparison_type = self.args["type"]
+        if comparison_type == "time":
+            time_format = "%H:%M:%S"
+            try:
+                upper_time = datetime.datetime.strptime(upper_col, time_format)
+                lower_time = datetime.datetime.strptime(lower_col, time_format)
+            except ValueError:
+                return False
+            return upper_time > lower_time
+        else:
+            return upper_col > lower_col
+
+    def get_error(self):
+        first_value_header = self.args["header"][self.args["upper_col"]]
+        last_value_header = self.args["header"][self.args["lower_col"]]
+
+        return {
+            "name": "Inconsistencia entre valores",
+            "type": "formato",
+            "message": "En la fila {1} el valor de la columna {0} es menor al valor de la columna {2}.".format(
+                first_value_header, self.row_counter, last_value_header
+            ),
+        }
+
+    def get_fun_type(self):
+        return "row"

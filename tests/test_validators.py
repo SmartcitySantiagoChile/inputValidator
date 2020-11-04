@@ -15,6 +15,7 @@ from validators import (
     RegexValueValidator,
     NumericRangeValueValidator,
     TimeValueValidator,
+    GreaterThanValueValidator,
 )
 
 
@@ -530,7 +531,7 @@ class DataValidatorTest(TestCase):
 
         self.assertEqual("row", validator.get_fun_type())
 
-    def test_tome_value_validator(self):
+    def test_time_value_validator(self):
         # base case
         header = ["ID", "TIPODIA", "PERIODO", "HORAINI", "HORAFIN", "HORAS"]
 
@@ -556,4 +557,24 @@ class DataValidatorTest(TestCase):
         }
         self.assertEqual(expected_error, validator.get_error())
 
+        self.assertEqual("row", validator.get_fun_type())
+
+    def test_greater_than_value_validator(self):
+        # base case
+        header = ["ID", "TIPODIA", "PERIODO", "HORAINI", "HORAFIN", "HORAS"]
+        validator = GreaterThanValueValidator(
+            {"header": header, "upper_col": 4, "lower_col": 3, "type": "time"}
+        )
+        row = ["30", "LABORAL", "01 - PRE NOCTURNO", "0:00:00", "0:59:59", "1"]
+        self.assertTrue(validator.apply(row))
+
+        # wrong case
+        row = ["30", "LABORAL", "01 - PRE NOCTURNO", "1:00:00", "0:59:59", "1"]
+        self.assertFalse(validator.apply(row))
+        expected_error = {
+            "name": "Inconsistencia entre valores",
+            "type": "formato",
+            "message": "En la fila 2 el valor de la columna HORAFIN es menor al valor de la columna HORAINI.",
+        }
+        self.assertEqual(expected_error, validator.get_error())
         self.assertEqual("row", validator.get_fun_type())
