@@ -6,15 +6,18 @@ from collections import defaultdict
 from validators import (
     ASCIIColValidator,
     DuplicateValueValidator,
+    GreaterThanValueValidator,
     HeaderValidator,
     MinRowsValidator,
     NameValidator,
     NotEmptyRowValidator,
+    NotEmptyValueValidator,
     NumericRangeValueValidator,
     RegexNameValidator,
     RegexValueValidator,
     RootValidator,
     StringDomainValueValidator,
+    TimeValueValidator,
 )
 
 check_name_functions = {
@@ -27,10 +30,13 @@ file_functions = {
     "min_rows": MinRowsValidator,
     "ascii": ASCIIColValidator,
     "duplicate": DuplicateValueValidator,
-    "not_empty": NotEmptyRowValidator,
+    "not_empty_row": NotEmptyRowValidator,
     "string_domain": StringDomainValueValidator,
     "regex_value": RegexValueValidator,
     "numeric_range": NumericRangeValueValidator,
+    "greater_than": GreaterThanValueValidator,
+    "time": TimeValueValidator,
+    "not_empty_col": NotEmptyValueValidator,
 }
 
 
@@ -97,6 +103,7 @@ class DataValidator:
         semantic_rules = rules.get("semanticRules", [])
         rules_list = format_rules + semantic_rules
         rules_dict = defaultdict(list)
+
         for rule in rules_list:
             rule_name = rule["function"]
             rule_args = rule["args"]
@@ -120,7 +127,7 @@ class DataValidator:
         row_rules_list = rules_dict.get("row", [])
 
         header_validator = HeaderValidator({"header": header})
-        empty_row_validator = NotEmptyRowValidator({})
+        not_empty_row_validator = NotEmptyRowValidator({})
 
         # open file
         file = open(os.path.join(path, name), encoding="UTF-8", errors="strict")
@@ -135,8 +142,8 @@ class DataValidator:
 
             # check rules
             for row in csv_reader:
-                if not empty_row_validator.apply(row):
-                    report.append(empty_row_validator.get_error())
+                if not not_empty_row_validator.apply(row):
+                    report.append(not_empty_row_validator.get_error())
                     continue
 
                 # check row fun

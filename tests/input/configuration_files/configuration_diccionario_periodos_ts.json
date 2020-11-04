@@ -1,0 +1,72 @@
+{
+  "path": {
+    "type": "root",
+    "name": ""
+  },
+  "rules": [],
+  "children": [
+    {
+      "path": {
+        "type": "name",
+        "name": "Diccionario"
+      },
+      "rules": [],
+      "children": [
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-PeriodosTS.csv",
+            "header": [
+              "ID",
+              "TIPODIA",
+              "PERIODO",
+              "HORAINI",
+              "HORAFIN",
+              "HORAS"
+            ]
+          },
+          "rules": {
+            "formatRules": [
+              {
+                "function": "not_empty_col",
+                "args": {
+                  "col_indexes": [0, 1, 2, 3, 4 , 5]
+                }
+              },
+              {
+                "function": "duplicate",
+                "args": {
+                  "col_index": 0
+                }
+              },
+              {
+                "function": "string_domain",
+                "args": {
+                  "col_indexes": [1],
+                  "domain": ["LABORAL", "SABADO", "DOMINGO"]
+                }
+              },
+              {
+                "function": "time",
+                "args": {
+                  "col_indexes": [3, 4]
+                }
+              },
+              {
+                "function": "greater_than",
+                "args": {
+                  "upper_col": 4,
+                  "lower_col": 3,
+                  "type": "time"
+                }
+              }
+            ],
+            "semanticRules": [
+            ]
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
+}

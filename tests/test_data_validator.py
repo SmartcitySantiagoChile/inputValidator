@@ -454,3 +454,47 @@ class DataValidatorTest(TestCase):
         }
         self.assertEqual(expected_report, data.report)
         self.assertEqual(expected_report_error, data.report_errors)
+
+    def test_diccionario_periodos_ts(self):
+        # base case
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_diccionario_periodos_ts"),
+            config_path=os.path.join(
+                self.configuration_path, "configuration_diccionario_periodos_ts.json"
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+        expected_report = [
+            ["Diccionario", "Diccionario"],
+            ["Diccionario-PeriodosTS.csv", "Diccionario/Diccionario-PeriodosTS.csv"],
+        ]
+        self.assertEqual(expected_report, data.report)
+        self.assertEqual({}, data.report_errors)
+
+        # wrong case
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_diccionario_periodos_ts"),
+            config_path=os.path.join(
+                self.configuration_path,
+                "configuration_diccionario_periodos_ts_wrong.json",
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+        expected_report = [
+            ["Diccionario", "Diccionario"],
+            [
+                "Diccionario-PeriodosTS-Wrong.csv",
+                "Diccionario/Diccionario-PeriodosTS-Wrong.csv",
+            ],
+        ]
+        expected_error = {
+            "Diccionario-PeriodosTS-Wrong.csv": [
+                {
+                    "name": "Inconsistencia entre valores",
+                    "type": "formato",
+                    "message": "En la fila 1 el valor de la columna HORAFIN es menor al valor de la columna HORAINI.",
+                }
+            ]
+        }
+        self.assertEqual(expected_report, data.report)
+        self.assertEqual(expected_error, data.report_errors)
