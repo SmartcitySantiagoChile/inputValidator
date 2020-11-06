@@ -16,7 +16,13 @@ from validators import (
     NumericRangeValueValidator,
     TimeValueValidator,
     GreaterThanValueValidator,
+    StoreColValue,
 )
+
+
+class Dummy:
+    def __init__(self):
+        self.storage = {}
 
 
 class DataValidatorTest(TestCase):
@@ -578,3 +584,29 @@ class DataValidatorTest(TestCase):
         }
         self.assertEqual(expected_error, validator.get_error())
         self.assertEqual("row", validator.get_fun_type())
+
+    def test_store_col_value(self):
+        # base case
+        header = ["ID", "COMUNA"]
+        dummy_object = Dummy()
+        validator = StoreColValue(
+            {
+                "header": header,
+                "col_index": 1,
+                "storage_name": "communes",
+                "data_validator": dummy_object,
+            }
+        )
+
+        row = ["0", "NUNOA"]
+        validator.apply(row)
+        expected_storage = ["NUNOA"]
+        self.assertEqual(expected_storage, dummy_object.storage["communes"])
+
+        expected_error = {
+            "name": "No se puede almacenar valor",
+            "type": "formato",
+            "message": "Error al almacenar valor",
+        }
+
+        self.assertEqual(expected_error, validator.get_error())

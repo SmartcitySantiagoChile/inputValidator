@@ -521,3 +521,34 @@ class GreaterThanValueValidator(Validator):
 
     def get_fun_type(self):
         return "row"
+
+
+class StoreColValue(Validator):
+    def __init__(self, args):
+        super().__init__(args)
+
+    def apply(self, args=None) -> bool:
+        """
+        Save col index in args
+        :return: bool
+        """
+        index = self.args["col_index"]
+        var = args[index]
+        data_validator = self.args["data_validator"]
+        storage_name = self.args["storage_name"]
+        if data_validator.storage.get(storage_name, 0) == 0:
+            data_validator.storage[storage_name] = [var]
+        else:
+            data_validator.storage[storage_name].push(var)
+        return True
+
+    def get_error(self):
+
+        return {
+            "name": "No se puede almacenar valor",
+            "type": "formato",
+            "message": "Error al almacenar valor",
+        }
+
+    def get_fun_type(self):
+        return "storage"
