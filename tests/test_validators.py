@@ -603,6 +603,10 @@ class DataValidatorTest(TestCase):
         expected_storage = ["NUNOA"]
         self.assertEqual(expected_storage, dummy_object.storage["communes"])
 
+        row = ["1", "SANTIAGO"]
+        validator.apply(row)
+        expected_storage = ["NUNOA", "SANTIAGO"]
+        self.assertEqual(expected_storage, dummy_object.storage["communes"])
         expected_error = {
             "name": "No se puede almacenar valor",
             "type": "formato",

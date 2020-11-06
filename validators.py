@@ -539,7 +539,7 @@ class StoreColValue(Validator):
         if data_validator.storage.get(storage_name, 0) == 0:
             data_validator.storage[storage_name] = [var]
         else:
-            data_validator.storage[storage_name].push(var)
+            data_validator.storage[storage_name].append(var)
         return True
 
     def get_error(self):
