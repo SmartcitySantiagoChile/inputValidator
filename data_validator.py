@@ -16,6 +16,7 @@ from validators import (
     RegexNameValidator,
     RegexValueValidator,
     RootValidator,
+    StoreColValue,
     StringDomainValueValidator,
     TimeValueValidator,
 )
@@ -37,6 +38,7 @@ file_functions = {
     "greater_than": GreaterThanValueValidator,
     "time": TimeValueValidator,
     "not_empty_col": NotEmptyValueValidator,
+    "store_col_value": StoreColValue,
 }
 
 
@@ -51,6 +53,7 @@ class DataValidator:
         self.path_list = path_list
         self.data_path = data_path
         self.path_list_dict = []
+        self.storage = {}
 
     def start_iteration_over_configuration_tree(self):
         """
@@ -125,6 +128,9 @@ class DataValidator:
         report = []
         files_rules_list = rules_dict.get("file", [])
         row_rules_list = rules_dict.get("row", [])
+        storage_rule_list = rules_dict.get("storage", [])
+        for storage_fun in storage_rule_list:
+            storage_fun.args["data_validator"] = self
 
         header_validator = HeaderValidator({"header": header})
         not_empty_row_validator = NotEmptyRowValidator({})
@@ -154,6 +160,10 @@ class DataValidator:
                 # apply file fun
                 for file_fun in files_rules_list:
                     file_fun.apply(row)
+
+                # apply storage fun
+                for storage_fun in storage_rule_list:
+                    storage_fun.apply(row)
 
         except UnicodeDecodeError:
             error = {

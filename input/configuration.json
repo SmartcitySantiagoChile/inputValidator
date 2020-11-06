@@ -51,6 +51,13 @@
               }
             ],
             "semanticRules": [
+              {
+                "function": "store_col_value",
+                "args": {
+                  "col_index": 1,
+                  "storage_name": "communes"
+                }
+              }
             ]
           },
           "children": []
@@ -99,7 +106,7 @@
                 }
               },
               {
-                "function": "not_empty",
+                "function": "not_empty_col",
                 "args": {
                   "col_indexes": [
                     1,
