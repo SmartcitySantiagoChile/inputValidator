@@ -163,7 +163,8 @@ class DataValidator:
 
                 # apply storage fun
                 for storage_fun in storage_rule_list:
-                    storage_fun.apply(row)
+                    if not storage_fun.apply(row):
+                        report.append(storage_fun.get_error())
 
         except UnicodeDecodeError:
             error = {

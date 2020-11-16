@@ -17,6 +17,7 @@ from validators import (
     TimeValueValidator,
     GreaterThanValueValidator,
     StoreColValue,
+    CheckColStorageValue,
 )
 
 
@@ -603,6 +604,7 @@ class DataValidatorTest(TestCase):
         expected_storage = ["NUNOA"]
         self.assertEqual(expected_storage, dummy_object.storage["communes"])
 
+        # wrong case
         row = ["1", "SANTIAGO"]
         validator.apply(row)
         expected_storage = ["NUNOA", "SANTIAGO"]
@@ -613,4 +615,31 @@ class DataValidatorTest(TestCase):
             "message": "Error al almacenar valor",
         }
 
+        self.assertEqual(expected_error, validator.get_error())
+
+    def test_check_col_storage_value(self):
+        # base case
+        dummy_object = Dummy()
+        dummy_object.storage["route_name"] = ["201I", "430I"]
+        header = ["ID", "ROUTE_NAME", "X-Coordinate", "Y-Coordinate"]
+
+        validator = CheckColStorageValue(
+            {
+                "header": header,
+                "col_index": 1,
+                "storage_name": "route_name",
+                "data_validator": dummy_object,
+            }
+        )
+        row = ["131985", "430I", "338029", "6306246"]
+        self.assertTrue(validator.apply(row))
+
+        # wrong case
+        row = ["131985", "201R", "338029", "6306246"]
+        self.assertFalse(validator.apply(row))
+        expected_error = {
+            "name": "El valor no es válido",
+            "type": "valor",
+            "message": "La variable 201R no se encuentra en los velares route_name en la fila 2, columna ROUTE_NAME.",
+        }
         self.assertEqual(expected_error, validator.get_error())

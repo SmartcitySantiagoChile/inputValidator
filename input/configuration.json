@@ -63,6 +63,9 @@
           "children": []
         },
         {
+
+        },
+        {
           "path": {
             "type": "name",
             "name": "Diccionario-Servicios.csv",
@@ -134,6 +137,13 @@
               }
             ],
             "semanticRules": [
+              {
+                "function": "store_col_value",
+                "args": {
+                  "col_index": 1,
+                  "storage_name": "route_name"
+                }
+              }
             ]
           },
           "children": []
