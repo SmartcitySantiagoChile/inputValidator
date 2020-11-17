@@ -508,7 +508,38 @@ class DataValidatorTest(TestCase):
             ),
         )
         data.start_iteration_over_configuration_tree()
-        print(len(data.report))
-        print(data.report)
-        print(len(data.report_errors["ShapeRutas.csv"]))
-        print(data.report_errors)
+        expected_data_report = [
+            ["Diccionario", "Diccionario"],
+            ["Diccionario-Servicios.csv", "Diccionario/Diccionario-Servicios.csv"],
+            ["Rutas", "Rutas"],
+            ["ShapeRutas.csv", "Rutas/ShapeRutas.csv"],
+        ]
+        self.assertEqual(expected_data_report, data.report)
+        self.assertEqual({}, data.report_errors)
+
+        # wrong case
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_shape_rutas"),
+            config_path=os.path.join(
+                self.configuration_path,
+                "configuration_shape_rutas_wrong.json",
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+        expected_data_report = [
+            ["Diccionario", "Diccionario"],
+            ["Diccionario-Servicios.csv", "Diccionario/Diccionario-Servicios.csv"],
+            ["Rutas", "Rutas"],
+            ["ShapeRutasWrong.csv", "Rutas/ShapeRutasWrong.csv"],
+        ]
+        self.assertEqual(expected_data_report, data.report)
+        expected_errors = {
+            "ShapeRutasWrong.csv": [
+                {
+                    "name": "El valor no es válido",
+                    "type": "valor",
+                    "message": "La variable E06PRN no se encuentra en los valores válidos para route_name en la fila 1, columna ROUTE_NAME.",
+                }
+            ]
+        }
+        self.assertEqual(expected_errors, data.report_errors)

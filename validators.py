@@ -662,7 +662,7 @@ class CheckColStorageValueValidator(Validator):
         return {
             "name": "El valor no es válido",
             "type": "valor",
-            "message": "La variable {0} no se encuentra en los valares {1} en la fila {2}, columna {3}.".format(
+            "message": "La variable {0} no se encuentra en los valores válidos para {1} en la fila {2}, columna {3}.".format(
                 var, self.args["storage_name"], self.row_counter, col_name
             ),
         }
@@ -701,8 +701,8 @@ class BoundingBoxValueValidator(Validator):
         return {
             "name": "Coordenadas inválidas",
             "type": "valor",
-            "message": "Las coordenadas {0}, {1} no se encuentran en el rango geográfico correcto.".format(
-                x, y
+            "message": "Las coordenadas {0}, {1} en al fila {2} no se encuentran en el rango geográfico correcto.".format(
+                x, y, self.row_counter
             ),
         }
 
