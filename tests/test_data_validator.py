@@ -498,3 +498,17 @@ class DataValidatorTest(TestCase):
         }
         self.assertEqual(expected_report, data.report)
         self.assertEqual(expected_error, data.report_errors)
+
+    def test_shape_rutas(self):
+        # base case
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_shape_rutas"),
+            config_path=os.path.join(
+                self.configuration_path, "configuration_shape_rutas.json"
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+        print(len(data.report))
+        print(data.report)
+        print(len(data.report_errors["ShapeRutas.csv"]))
+        print(data.report_errors)

@@ -1,0 +1,162 @@
+{
+  "path": {
+    "type": "root",
+    "name": ""
+  },
+  "rules": [],
+  "children": [
+    {
+      "path": {
+        "type": "name",
+        "name": "Diccionario"
+      },
+      "rules": [],
+      "children": [
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-Servicios.csv",
+            "header": [
+              "ROUTE_ID",
+              "ROUTE_NAME",
+              "SERVICE_NA",
+              "UN",
+              "OP_NOC",
+              "DIST",
+              "PO_MOD",
+              "SENTIDO",
+              "COD_USUARI",
+              "COD_TS",
+              "COD_SINSER",
+              "COD_SINRUT",
+              "COD_USUSEN",
+              "TIPO_SERV",
+              "FREC_PM",
+              "FREC_PT",
+              "PLAZAS_PM",
+              "PLAZAS_PT",
+              "SEL_PM",
+              "SEL_PT",
+              "SEN1",
+              "VALIDA"
+            ]
+          },
+          "rules": {
+            "formatRules": [
+              {
+                "function": "duplicate",
+                "args": {
+                  "col_index": 1
+                }
+              },
+              {
+                "function": "duplicate",
+                "args": {
+                  "col_index": 11
+                }
+              },
+              {
+                "function": "not_empty_col",
+                "args": {
+                  "col_indexes": [
+                    1,
+                    3,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12
+                  ]
+                }
+              },
+              {
+                "function": "string_domain",
+                "args": {
+                  "col_indexes": [
+                    7
+                  ],
+                  "domain": [
+                    "I",
+                    "R"
+                  ]
+                }
+              }
+            ],
+            "semanticRules": [
+              {
+                "function": "store_col_value",
+                "args": {
+                  "col_index": 1,
+                  "storage_name": "route_name"
+                }
+              }
+            ]
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "path": {
+        "type": "name",
+        "name": "Rutas"
+      },
+      "rules": [],
+      "children": [
+        {
+          "path": {
+            "type": "name",
+            "name": "ShapeRutas.csv",
+            "header": [
+              "ID",
+              "ROUTE_NAME",
+              "X-Coordinate",
+              "Y-Coordinate"
+            ]
+          },
+          "rules": {
+            "formatRules": [
+            ],
+            "semanticRules": [
+              {
+                "function": "check_col_storage_value",
+                "args": {
+                  "col_index": 1,
+                  "storage_name": "route_name"
+                }
+              },
+              {
+                "function": "bounding_box",
+                "args": {
+                  "x_coordinate_index": 2,
+                  "y_coordinate_index": 3,
+                  "bounding_box": [
+                    [
+                      -33.316183,
+                      -70.889876
+                    ],
+                    [
+                      -33.316183,
+                      -70.461653
+                    ],
+                    [
+                      -34.190746,
+                      -70.461653
+                    ],
+                    [
+                      -34.190746,
+                      -70.889876
+                    ]
+                  ],
+                  "coordinate_system": "utm"
+                }
+              }
+            ]
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
+}

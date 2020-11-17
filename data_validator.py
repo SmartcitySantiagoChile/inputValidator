@@ -5,6 +5,8 @@ from collections import defaultdict
 
 from validators import (
     ASCIIColValidator,
+    BoundingBoxValueValidator,
+    CheckColStorageValueValidator,
     DuplicateValueValidator,
     GreaterThanValueValidator,
     HeaderValidator,
@@ -39,6 +41,8 @@ file_functions = {
     "time": TimeValueValidator,
     "not_empty_col": NotEmptyValueValidator,
     "store_col_value": StoreColValue,
+    "check_col_storage_value": CheckColStorageValueValidator,
+    "bounding_box": BoundingBoxValueValidator,
 }
 
 
