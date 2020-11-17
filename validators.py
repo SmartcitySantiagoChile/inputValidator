@@ -1,8 +1,89 @@
 import datetime
 import glob
+import math
 import os
 import re
 from abc import ABCMeta, abstractmethod
+
+from shapely.geometry import Point, Polygon
+
+
+def utm_to_wsg84(
+    east_coordinate: float,
+    north_coordinate: float,
+    zone: int = 19,
+    north_hemisphere: bool = False,
+) -> tuple:
+    if not north_hemisphere:
+        north_coordinate = 10000000 - north_coordinate
+
+    a = 6378137
+    e = 0.081819191
+    e1sq = 0.006739497
+    k0 = 0.9996
+
+    arc = north_coordinate / k0
+    mu = arc / (
+        a
+        * (
+            1
+            - math.pow(e, 2) / 4.0
+            - 3 * math.pow(e, 4) / 64.0
+            - 5 * math.pow(e, 6) / 256.0
+        )
+    )
+
+    ei = (1 - math.pow((1 - e * e), (1 / 2.0))) / (1 + math.pow((1 - e * e), (1 / 2.0)))
+
+    ca = 3 * ei / 2 - 27 * math.pow(ei, 3) / 32.0
+
+    cb = 21 * math.pow(ei, 2) / 16 - 55 * math.pow(ei, 4) / 32
+    cc = 151 * math.pow(ei, 3) / 96
+    cd = 1097 * math.pow(ei, 4) / 512
+    phi1 = (
+        mu
+        + ca * math.sin(2 * mu)
+        + cb * math.sin(4 * mu)
+        + cc * math.sin(6 * mu)
+        + cd * math.sin(8 * mu)
+    )
+
+    n0 = a / math.pow((1 - math.pow((e * math.sin(phi1)), 2)), (1 / 2.0))
+
+    r0 = a * (1 - e * e) / math.pow((1 - math.pow((e * math.sin(phi1)), 2)), (3 / 2.0))
+    fact1 = n0 * math.tan(phi1) / r0
+
+    _a1 = 500000 - east_coordinate
+    dd0 = _a1 / (n0 * k0)
+    fact2 = dd0 * dd0 / 2
+
+    t0 = math.pow(math.tan(phi1), 2)
+    q0 = e1sq * math.pow(math.cos(phi1), 2)
+    fact3 = (5 + 3 * t0 + 10 * q0 - 4 * q0 * q0 - 9 * e1sq) * math.pow(dd0, 4) / 24
+
+    fact4 = (
+        (61 + 90 * t0 + 298 * q0 + 45 * t0 * t0 - 252 * e1sq - 3 * q0 * q0)
+        * math.pow(dd0, 6)
+        / 720
+    )
+
+    lof1 = _a1 / (n0 * k0)
+    lof2 = (1 + 2 * t0 + q0) * math.pow(dd0, 3) / 6.0
+    lof3 = (
+        (5 - 2 * q0 + 28 * t0 - 3 * math.pow(q0, 2) + 8 * e1sq + 24 * math.pow(t0, 2))
+        * math.pow(dd0, 5)
+        / 120
+    )
+    _a2 = (lof1 - lof2 + lof3) / math.cos(phi1)
+    _a3 = _a2 * 180 / math.pi
+
+    latitude = 180 * (phi1 - fact1 * (fact2 + fact3 + fact4)) / math.pi
+
+    if not north_hemisphere:
+        latitude = -latitude
+
+    longitude = ((zone > 0) and (6 * zone - 183.0) or 3.0) - _a3
+    return latitude, longitude
 
 
 class Validator(object, metaclass=ABCMeta):
@@ -554,7 +635,7 @@ class StoreColValue(Validator):
         return "storage"
 
 
-class CheckColStorageValue(Validator):
+class CheckColStorageValueValidator(Validator):
     def __init__(self, args):
         self.row_counter = 0
         super().__init__(args)
@@ -588,3 +669,30 @@ class CheckColStorageValue(Validator):
 
     def get_fun_type(self):
         return "storage"
+
+
+class BoundingBoxValueValidator(Validator):
+    def __init__(self, args):
+        self.row_counter = 0
+        super().__init__(args)
+
+    def apply(self, args=None) -> bool:
+        """
+        Check if coordinate values are in given bounding box
+        :return: bool
+        """
+        self.row_counter += 1
+        self.args["row"] = args
+        x_coordinate_index = self.args["x_coordinate_index"]
+        y_coordinate_index = self.args["y_coordinate_index"]
+        x = float(args[x_coordinate_index])
+        y = float(args[y_coordinate_index])
+        point = Point(x, y)
+        bounding_box = Polygon(self.args["bounding_box"])
+        return bounding_box.contains(point)
+
+    def get_error(self):
+        return {}
+
+    def get_fun_type(self):
+        return "row"

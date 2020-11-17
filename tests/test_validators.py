@@ -17,7 +17,9 @@ from validators import (
     TimeValueValidator,
     GreaterThanValueValidator,
     StoreColValue,
-    CheckColStorageValue,
+    CheckColStorageValueValidator,
+    BoundingBoxValueValidator,
+    utm_to_wsg84,
 )
 
 
@@ -623,7 +625,7 @@ class DataValidatorTest(TestCase):
         dummy_object.storage["route_name"] = ["201I", "430I"]
         header = ["ID", "ROUTE_NAME", "X-Coordinate", "Y-Coordinate"]
 
-        validator = CheckColStorageValue(
+        validator = CheckColStorageValueValidator(
             {
                 "header": header,
                 "col_index": 1,
@@ -643,3 +645,28 @@ class DataValidatorTest(TestCase):
             "message": "La variable 201R no se encuentra en los velares route_name en la fila 2, columna ROUTE_NAME.",
         }
         self.assertEqual(expected_error, validator.get_error())
+
+    def test_bounding_box_value_validator(self):
+        # base case
+        header = ["ID", "ROUTE_NAME", "X-Coordinate", "Y-Coordinate"]
+        validator = BoundingBoxValueValidator(
+            {
+                "header": header,
+                "x_coordinate_index": 2,
+                "y_coordinate_index": 3,
+                "bounding_box": [
+                    (-33.316183, -70.889876),
+                    (-33.316183, -70.461653),
+                    (-34.190746, -70.461653),
+                    (-34.190746, -70.889876),
+                ],
+            }
+        )
+        # a = [(324075, 6312066), (363942, 6312707)]
+        row = ["131985", "430I", "338029", "6306246"]
+        print(validator.apply(row))
+
+    def test_utm_to_wsg84(self):
+        test_case = [338029, 6306246]
+        expected_res = (-33.37083676362541, -70.74108491315275)
+        self.assertEqual(expected_res, utm_to_wsg84(test_case[0], test_case[1]))
