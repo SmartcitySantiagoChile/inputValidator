@@ -662,7 +662,7 @@ class CheckColStorageValueValidator(Validator):
         return {
             "name": "El valor no es válido",
             "type": "valor",
-            "message": "La variable {0} no se encuentra en los velares {1} en la fila {2}, columna {3}.".format(
+            "message": "La variable {0} no se encuentra en los valares {1} en la fila {2}, columna {3}.".format(
                 var, self.args["storage_name"], self.row_counter, col_name
             ),
         }
@@ -687,12 +687,24 @@ class BoundingBoxValueValidator(Validator):
         y_coordinate_index = self.args["y_coordinate_index"]
         x = float(args[x_coordinate_index])
         y = float(args[y_coordinate_index])
+        if self.args["coordinate_system"] == "utm":
+            x, y = utm_to_wsg84(x, y)
         point = Point(x, y)
         bounding_box = Polygon(self.args["bounding_box"])
         return bounding_box.contains(point)
 
     def get_error(self):
-        return {}
+        x_coordinate_index = self.args["x_coordinate_index"]
+        y_coordinate_index = self.args["y_coordinate_index"]
+        x = float(self.args["row"][x_coordinate_index])
+        y = float(self.args["row"][y_coordinate_index])
+        return {
+            "name": "Coordenadas inválidas",
+            "type": "valor",
+            "message": "Las coordenadas {0}, {1} no se encuentran en el rango geográfico correcto.".format(
+                x, y
+            ),
+        }
 
     def get_fun_type(self):
         return "row"

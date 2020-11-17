@@ -660,11 +660,22 @@ class DataValidatorTest(TestCase):
                     (-34.190746, -70.461653),
                     (-34.190746, -70.889876),
                 ],
+                "coordinate_system": "utm",
             }
         )
-        # a = [(324075, 6312066), (363942, 6312707)]
         row = ["131985", "430I", "338029", "6306246"]
-        print(validator.apply(row))
+        self.assertTrue(validator.apply(row))
+
+        # wrong case
+        row = ["131985", "430I", "28029", "1006246"]
+        expected_error = {
+            "name": "Coordenadas inválidas",
+            "type": "valor",
+            "message": "Las coordenadas 28029.0, 1006246.0 no se encuentran en el rango geográfico correcto.",
+        }
+
+        self.assertFalse(validator.apply(row))
+        self.assertEqual(expected_error, validator.get_error())
 
     def test_utm_to_wsg84(self):
         test_case = [338029, 6306246]
