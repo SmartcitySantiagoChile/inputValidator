@@ -63,9 +63,6 @@
           "children": []
         },
         {
-
-        },
-        {
           "path": {
             "type": "name",
             "name": "Diccionario-Servicios.csv",
@@ -151,6 +148,76 @@
         {
           "path": {
             "type": "name",
+            "name": "Diccionario-PeriodosTS.csv",
+            "header": [
+              "ID",
+              "TIPODIA",
+              "PERIODO",
+              "HORAINI",
+              "HORAFIN",
+              "HORAS"
+            ]
+          },
+          "rules": {
+            "formatRules": [
+              {
+                "function": "not_empty_col",
+                "args": {
+                  "col_indexes": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                  ]
+                }
+              },
+              {
+                "function": "duplicate",
+                "args": {
+                  "col_index": 0
+                }
+              },
+              {
+                "function": "string_domain",
+                "args": {
+                  "col_indexes": [
+                    1
+                  ],
+                  "domain": [
+                    "LABORAL",
+                    "SABADO",
+                    "DOMINGO"
+                  ]
+                }
+              },
+              {
+                "function": "time",
+                "args": {
+                  "col_indexes": [
+                    3,
+                    4
+                  ]
+                }
+              },
+              {
+                "function": "greater_than",
+                "args": {
+                  "upper_col": 4,
+                  "lower_col": 3,
+                  "type": "time"
+                }
+              }
+            ],
+            "semanticRules": [
+            ]
+          },
+          "children": []
+        },
+        {
+          "path": {
+            "type": "name",
             "name": "Diccionario-Patentes.csv",
             "header": [
               "FOLIO",
@@ -194,6 +261,67 @@
               }
             ],
             "semanticRules": [
+            ]
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "path": {
+        "type": "name",
+        "name": "Rutas"
+      },
+      "rules": [],
+      "children": [
+        {
+          "path": {
+            "type": "name",
+            "name": "ShapeRutas.csv",
+            "header": [
+              "ID",
+              "ROUTE_NAME",
+              "X-Coordinate",
+              "Y-Coordinate"
+            ]
+          },
+          "rules": {
+            "formatRules": [
+            ],
+            "semanticRules": [
+              {
+                "function": "check_col_storage_value",
+                "args": {
+                  "col_index": 1,
+                  "storage_name": "route_name"
+                }
+              },
+              {
+                "function": "bounding_box",
+                "args": {
+                  "x_coordinate_index": 2,
+                  "y_coordinate_index": 3,
+                  "bounding_box": [
+                    [
+                      -33.316183,
+                      -70.889876
+                    ],
+                    [
+                      -33.316183,
+                      -70.461653
+                    ],
+                    [
+                      -34.190746,
+                      -70.461653
+                    ],
+                    [
+                      -34.190746,
+                      -70.889876
+                    ]
+                  ],
+                  "coordinate_system": "utm"
+                }
+              }
             ]
           },
           "children": []

@@ -650,7 +650,7 @@ class CheckColStorageValueValidator(Validator):
         index = self.args["col_index"]
         val = args[index]
         data_validator = self.args["data_validator"]
-        storage = data_validator.storage[self.args["storage_name"]]
+        storage = data_validator.storage.get(self.args["storage_name"], [])
         return val in storage
 
     def get_error(self):
@@ -708,3 +708,39 @@ class BoundingBoxValueValidator(Validator):
 
     def get_fun_type(self):
         return "row"
+
+
+class StoreColDictValues(Validator):
+    def apply(self, args=None) -> bool:
+        """
+        Save cols index in args
+        :return: bool
+        """
+        key_index = self.args["key_index"]
+        value_indexes = self.args["value_indexes"]
+        key_value = args[key_index]
+        data_validator = self.args["data_validator"]
+        storage_name = self.args["storage_name"]
+        if data_validator.storage.get(storage_name, 0) == 0:
+            value_dict = {key_value: []}
+        else:
+            if data_validator.storage[storage_name].get(key_value, 0) == 0:
+                value_dict = data_validator.storage[storage_name]
+                value_dict[key_value] = []
+            else:
+                value_dict = data_validator.storage[storage_name]
+        for value in value_indexes:
+            value_dict[key_value].append(args[value])
+        data_validator.storage[storage_name] = value_dict
+        return True
+
+    def get_error(self):
+
+        return {
+            "name": "No se puede almacenar valor",
+            "type": "formato",
+            "message": "Error al almacenar valor",
+        }
+
+    def get_fun_type(self):
+        return "storage"

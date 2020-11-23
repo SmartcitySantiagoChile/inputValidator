@@ -20,6 +20,7 @@ from validators import (
     CheckColStorageValueValidator,
     BoundingBoxValueValidator,
     utm_to_wsg84,
+    StoreColDictValues,
 )
 
 
@@ -618,6 +619,7 @@ class DataValidatorTest(TestCase):
         }
 
         self.assertEqual(expected_error, validator.get_error())
+        self.assertEqual("storage", validator.get_fun_type())
 
     def test_check_col_storage_value(self):
         # base case
@@ -640,11 +642,14 @@ class DataValidatorTest(TestCase):
         row = ["131985", "201R", "338029", "6306246"]
         self.assertFalse(validator.apply(row))
         expected_error = {
+            "message": "La variable 201R no se encuentra en los valores válidos para "
+            "route_name en la fila 2, columna ROUTE_NAME.",
             "name": "El valor no es válido",
             "type": "valor",
-            "message": "La variable 201R no se encuentra en los velares route_name en la fila 2, columna ROUTE_NAME.",
         }
+
         self.assertEqual(expected_error, validator.get_error())
+        self.assertEqual("storage", validator.get_fun_type())
 
     def test_bounding_box_value_validator(self):
         # base case
@@ -676,8 +681,43 @@ class DataValidatorTest(TestCase):
 
         self.assertFalse(validator.apply(row))
         self.assertEqual(expected_error, validator.get_error())
+        self.assertEqual("row", validator.get_fun_type())
 
     def test_utm_to_wsg84(self):
         test_case = [338029, 6306246]
         expected_res = (-33.37083676362541, -70.74108491315275)
         self.assertEqual(expected_res, utm_to_wsg84(test_case[0], test_case[1]))
+
+    def test_store_col_dict_values(self):
+        # base case
+        header = ["ID_POLIGONO", "X", "Y", "NOMBRE_ZONA", "ID_ZONIFICACION"]
+        dummy_object = Dummy()
+        validator = StoreColDictValues(
+            {
+                "header": header,
+                "key_index": 4,
+                "value_indexes": [1, 2],
+                "storage_name": "zone",
+                "data_validator": dummy_object,
+            }
+        )
+        row = ["0", "348541.1456", "6296986.971", "ORIENTE", "zonas_6"]
+        validator.apply(row)
+        expected_storage = {"zonas_6": ["348541.1456", "6296986.971"]}
+        self.assertEqual(expected_storage, dummy_object.storage["zone"])
+        # wrong case
+        row = ["582", "353790.8992", "6304293.784", "VITACURA", "eod_2006"]
+        validator.apply(row)
+        expected_storage = {
+            "zonas_6": ["348541.1456", "6296986.971"],
+            "eod_2006": ["353790.8992", "6304293.784"],
+        }
+        self.assertEqual(expected_storage, dummy_object.storage["zone"])
+        expected_error = {
+            "name": "No se puede almacenar valor",
+            "type": "formato",
+            "message": "Error al almacenar valor",
+        }
+
+        self.assertEqual(expected_error, validator.get_error())
+        self.assertEqual("storage", validator.get_fun_type())
