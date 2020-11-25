@@ -688,7 +688,7 @@ class BoundingBoxValueValidator(Validator):
         x = float(args[x_coordinate_index])
         y = float(args[y_coordinate_index])
         if self.args["coordinate_system"] == "utm":
-            x, y = utm_to_wsg84(x, y)
+            x, y = utm_to_wsg84(x, y, 19)
         point = Point(x, y)
         bounding_box = Polygon(self.args["bounding_box"])
         return bounding_box.contains(point)
@@ -729,8 +729,10 @@ class StoreColDictValues(Validator):
                 value_dict[key_value] = []
             else:
                 value_dict = data_validator.storage[storage_name]
+        var = []
         for value in value_indexes:
-            value_dict[key_value].append(args[value])
+            var.append(args[value])
+        value_dict[key_value].append(var)
         data_validator.storage[storage_name] = value_dict
         return True
 
@@ -740,6 +742,68 @@ class StoreColDictValues(Validator):
             "name": "No se puede almacenar valor",
             "type": "formato",
             "message": "Error al almacenar valor",
+        }
+
+    def get_fun_type(self):
+        return "storage"
+
+
+class CheckStoreColDictValuesValidator(Validator):
+    def __init__(self, args):
+        self.row_counter = 0
+        super().__init__(args)
+
+    def apply(self, args=None) -> bool:
+        """
+        Check if col value dict is in given storage
+        :return: bool
+        """
+        self.row_counter += 1
+        self.args["row"] = args
+        key_name = self.args["key_name"]
+        value_indexes = self.args["value_indexes"]
+        values = [float(args[value]) for value in value_indexes]
+        data_validator = self.args["data_validator"]
+        storage = data_validator.storage.get(self.args["storage_name"], [])
+        storage_key = storage.get(key_name, [])
+        transform_data = self.args["transform_data"]
+        res = False
+        if transform_data == "wsg84_to_utm":
+            for storage_values in storage_key:
+                storage_values = utm_to_wsg84(
+                    float(storage_values[0]), float(storage_values[1])
+                )
+                if math.isclose(
+                    storage_values[0], values[0], abs_tol=0.001
+                ) and math.isclose(storage_values[1], values[1], abs_tol=0.001):
+                    res = True
+                    break
+        else:
+            for storage_values in storage_key:
+                storage_values = [float(storage_values[0]), float(storage_values[1])]
+                if math.isclose(
+                    storage_values[0], values[0], abs_tol=0.001
+                ) and math.isclose(storage_values[1], values[1], abs_tol=0.001):
+                    res = True
+                    break
+        return res
+
+    def get_error(self):
+        header = self.args["header"]
+        cols_names = [header[index] for index in self.args["value_indexes"]]
+        var = [self.args["row"][value] for value in self.args["value_indexes"]]
+        head = "no se encuentra"
+        tail = "columna"
+        if len(cols_names) > 1:
+            head = "no se encuentran"
+            tail = "columnas"
+
+        return {
+            "name": "El valor no es válido",
+            "type": "valor",
+            "message": "{0} {1} en los valores válidos para {2} en la fila {3}, {4} {5}.".format(
+                var, head, self.args["key_name"], self.row_counter, tail, cols_names
+            ),
         }
 
     def get_fun_type(self):

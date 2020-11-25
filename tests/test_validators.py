@@ -21,6 +21,7 @@ from validators import (
     BoundingBoxValueValidator,
     utm_to_wsg84,
     StoreColDictValues,
+    CheckStoreColDictValuesValidator,
 )
 
 
@@ -676,7 +677,7 @@ class DataValidatorTest(TestCase):
         expected_error = {
             "name": "Coordenadas inválidas",
             "type": "valor",
-            "message": "Las coordenadas 28029.0, 1006246.0 no se encuentran en el rango geográfico correcto.",
+            "message": "Las coordenadas 28029.0, 1006246.0 en al fila 2 no se encuentran en el rango geográfico correcto.",
         }
 
         self.assertFalse(validator.apply(row))
@@ -686,7 +687,7 @@ class DataValidatorTest(TestCase):
     def test_utm_to_wsg84(self):
         test_case = [338029, 6306246]
         expected_res = (-33.37083676362541, -70.74108491315275)
-        self.assertEqual(expected_res, utm_to_wsg84(test_case[0], test_case[1]))
+        self.assertEqual(expected_res, utm_to_wsg84(*test_case))
 
     def test_store_col_dict_values(self):
         # base case
@@ -703,14 +704,14 @@ class DataValidatorTest(TestCase):
         )
         row = ["0", "348541.1456", "6296986.971", "ORIENTE", "zonas_6"]
         validator.apply(row)
-        expected_storage = {"zonas_6": ["348541.1456", "6296986.971"]}
+        expected_storage = {"zonas_6": [["348541.1456", "6296986.971"]]}
         self.assertEqual(expected_storage, dummy_object.storage["zone"])
         # wrong case
         row = ["582", "353790.8992", "6304293.784", "VITACURA", "eod_2006"]
         validator.apply(row)
         expected_storage = {
-            "zonas_6": ["348541.1456", "6296986.971"],
-            "eod_2006": ["353790.8992", "6304293.784"],
+            "zonas_6": [["348541.1456", "6296986.971"]],
+            "eod_2006": [["353790.8992", "6304293.784"]],
         }
         self.assertEqual(expected_storage, dummy_object.storage["zone"])
         expected_error = {
@@ -720,4 +721,152 @@ class DataValidatorTest(TestCase):
         }
 
         self.assertEqual(expected_error, validator.get_error())
+        self.assertEqual("storage", validator.get_fun_type())
+
+    def test_check_store_col_dict_values_validator(self):
+        # base case
+        dummy_object = Dummy()
+        dummy_object.storage["zone"] = {
+            "zonas_6": [
+                ["348541.1456", "6296986.971"],
+                ["348111.3295", "6298523.526"],
+                ["349733.1474", "6292997.514"],
+            ],
+            "eod_2006": [["353790.8992", "6304293.784"]],
+        }
+        header = [
+            "CODIGOTRX",
+            "COMUNA",
+            "LATITUD",
+            "LONGITUD",
+            "LINEA",
+            "ESTANDAR",
+            "TIPO",
+            "ESTANDAR_ESTACION_UNICA",
+            "CODIGO",
+            "COLOR",
+        ]
+
+        validator = CheckStoreColDictValuesValidator(
+            {
+                "header": header,
+                "key_name": "zonas_6",
+                "value_indexes": [2, 3],
+                "storage_name": "zone",
+                "data_validator": dummy_object,
+                "transform_data": "wsg84_to_utm",
+            }
+        )
+
+        row = [
+            "Agricola",
+            "MACUL",
+            "-33.491584",
+            "-70.617529",
+            "L5",
+            "CAMINO AGRICOLA",
+            "NORMAL",
+            "CAMINO AGRICOLA",
+            "AG",
+            "V",
+        ]
+
+        self.assertTrue(validator.apply(row))
+
+        dummy_object.storage["zone"] = {
+            "zonas_6": [["-33.491584", "-70.617529"]],
+            "eod_2006": [["353790.8992", "6304293.784"]],
+        }
+        header = [
+            "CODIGOTRX",
+            "COMUNA",
+            "LATITUD",
+            "LONGITUD",
+            "LINEA",
+            "ESTANDAR",
+            "TIPO",
+            "ESTANDAR_ESTACION_UNICA",
+            "CODIGO",
+            "COLOR",
+        ]
+
+        validator = CheckStoreColDictValuesValidator(
+            {
+                "header": header,
+                "key_name": "zonas_6",
+                "value_indexes": [2, 3],
+                "storage_name": "zone",
+                "data_validator": dummy_object,
+                "transform_data": "none",
+            }
+        )
+
+        row = [
+            "Agricola",
+            "MACUL",
+            "-33.491584",
+            "-70.617529",
+            "L5",
+            "CAMINO AGRICOLA",
+            "NORMAL",
+            "CAMINO AGRICOLA",
+            "AG",
+            "V",
+        ]
+
+        self.assertTrue(validator.apply(row))
+
+        # wrong case
+        dummy_object = Dummy()
+        dummy_object.storage["zone"] = {
+            "zonas_6": [["348541.1456", "6296986.971"], ["348111.3295", "6298523.526"]],
+            "eod_2006": [["353790.8992", "6304293.784"]],
+        }
+        header = [
+            "CODIGOTRX",
+            "COMUNA",
+            "LATITUD",
+            "LONGITUD",
+            "LINEA",
+            "ESTANDAR",
+            "TIPO",
+            "ESTANDAR_ESTACION_UNICA",
+            "CODIGO",
+            "COLOR",
+        ]
+
+        validator = CheckStoreColDictValuesValidator(
+            {
+                "header": header,
+                "key_name": "zonas_6",
+                "value_indexes": [2, 3],
+                "storage_name": "zone",
+                "data_validator": dummy_object,
+                "transform_data": "wsg84_to_utm",
+            }
+        )
+
+        row = [
+            "Agricola",
+            "MACUL",
+            "-33.491584",
+            "-70.617529",
+            "L5",
+            "CAMINO AGRICOLA",
+            "NORMAL",
+            "CAMINO AGRICOLA",
+            "AG",
+            "V",
+        ]
+
+        self.assertFalse(validator.apply(row))
+
+        expected_error = {
+            "name": "El valor no es válido",
+            "type": "valor",
+            "message": "['-33.491584', '-70.617529'] no se encuentran en los valores válidos para zonas_6 en la fila 1, columnas ['LATITUD', 'LONGITUD'].",
+        }
+
+        self.assertEqual(expected_error, validator.get_error())
+
         self.assertEqual("storage", validator.get_fun_type())
