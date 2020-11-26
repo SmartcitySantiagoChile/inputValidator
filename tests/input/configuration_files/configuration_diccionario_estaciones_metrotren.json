@@ -160,23 +160,6 @@
                 "args": {
                   "col_index": 0
                 }
-              },
-              {
-                "function": "string_domain",
-                "args": {
-                  "col_indexes": [
-                    4
-                  ],
-                  "domain": [
-                    "L1",
-                    "L2",
-                    "L3",
-                    "L4",
-                    "L4A",
-                    "L5",
-                    "L6"
-                  ]
-                }
               }
             ],
             "semanticRules": [
@@ -185,6 +168,18 @@
                 "args": {
                   "col_index": 1,
                   "storage_name": "communes"
+                }
+              },
+              {
+                "function": "check_store_col_dict_values",
+                "args": {
+                  "storage_name": "zone",
+                  "key_name": "comunas",
+                  "value_indexes": [
+                    2,
+                    3
+                  ],
+                  "transform_data": "wsg84_to_utm"
                 }
               }
             ]

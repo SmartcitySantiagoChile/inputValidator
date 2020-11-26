@@ -134,18 +134,12 @@
         {
           "path": {
             "type": "name",
-            "name": "Diccionario-EstacionesMetro.csv",
+            "name": "Diccionario-EstacionesMetroTren.csv",
             "header": [
               "CODIGOTRX",
               "COMUNA",
               "LATITUD",
-              "LONGITUD",
-              "LINEA",
-              "ESTANDAR",
-              "TIPO",
-              "ESTANDAR_ESTACION_UNICA",
-              "CODIGO",
-              "COLOR"
+              "LONGITUD"
             ]
           },
           "rules": {
@@ -157,13 +151,7 @@
                     0,
                     1,
                     2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9
+                    3
                   ]
                 }
               },
@@ -172,30 +160,13 @@
                 "args": {
                   "col_index": 0
                 }
-              },
-              {
-                "function": "string_domain",
-                "args": {
-                  "col_indexes": [
-                    4
-                  ],
-                  "domain": [
-                    "L1",
-                    "L2",
-                    "L3",
-                    "L4",
-                    "L4A",
-                    "L5",
-                    "L6"
-                  ]
-                }
               }
             ],
             "semanticRules": [
               {
                 "function": "check_col_storage_value",
                 "args": {
-                  "col_index": 1,
+                  "col_index": 0,
                   "storage_name": "communes"
                 }
               },
@@ -203,31 +174,7 @@
                 "function": "check_store_col_dict_values",
                 "args": {
                   "storage_name": "zone",
-                  "key_name": "diseno_777",
-                  "value_indexes": [
-                    2,
-                    3
-                  ],
-                  "transform_data": "wsg84_to_utm"
-                }
-              },
-              {
-                "function": "check_store_col_dict_values",
-                "args": {
-                  "storage_name": "zone",
                   "key_name": "comunas",
-                  "value_indexes": [
-                    2,
-                    3
-                  ],
-                  "transform_data": "wsg84_to_utm"
-                }
-              },
-              {
-                "function": "check_store_col_dict_values",
-                "args": {
-                  "storage_name": "zone",
-                  "key_name": "zone_777",
                   "value_indexes": [
                     2,
                     3

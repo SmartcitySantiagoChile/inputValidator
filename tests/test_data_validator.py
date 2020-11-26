@@ -732,15 +732,94 @@ class DataValidatorTest(TestCase):
     def test_diccionario_estaciones_metrotren(self):
         # base case
         data = DataValidator(
-            data_path=os.path.join(self.input_path, "check_diccionario_patentes"),
+            data_path=os.path.join(
+                self.input_path, "check_diccionario_estaciones_metrotren"
+            ),
             config_path=os.path.join(
-                self.configuration_path, "configuration_diccionario_patentes.json"
+                self.configuration_path,
+                "configuration_diccionario_estaciones_metrotren.json",
             ),
         )
         data.start_iteration_over_configuration_tree()
         expected_report = [
             ["Diccionario", "Diccionario"],
-            ["Diccionario-Patentes.csv", "Diccionario/Diccionario-Patentes.csv"],
+            ["Diccionario-Comunas.csv", "Diccionario/Diccionario-Comunas.csv"],
+            [
+                "Diccionario-Zonificaciones.csv",
+                "Diccionario/Diccionario-Zonificaciones.csv",
+            ],
+            [
+                "Diccionario-EstacionesMetroTren.csv",
+                "Diccionario/Diccionario-EstacionesMetroTren.csv",
+            ],
         ]
         self.assertEqual(expected_report, data.report)
         self.assertEqual({}, data.report_errors)
+
+        # wrong case
+        data = DataValidator(
+            data_path=os.path.join(
+                self.input_path, "check_diccionario_estaciones_metrotren"
+            ),
+            config_path=os.path.join(
+                self.configuration_path,
+                "configuration_diccionario_estaciones_metrotren_wrong.json",
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+        self.assertEqual(expected_report, data.report)
+        expected_data_error = {
+            "Diccionario-EstacionesMetroTren.csv": [
+                {
+                    "name": "El valor no es válido",
+                    "type": "valor",
+                    "message": "La variable Estacion Alameda no se encuentra en los valores válidos para communes en la fila 1, columna CODIGOTRX.",
+                },
+                {
+                    "name": "El valor no es válido",
+                    "type": "valor",
+                    "message": "La variable Estacion Lo Valledor no se encuentra en los valores válidos para communes en la fila 2, columna CODIGOTRX.",
+                },
+                {
+                    "name": "El valor no es válido",
+                    "type": "valor",
+                    "message": "La variable Estacion Pedro Aguirre Cerda no se encuentra en los valores válidos para communes en la fila 3, columna CODIGOTRX.",
+                },
+                {
+                    "name": "El valor no es válido",
+                    "type": "valor",
+                    "message": "La variable Estacion Lo Espejo no se encuentra en los valores válidos para communes en la fila 4, columna CODIGOTRX.",
+                },
+                {
+                    "name": "El valor no es válido",
+                    "type": "valor",
+                    "message": "La variable Estacion Lo Blanco no se encuentra en los valores válidos para communes en la fila 5, columna CODIGOTRX.",
+                },
+                {
+                    "name": "El valor no es válido",
+                    "type": "valor",
+                    "message": "La variable Estacion Freire no se encuentra en los valores válidos para communes en la fila 6, columna CODIGOTRX.",
+                },
+                {
+                    "name": "El valor no es válido",
+                    "type": "valor",
+                    "message": "La variable Estacion San Bernardo no se encuentra en los valores válidos para communes en la fila 7, columna CODIGOTRX.",
+                },
+                {
+                    "name": "El valor no es válido",
+                    "type": "valor",
+                    "message": "La variable Estacion Maestranza no se encuentra en los valores válidos para communes en la fila 8, columna CODIGOTRX.",
+                },
+                {
+                    "name": "El valor no es válido",
+                    "type": "valor",
+                    "message": "La variable Estacion Cinco Pinos no se encuentra en los valores válidos para communes en la fila 9, columna CODIGOTRX.",
+                },
+                {
+                    "name": "El valor no es válido",
+                    "type": "valor",
+                    "message": "La variable Estacion Nos no se encuentra en los valores válidos para communes en la fila 10, columna CODIGOTRX.",
+                },
+            ]
+        }
+        self.assertEqual(expected_data_error, data.report_errors)
