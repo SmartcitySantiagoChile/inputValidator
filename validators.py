@@ -764,6 +764,12 @@ class CheckStoreColDictValuesValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if col value dict is in given storage
+        :param args: {
+            key_name -> string
+            value_indexes -> list
+            storage_name -> string
+            transform_data -> string
+        }
         :return: bool
         """
         self.row_counter += 1
@@ -782,16 +788,16 @@ class CheckStoreColDictValuesValidator(Validator):
                     float(storage_values[0]), float(storage_values[1])
                 )
                 if math.isclose(
-                    storage_values[0], values[0], abs_tol=0.001
-                ) and math.isclose(storage_values[1], values[1], abs_tol=0.001):
+                    storage_values[0], values[0], abs_tol=0.1
+                ) and math.isclose(storage_values[1], values[1], abs_tol=0.1):
                     res = True
                     break
         else:
             for storage_values in storage_key:
                 storage_values = [float(storage_values[0]), float(storage_values[1])]
                 if math.isclose(
-                    storage_values[0], values[0], abs_tol=0.001
-                ) and math.isclose(storage_values[1], values[1], abs_tol=0.001):
+                    storage_values[0], values[0], abs_tol=0.1
+                ) and math.isclose(storage_values[1], values[1], abs_tol=0.1):
                     res = True
                     break
         return res
