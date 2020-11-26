@@ -591,3 +591,140 @@ class DataValidatorTest(TestCase):
         }
         self.assertEqual(expected_data_report, data.report)
         self.assertEqual(expected_error, data.report_errors)
+
+    def test_diccionario_estaciones_metro(self):
+        # base case
+        data = DataValidator(
+            data_path=os.path.join(
+                self.input_path, "check_diccionario_estaciones_metro"
+            ),
+            config_path=os.path.join(
+                self.configuration_path,
+                "configuration_diccionario_estaciones_metro.json",
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+        expected_data_report = [
+            ["Diccionario", "Diccionario"],
+            ["Diccionario-Comunas.csv", "Diccionario/Diccionario-Comunas.csv"],
+            [
+                "Diccionario-Zonificaciones.csv",
+                "Diccionario/Diccionario-Zonificaciones.csv",
+            ],
+            [
+                "Diccionario-EstacionesMetro.csv",
+                "Diccionario/Diccionario-EstacionesMetro.csv",
+            ],
+        ]
+
+        self.assertEqual(expected_data_report, data.report)
+        self.assertEqual({}, data.report_errors)
+
+        # wrong case
+        data = DataValidator(
+            data_path=os.path.join(
+                self.input_path, "check_diccionario_estaciones_metro"
+            ),
+            config_path=os.path.join(
+                self.configuration_path,
+                "configuration_diccionario_estaciones_metro_wrong.json",
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+        expected_data_report = [
+            ["Diccionario", "Diccionario"],
+            ["Diccionario-Comunas.csv", "Diccionario/Diccionario-Comunas.csv"],
+            [
+                "Diccionario-Zonificaciones.csv",
+                "Diccionario/Diccionario-Zonificaciones.csv",
+            ],
+            [
+                "Diccionario-EstacionesMetro.csv",
+                "Diccionario/Diccionario-EstacionesMetro.csv",
+            ],
+        ]
+
+        self.assertEqual(expected_data_report, data.report)
+        expected_data_error = {
+            "Diccionario-EstacionesMetro.csv": [
+                {
+                    "message": "Existe un valor "
+                    "incorrecto en la "
+                    "fila 8, columna "
+                    "LINEA. Los "
+                    "valores solo "
+                    "pueden ser "
+                    "['L1', 'L2', "
+                    "'L3', 'L4', "
+                    "'L4A', 'L5']",
+                    "name": "Valores incorrectos",
+                    "type": "formato",
+                },
+                {
+                    "message": "Existe un valor "
+                    "incorrecto en la "
+                    "fila 13, columna "
+                    "LINEA. Los "
+                    "valores solo "
+                    "pueden ser "
+                    "['L1', 'L2', "
+                    "'L3', 'L4', "
+                    "'L4A', 'L5']",
+                    "name": "Valores incorrectos",
+                    "type": "formato",
+                },
+                {
+                    "message": "Existe un valor "
+                    "incorrecto en la "
+                    "fila 28, columna "
+                    "LINEA. Los "
+                    "valores solo "
+                    "pueden ser "
+                    "['L1', 'L2', "
+                    "'L3', 'L4', "
+                    "'L4A', 'L5']",
+                    "name": "Valores incorrectos",
+                    "type": "formato",
+                },
+                {
+                    "message": "Existe un valor "
+                    "incorrecto en la "
+                    "fila 34, columna "
+                    "LINEA. Los "
+                    "valores solo "
+                    "pueden ser "
+                    "['L1', 'L2', "
+                    "'L3', 'L4', "
+                    "'L4A', 'L5']",
+                    "name": "Valores incorrectos",
+                    "type": "formato",
+                },
+                {
+                    "message": "Existe un valor "
+                    "incorrecto en la "
+                    "fila 48, columna "
+                    "LINEA. Los "
+                    "valores solo "
+                    "pueden ser "
+                    "['L1', 'L2', "
+                    "'L3', 'L4', "
+                    "'L4A', 'L5']",
+                    "name": "Valores incorrectos",
+                    "type": "formato",
+                },
+                {
+                    "message": "Existe un valor "
+                    "incorrecto en la "
+                    "fila 76, columna "
+                    "LINEA. Los "
+                    "valores solo "
+                    "pueden ser "
+                    "['L1', 'L2', "
+                    "'L3', 'L4', "
+                    "'L4A', 'L5']",
+                    "name": "Valores incorrectos",
+                    "type": "formato",
+                },
+            ]
+        }
+        self.assertEqual(expected_data_error, data.report_errors)

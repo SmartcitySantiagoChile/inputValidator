@@ -387,6 +387,10 @@ class StringDomainValueValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if col has domain values
+        args:{
+            domain -> list
+            col_indexes -> list
+        }
         :return: bool
         """
         self.cols_error = []
@@ -643,6 +647,10 @@ class CheckColStorageValueValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if col value is in given storage
+        args:{
+            col_index -> int
+            storage_name -> string
+        }
         :return: bool
         """
         self.row_counter += 1
