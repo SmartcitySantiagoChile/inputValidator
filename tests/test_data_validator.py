@@ -543,3 +543,51 @@ class DataValidatorTest(TestCase):
             ]
         }
         self.assertEqual(expected_errors, data.report_errors)
+
+    def test_diccionario_zonificaciones(self):
+        # base case
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_diccionario_zonificaciones"),
+            config_path=os.path.join(
+                self.configuration_path, "configuration_diccionario_zonificaciones.json"
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+        expected_data_report = [
+            ["Diccionario", "Diccionario"],
+            [
+                "Diccionario-Zonificaciones.csv",
+                "Diccionario/Diccionario-Zonificaciones.csv",
+            ],
+        ]
+
+        self.assertEqual(expected_data_report, data.report)
+        self.assertEqual({}, data.report_errors)
+        # wrong case
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_diccionario_zonificaciones"),
+            config_path=os.path.join(
+                self.configuration_path,
+                "configuration_diccionario_zonificaciones_wrong.json",
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+        expected_data_report = [
+            ["Diccionario", "Diccionario"],
+            [
+                "Diccionario-Zonificaciones.csv",
+                "Diccionario/Diccionario-Zonificaciones.csv",
+            ],
+        ]
+
+        expected_error = {
+            "Diccionario-Zonificaciones.csv": [
+                {
+                    "name": "Coordenadas inválidas",
+                    "type": "valor",
+                    "message": "Las coordenadas 320439.3733, 6299473.56 en al fila 149819 no se encuentran en el rango geográfico correcto.",
+                }
+            ]
+        }
+        self.assertEqual(expected_data_report, data.report)
+        self.assertEqual(expected_error, data.report_errors)

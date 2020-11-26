@@ -7,6 +7,7 @@ from validators import (
     ASCIIColValidator,
     BoundingBoxValueValidator,
     CheckColStorageValueValidator,
+    CheckStoreColDictValuesValidator,
     DuplicateValueValidator,
     GreaterThanValueValidator,
     HeaderValidator,
@@ -18,6 +19,7 @@ from validators import (
     RegexNameValidator,
     RegexValueValidator,
     RootValidator,
+    StoreColDictValues,
     StoreColValue,
     StringDomainValueValidator,
     TimeValueValidator,
@@ -43,6 +45,8 @@ file_functions = {
     "store_col_value": StoreColValue,
     "check_col_storage_value": CheckColStorageValueValidator,
     "bounding_box": BoundingBoxValueValidator,
+    "store_col_dict_values": StoreColDictValues,
+    "check_store_col_dict_values": CheckStoreColDictValuesValidator,
 }
 
 
