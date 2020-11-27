@@ -1,5 +1,6 @@
 # -*- coding: utf8 -*-
 import argparse
+import csv
 import logging
 import os
 import shutil
@@ -63,6 +64,12 @@ def main(argv):
         logger.error("{0} contiene los siguientes errores:".format(key))
         for error in value:
             logger.error(error)
+    with open(os.path.join(OUTPUT_PATH, "output.csv"), "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["Archivo", "Error", "Tipo", "Detalle"])
+        for key, value in validator.report_errors.items():
+            for error in value:
+                writer.writerow([key, error["name"], error["type"], error["message"]])
 
     if not is_path_list:
         shutil.rmtree(os.path.join(INPUTS_PATH, "tmp"))

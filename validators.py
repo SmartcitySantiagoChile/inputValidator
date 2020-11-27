@@ -779,7 +779,7 @@ class CheckStoreColDictValuesValidator(Validator):
         values = [float(args[value]) for value in value_indexes]
         data_validator = self.args["data_validator"]
         storage = data_validator.storage.get(self.args["storage_name"], [])
-        storage_key = storage.get(key_name, [])
+        storage_key = storage.get(key_name, []) if storage != [] else []
         transform_data = self.args["transform_data"]
         res = False
         if transform_data == "wsg84_to_utm":

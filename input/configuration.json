@@ -399,7 +399,7 @@
                 "function": "check_col_storage_value",
                 "args": {
                   "col_index": 1,
-                  "storage_name": "communes"
+                  "storage_name": "comunas"
                 }
               },
               {
