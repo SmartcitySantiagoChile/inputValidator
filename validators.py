@@ -117,6 +117,8 @@ class RootValidator(Validator):
             "title": "Raiz incorrecta",
             "type": "formato",
             "message": "La raíz del directorio debe tener un nombre vacío en la configuración.",
+            "row": "",
+            "cols": "",
         }
 
     def get_fun_type(self):
@@ -141,6 +143,8 @@ class NameValidator(Validator):
             "message": "El nombre del directorio o archivo {0} no se encuentra en el directorio {1}.".format(
                 self.args["name"], self.args["path"]
             ),
+            "row": "",
+            "cols": "",
         }
 
     def get_fun_type(self):
@@ -164,6 +168,8 @@ class RegexNameValidator(Validator):
             "message": "No existe directorio o archivo con la expresión regular {0} en el directorio {1} .".format(
                 self.args["name"], self.args["path"]
             ),
+            "row": "",
+            "cols": "",
         }
 
     def get_fun_type(self):
@@ -193,6 +199,8 @@ class MinRowsValidator(Validator):
             "message": "El archivo posee {0} filas, cuando debería tener {1} filas como mínimo".format(
                 self.counter, self.args["min"]
             ),
+            "row": "",
+            "cols": "",
         }
 
     def get_fun_type(self):
@@ -242,6 +250,8 @@ class ASCIIColValidator(Validator):
             "message": "{0} {1} {2} {3} {4} {5}.".format(
                 head, var, mid, self.row_counter, tail, ", ".join(cols_names)
             ),
+            "row": self.row_counter,
+            "cols": cols_names,
         }
 
     def get_fun_type(self):
@@ -281,6 +291,8 @@ class DuplicateValueValidator(Validator):
             "message": "La variable {0} está duplicada en la fila {1}, columna {2}.".format(
                 var, self.row_counter, col_name
             ),
+            "row": self.row_counter,
+            "cols": col_name,
         }
 
     def get_fun_type(self):
@@ -308,6 +320,8 @@ class NotEmptyRowValidator(Validator):
             "message": "El archivo posee una linea vacía en la fila {0}.".format(
                 self.row_counter
             ),
+            "row": self.row_counter,
+            "cols": "",
         }
 
     def get_fun_type(self):
@@ -327,6 +341,8 @@ class HeaderValidator(Validator):
             "name": "Header incorrecto",
             "type": "formato",
             "message": "El header no corresponde al archivo.",
+            "row": "",
+            "cols": "",
         }
 
     def get_fun_type(self):
@@ -372,6 +388,8 @@ class NotEmptyValueValidator(Validator):
             "message": "{0} en la fila {1}, {2} {3}.".format(
                 head, self.row_counter, tail, ", ".join(cols_names)
             ),
+            "row": self.row_counter,
+            "cols": cols_names,
         }
 
     def get_fun_type(self):
@@ -423,6 +441,8 @@ class StringDomainValueValidator(Validator):
             "message": "{0} en la fila {1}, {2} {3}. Los valores solo pueden ser {4}".format(
                 head, self.row_counter, tail, ", ".join(cols_names), self.args["domain"]
             ),
+            "row": self.row_counter,
+            "cols": cols_names,
         }
 
     def get_fun_type(self):
@@ -458,6 +478,8 @@ class RegexValueValidator(Validator):
             "message": "La variable {0} no cumple con el formato {1} en la fila {2}, columna {3}.".format(
                 var, self.args["regex_name"], self.row_counter, col_name
             ),
+            "row": self.row_counter,
+            "cols": col_name,
         }
 
     def get_fun_type(self):
@@ -511,6 +533,8 @@ class NumericRangeValueValidator(Validator):
                 ", ".join(cols_names),
                 [self.args["lower_bound"], self.args["upper_bound"]],
             ),
+            "row": self.row_counter,
+            "cols": cols_names,
         }
 
     def get_fun_type(self):
@@ -560,6 +584,8 @@ class TimeValueValidator(Validator):
             "message": "{0} en la fila {1}, {2} {3}.".format(
                 head, self.row_counter, tail, ", ".join(cols_names)
             ),
+            "row": self.row_counter,
+            "cols": cols_names,
         }
 
     def get_fun_type(self):
@@ -602,6 +628,8 @@ class GreaterThanValueValidator(Validator):
             "message": "En la fila {1} el valor de la columna {0} es menor al valor de la columna {2}.".format(
                 first_value_header, self.row_counter, last_value_header
             ),
+            "row": self.row_counter,
+            "cols": [first_value_header, last_value_header],
         }
 
     def get_fun_type(self):
@@ -633,6 +661,8 @@ class StoreColValue(Validator):
             "name": "No se puede almacenar valor",
             "type": "formato",
             "message": "Error al almacenar valor",
+            "row": "",
+            "cols": "",
         }
 
     def get_fun_type(self):
@@ -673,6 +703,8 @@ class CheckColStorageValueValidator(Validator):
             "message": "La variable {0} no se encuentra en los valores válidos para {1} en la fila {2}, columna {3}.".format(
                 var, self.args["storage_name"], self.row_counter, col_name
             ),
+            "row": self.row_counter,
+            "cols": col_name,
         }
 
     def get_fun_type(self):
@@ -712,6 +744,8 @@ class BoundingBoxValueValidator(Validator):
             "message": "Las coordenadas {0}, {1} en al fila {2} no se encuentran en el rango geográfico correcto.".format(
                 x, y, self.row_counter
             ),
+            "row": self.row_counter,
+            "cols": "",
         }
 
     def get_fun_type(self):
@@ -750,6 +784,8 @@ class StoreColDictValues(Validator):
             "name": "No se puede almacenar valor",
             "type": "formato",
             "message": "Error al almacenar valor",
+            "row": "",
+            "cols": "",
         }
 
     def get_fun_type(self):
@@ -818,6 +854,8 @@ class CheckStoreColDictValuesValidator(Validator):
             "message": "{0} {1} en los valores válidos para {2} en la fila {3}, {4} {5}.".format(
                 var, head, self.args["key_name"], self.row_counter, tail, cols_names
             ),
+            "row": self.row_counter,
+            "cols": cols_names,
         }
 
     def get_fun_type(self):
