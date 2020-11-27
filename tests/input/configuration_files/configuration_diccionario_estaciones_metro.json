@@ -222,18 +222,6 @@
                   ],
                   "transform_data": "wsg84_to_utm"
                 }
-              },
-              {
-                "function": "check_store_col_dict_values",
-                "args": {
-                  "storage_name": "zone",
-                  "key_name": "zone_777",
-                  "value_indexes": [
-                    2,
-                    3
-                  ],
-                  "transform_data": "wsg84_to_utm"
-                }
               }
             ]
           },

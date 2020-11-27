@@ -823,3 +823,27 @@ class DataValidatorTest(TestCase):
             ]
         }
         self.assertEqual(expected_data_error, data.report_errors)
+
+    def test_paraderos(self):
+        # base case
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_paraderos"),
+            config_path=os.path.join(
+                self.configuration_path,
+                "configuration_paraderos.json",
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+        expected_report = [
+            ["Diccionario", "Diccionario"],
+            ["Diccionario-Comunas.csv", "Diccionario/Diccionario-Comunas.csv"],
+            [
+                "Diccionario-Zonificaciones.csv",
+                "Diccionario/Diccionario-Zonificaciones.csv",
+            ],
+            ["Paraderos", "Paraderos"],
+            ["ConsolidadoParadas.csv", "Paraderos/ConsolidadoParadas.csv"],
+        ]
+
+        self.assertEqual(expected_report, data.report)
+        self.assertEqual({}, data.report_errors)
