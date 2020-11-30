@@ -22,6 +22,7 @@ from validators import (
     utm_to_wsg84,
     StoreColDictValues,
     CheckStoreColDictValuesValidator,
+    CheckColStorageMultiValueValidator,
 )
 
 
@@ -921,4 +922,82 @@ class DataValidatorTest(TestCase):
 
         self.assertEqual(expected_error, validator.get_error())
 
+        self.assertEqual("storage", validator.get_fun_type())
+
+    def test_check_col_storage_multi_value(self):
+        # base case
+        dummy_object = Dummy()
+        dummy_object.storage["servicios"] = [
+            "T556 00I",
+            "T576 00I",
+            "T576 03I",
+            "T430 00I",
+            "T430 C2 00I",
+            "T406 C0 00I",
+            "B51 00I",
+            "B51 C0 00I",
+        ]
+        header = [
+            "Código ZP",
+            "Patente",
+            "Código Parada TS_1",
+            "Código Parada TS_2",
+            "X",
+            "Y",
+            "Comuna",
+            "Nombre Parada",
+            "Mixta",
+            "Unidades",
+            "Servicios",
+        ]
+
+        validator = CheckColStorageMultiValueValidator(
+            {
+                "header": header,
+                "col_index": 10,
+                "storage_name": "servicios",
+                "data_validator": dummy_object,
+                "separator": "-",
+            }
+        )
+        row = [
+            "1",
+            "RM-0045",
+            "E-17-140-PO-7",
+            "",
+            "352880.2",
+            "26301757.18",
+            "LAS CONDES",
+            "Parada 4 / (M) Escuela Militar",
+            "SI",
+            "U4-U6-U5",
+            "T556 00I-T576 00I-T576 03I-T430 00I-T430 C2 00I-T406 C0 00I-B51 00I-B51 C0 00I",
+        ]
+
+        self.assertTrue(validator.apply(row))
+
+        row = [
+            "1",
+            "RM-0045",
+            "E-17-140-PO-7",
+            "",
+            "352880.2",
+            "26301757.18",
+            "LAS CONDES",
+            "Parada 4 / (M) Escuela Militar",
+            "SI",
+            "U4-U6-U5",
+            "B01 00I-T576 00I-T576 03I-T430 00I-T430 C2 00I-T406 C0 00I-B51 00I-B51 C0 00I",
+        ]
+
+        self.assertFalse(validator.apply(row))
+        expected_error = {
+            "name": "El valor no es válido",
+            "type": "valor",
+            "message": "La variable ['B01 00I'] no se encuentra en los valores válidos para servicios en la fila 2, columna Servicios.",
+            "row": 2,
+            "cols": "Servicios",
+        }
+
+        self.assertEqual(expected_error, validator.get_error())
         self.assertEqual("storage", validator.get_fun_type())

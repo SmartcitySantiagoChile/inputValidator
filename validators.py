@@ -866,3 +866,55 @@ class CheckStoreColDictValuesValidator(Validator):
 
     def get_fun_type(self):
         return "storage"
+
+
+class CheckColStorageMultiValueValidator(Validator):
+    def __init__(self, args):
+        self.row_counter = 0
+        super().__init__(args)
+
+    def apply(self, args=None) -> bool:
+        """
+        Check if col value is in given storage when col value is a list
+        args:{
+            col_index -> int
+            storage_name -> string
+        }
+        :return: bool
+        """
+        self.row_counter += 1
+        self.args["row"] = args
+        index = self.args["col_index"]
+        separator = self.args["separator"]
+        values = args[index].split(separator)
+        data_validator = self.args["data_validator"]
+        storage = data_validator.storage.get(self.args["storage_name"], [])
+        status = True
+        self.args["error_values"] = []
+        for val in values:
+            if val not in storage:
+                self.args["error_values"].append(val)
+                status = False
+
+        return status
+
+    def get_error(self):
+        index = self.args["col_index"]
+        header = self.args["header"]
+        col_name = header[index]
+
+        return {
+            "name": "El valor no es válido",
+            "type": "valor",
+            "message": "La variable {0} no se encuentra en los valores válidos para {1} en la fila {2}, columna {3}.".format(
+                self.args["error_values"],
+                self.args["storage_name"],
+                self.row_counter,
+                col_name,
+            ),
+            "row": self.row_counter,
+            "cols": col_name,
+        }
+
+    def get_fun_type(self):
+        return "storage"
