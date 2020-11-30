@@ -159,7 +159,10 @@ class RegexNameValidator(Validator):
         """
         path = self.args["path"]
         regex = self.args["name"]
-        return True if len(glob.glob(os.path.join(path, regex))) > 0 else False
+        name = os.path.split(glob.glob(os.path.join(path, regex))[0])[1]
+        validator = args
+        validator.temp_name = name
+        return True if len(name) > 0 else False
 
     def get_error(self):
         return {

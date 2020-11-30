@@ -847,3 +847,18 @@ class DataValidatorTest(TestCase):
 
         self.assertEqual(expected_report, data.report)
         self.assertEqual({}, data.report_errors)
+
+    def test_diccionario_detalle_servicio(self):
+        # base case
+        data = DataValidator(
+            data_path=os.path.join(
+                self.input_path, "check_diccionario_detalle_servicio"
+            ),
+            config_path=os.path.join(
+                self.configuration_path,
+                "configuration_diccionario_detalle_servicio.json",
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+        print(data.report)
+        print(data.report_errors)

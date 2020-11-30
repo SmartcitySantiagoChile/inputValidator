@@ -63,6 +63,7 @@ class DataValidator:
         self.path_list_dict = []
         self.storage = {}
         self.log = logger
+        self.temp_name = None
 
     def start_iteration_over_configuration_tree(self):
         """
@@ -87,8 +88,11 @@ class DataValidator:
         validator = check_name_functions[type_name](
             {"path": absolute_path, "name": name}
         )
-        if validator.apply():
+        if validator.apply(self):
             # if name correct check rules and report errors
+            if type_name == "regex":
+                name = self.temp_name
+                self.temp_name = None
             if rules:
                 status = self.validate_node_rules(absolute_path, name, rules, header)
                 for error in status:
