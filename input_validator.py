@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 INPUTS_PATH = os.path.join(DIR_PATH, "input")
 OUTPUT_PATH = os.path.join(DIR_PATH, "output")
-OUTPUT_NAME = "transaccionesPorDia"
+OUTPUT_NAME = "errores.csv"
 CONFIG_PATH = os.path.join(INPUTS_PATH, "configuration.json")
 
 
@@ -49,14 +49,16 @@ def main(argv):
             zip_ref.extractall(temporal_path)
             input_path = os.path.join(temporal_path, zip_ref.namelist()[0])
 
-    validator = DataValidator(CONFIG_PATH, input_path, path_list=is_path_list)
+    validator = DataValidator(
+        CONFIG_PATH, input_path, path_list=is_path_list, logger=logger
+    )
 
     if is_path_list:
         validator.start_iteration_over_path_list()
     else:
         validator.start_iteration_over_configuration_tree()
 
-    # output_path = args.output if args.output else OUTPUT_PATH
+    output_path = args.output if args.output else OUTPUT_PATH
 
     for success in validator.report:
         logger.info("{0} found in {1}".format(success[0], success[1]))
@@ -64,15 +66,29 @@ def main(argv):
         logger.error("{0} contiene los siguientes errores:".format(key))
         for error in value:
             logger.error(error)
-    with open(os.path.join(OUTPUT_PATH, "output.csv"), "w", newline="") as f:
+    with open(os.path.join(OUTPUT_PATH, OUTPUT_NAME), "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["Archivo", "Error", "Tipo", "Detalle"])
+        writer.writerow(["Archivo", "Error", "Tipo", "Fila", "Columna(s)" "Detalle"])
         for key, value in validator.report_errors.items():
             for error in value:
-                writer.writerow([key, error["name"], error["type"], error["message"]])
+                writer.writerow(
+                    [
+                        key,
+                        error["name"],
+                        error["type"],
+                        error["row"],
+                        error["cols"],
+                        error["message"],
+                    ]
+                )
 
     if not is_path_list:
         shutil.rmtree(os.path.join(INPUTS_PATH, "tmp"))
+    logger.info(
+        "Archivos procesados, los resultados se encuentran en {0}".format(
+            os.path.join(output_path, OUTPUT_NAME)
+        )
+    )
 
 
 if __name__ == "__main__":

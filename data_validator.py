@@ -53,7 +53,7 @@ file_functions = {
 class DataValidator:
     """A class to iterate over a tree configuration json file and validate data"""
 
-    def __init__(self, config_path, data_path, path_list=False):
+    def __init__(self, config_path, data_path, path_list=False, logger=None):
         with open(config_path) as json_config:
             self.config = json.loads(json_config.read())
         self.report_errors = defaultdict(list)
@@ -62,6 +62,7 @@ class DataValidator:
         self.data_path = data_path
         self.path_list_dict = []
         self.storage = {}
+        self.log = logger
 
     def start_iteration_over_configuration_tree(self):
         """
@@ -146,12 +147,13 @@ class DataValidator:
         # open file
         file = open(os.path.join(path, name), encoding="UTF-8", errors="strict")
         csv_reader = csv.reader(file, delimiter=";")
+        if self.log:
+            self.log.info("Procesando {0} ...".format(name))
         try:
             # check header
             if not header_validator.apply(next(csv_reader)):
                 report.append(header_validator.get_error())
                 file.close()
-                report.append(header_validator.get_error())
                 return report
 
             # check rules

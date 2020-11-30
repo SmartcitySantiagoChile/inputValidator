@@ -741,11 +741,14 @@ class BoundingBoxValueValidator(Validator):
         return {
             "name": "Coordenadas inválidas",
             "type": "valor",
-            "message": "Las coordenadas {0}, {1} en al fila {2} no se encuentran en el rango geográfico correcto.".format(
+            "message": "Las coordenadas {0}, {1} en la fila {2} no se encuentran en el rango geográfico correcto.".format(
                 x, y, self.row_counter
             ),
             "row": self.row_counter,
-            "cols": "",
+            "cols": [
+                self.args["header"][x_coordinate_index],
+                self.args["header"][y_coordinate_index],
+            ],
         }
 
     def get_fun_type(self):
