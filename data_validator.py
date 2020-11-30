@@ -6,6 +6,7 @@ from collections import defaultdict
 from validators import (
     ASCIIColValidator,
     BoundingBoxValueValidator,
+    CheckColStorageMultiValueValidator,
     CheckColStorageValueValidator,
     CheckStoreColDictValuesValidator,
     DuplicateValueValidator,
@@ -47,6 +48,7 @@ file_functions = {
     "bounding_box": BoundingBoxValueValidator,
     "store_col_dict_values": StoreColDictValues,
     "check_store_col_dict_values": CheckStoreColDictValuesValidator,
+    "check_col_storage_multi_value": CheckColStorageMultiValueValidator,
 }
 
 
