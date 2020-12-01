@@ -80,6 +80,8 @@ class DataValidatorTest(TestCase):
     def test_regex_name_validator(self):
         # base case
         path = os.path.join(self.check_name_data_path, "Diccionario")
+        dummy_validator = Dummy()
+        dummy_validator.temp_name = "test"
         args = {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv"}
         validator = RegexNameValidator(args)
 
@@ -93,13 +95,13 @@ class DataValidatorTest(TestCase):
             "title": "No existe archivo con expresión regular",
             "type": "formato",
         }
-        self.assertTrue(validator.apply())
+        self.assertTrue(validator.apply(dummy_validator))
         self.assertEqual("name", validator.get_fun_type())
         self.assertEqual(error_message, validator.get_error())
 
         # wrong case
         validator = RegexNameValidator({"path": path, "name": "wrong.csv"})
-        self.assertFalse(validator.apply())
+        self.assertFalse(validator.apply(dummy_validator))
 
     def test_min_rows_validator(self):
         # base case
@@ -719,8 +721,8 @@ class DataValidatorTest(TestCase):
         # wrong case
         row = ["131985", "430I", "28029", "1006246"]
         expected_error = {
-            "cols": "",
-            "message": "Las coordenadas 28029.0, 1006246.0 en al fila 2 no se encuentran "
+            "cols": ["X-Coordinate", "Y-Coordinate"],
+            "message": "Las coordenadas 28029.0, 1006246.0 en la fila 2 no se encuentran "
             "en el rango geográfico correcto.",
             "name": "Coordenadas inválidas",
             "row": 2,

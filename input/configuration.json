@@ -140,6 +140,13 @@
                   "col_index": 1,
                   "storage_name": "route_name"
                 }
+              },
+              {
+                "function": "store_col_value",
+                "args": {
+                  "col_index": 11,
+                  "storage_name": "servicios"
+                }
               }
             ]
           },
@@ -479,6 +486,93 @@
                     3
                   ],
                   "transform_data": "wsg84_to_utm"
+                }
+              }
+            ]
+          },
+          "children": []
+        },
+        {
+          "path": {
+            "type": "regex",
+            "name": "Diccionario-DetalleServicioZP_*_*.csv",
+            "header": [
+              "Código ZP",
+              "Patente",
+              "Código Parada TS_1",
+              "Código Parada TS_2",
+              "X",
+              "Y",
+              "Comuna",
+              "Nombre Parada",
+              "Mixta",
+              "Unidades",
+              "Servicios"
+            ]
+          },
+          "rules": {
+            "formatRules": [
+              {
+                "function": "bounding_box",
+                "args": {
+                  "x_coordinate_index": 4,
+                  "y_coordinate_index": 5,
+                  "bounding_box": [
+                    [
+                      -33.157966831331976,
+                      -70.931424000069
+                    ],
+                    [
+                      -33.157966831331976,
+                      -70.40197466739595
+                    ],
+                    [
+                      -34.190746,
+                      -70.40197466739595
+                    ],
+                    [
+                      -34.190746,
+                      -70.931424000069
+                    ]
+                  ],
+                  "coordinate_system": "utm"
+                }
+              },
+              {
+                "function": "not_empty_col",
+                "args": {
+                  "col_indexes": [
+                    10
+                  ]
+                }
+              },
+              {
+                "function": "duplicate",
+                "args": {
+                  "col_index": 0
+                }
+              },
+              {
+                "function": "duplicate",
+                "args": {
+                  "col_index": 1
+                }
+              }
+            ],
+            "semanticRules": [
+              {
+                "function": "check_col_storage_value",
+                "args": {
+                  "col_index": 6,
+                  "storage_name": "comunas"
+                }
+              },
+              {
+                "function": "check_col_storage_multi_value",
+                "args": {
+                  "col_index": 10,
+                  "storage_name": "servicios",
+                  "separator": "-"
                 }
               }
             ]

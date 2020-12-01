@@ -39,14 +39,17 @@ class DataValidatorTest(TestCase):
         expected_errors = {
             "asd": [
                 {
+                    "cols": "",
                     "message": "El nombre del directorio o archivo asd no se "
                     "encuentra en el directorio "
-                    "{0}/.".format(self.data_path),
+                    "/home/bastianleaf/PycharmProjects/inputValidator/tests/input/data/.",
+                    "row": "",
                     "title": "Nombre incorrecto",
                     "type": "formato",
                 }
             ]
         }
+
         data = DataValidator(
             data_path=self.data_path,
             config_path=os.path.join(
@@ -170,9 +173,11 @@ class DataValidatorTest(TestCase):
         )
         expected_error = [
             {
-                "name": "Fila vacía",
-                "type": "formato",
+                "cols": "",
                 "message": "El archivo posee una linea vacía en la fila 1.",
+                "name": "Fila vacía",
+                "row": 1,
+                "type": "formato",
             }
         ]
         header = ["ID", "NOMBRE"]
@@ -288,14 +293,24 @@ class DataValidatorTest(TestCase):
         expected_error_report = {
             "Diccionario-Comunas-Wrong.csv": [
                 {
+                    "cols": "ID",
+                    "message": "La variable 0 está "
+                    "duplicada en la "
+                    "fila 2, columna "
+                    "ID.",
                     "name": "Valor duplicado",
+                    "row": 2,
                     "type": "formato",
-                    "message": "La variable 0 está duplicada en la fila 2, columna ID.",
                 },
                 {
+                    "cols": "NOMBRE",
+                    "message": "La variable LAMPA "
+                    "está duplicada en "
+                    "la fila 2, columna "
+                    "NOMBRE.",
                     "name": "Valor duplicado",
+                    "row": 2,
                     "type": "formato",
-                    "message": "La variable LAMPA está duplicada en la fila 2, columna NOMBRE.",
                 },
             ]
         }
@@ -339,66 +354,80 @@ class DataValidatorTest(TestCase):
         expected_report_error = {
             "Diccionario-Servicios-Wrong.csv": [
                 {
+                    "cols": "COD_SINRUT",
                     "message": "La variable T207 "
                     "00R está "
                     "duplicada en la "
                     "fila 40, columna "
                     "COD_SINRUT.",
                     "name": "Valor duplicado",
+                    "row": 40,
                     "type": "formato",
                 },
                 {
+                    "cols": "COD_SINRUT",
                     "message": "La variable SCA "
                     "está duplicada "
                     "en la fila 414, "
                     "columna "
                     "COD_SINRUT.",
                     "name": "Valor duplicado",
+                    "row": 414,
                     "type": "formato",
                 },
                 {
+                    "cols": "COD_SINRUT",
                     "message": "La variable SCA "
                     "está duplicada "
                     "en la fila 418, "
                     "columna "
                     "COD_SINRUT.",
                     "name": "Valor duplicado",
+                    "row": 418,
                     "type": "formato",
                 },
                 {
+                    "cols": "COD_SINRUT",
                     "message": "La variable SCA "
                     "está duplicada "
                     "en la fila 580, "
                     "columna "
                     "COD_SINRUT.",
                     "name": "Valor duplicado",
+                    "row": 580,
                     "type": "formato",
                 },
                 {
+                    "cols": "COD_SINRUT",
                     "message": "La variable SCA "
                     "está duplicada "
                     "en la fila 585, "
                     "columna "
                     "COD_SINRUT.",
                     "name": "Valor duplicado",
+                    "row": 585,
                     "type": "formato",
                 },
                 {
+                    "cols": "COD_SINRUT",
                     "message": "La variable SCA "
                     "está duplicada "
                     "en la fila 1314, "
                     "columna "
                     "COD_SINRUT.",
                     "name": "Valor duplicado",
+                    "row": 1314,
                     "type": "formato",
                 },
                 {
+                    "cols": "COD_SINRUT",
                     "message": "La variable SCA "
                     "está duplicada "
                     "en la fila 1405, "
                     "columna "
                     "COD_SINRUT.",
                     "name": "Valor duplicado",
+                    "row": 1405,
                     "type": "formato",
                 },
             ]
@@ -441,15 +470,12 @@ class DataValidatorTest(TestCase):
         expected_report_error = {
             "Diccionario-Patentes-Wrong.csv": [
                 {
+                    "cols": "",
                     "message": "El header no " "corresponde al " "archivo.",
                     "name": "Header incorrecto",
+                    "row": "",
                     "type": "formato",
-                },
-                {
-                    "message": "El header no " "corresponde al " "archivo.",
-                    "name": "Header incorrecto",
-                    "type": "formato",
-                },
+                }
             ]
         }
         self.assertEqual(expected_report, data.report)
@@ -490,9 +516,17 @@ class DataValidatorTest(TestCase):
         expected_error = {
             "Diccionario-PeriodosTS-Wrong.csv": [
                 {
-                    "name": "Inconsistencia entre valores",
+                    "cols": ["HORAFIN", "HORAINI"],
+                    "message": "En la fila 1 el "
+                    "valor de la "
+                    "columna HORAFIN "
+                    "es menor al "
+                    "valor de la "
+                    "columna "
+                    "HORAINI.",
+                    "name": "Inconsistencia " "entre valores",
+                    "row": 1,
                     "type": "formato",
-                    "message": "En la fila 1 el valor de la columna HORAFIN es menor al valor de la columna HORAINI.",
                 }
             ]
         }
@@ -536,9 +570,15 @@ class DataValidatorTest(TestCase):
         expected_errors = {
             "ShapeRutasWrong.csv": [
                 {
+                    "cols": "ROUTE_NAME",
+                    "message": "La variable E06PRN no se "
+                    "encuentra en los valores "
+                    "válidos para route_name en "
+                    "la fila 1, columna "
+                    "ROUTE_NAME.",
                     "name": "El valor no es válido",
+                    "row": 1,
                     "type": "valor",
-                    "message": "La variable E06PRN no se encuentra en los valores válidos para route_name en la fila 1, columna ROUTE_NAME.",
                 }
             ]
         }
@@ -583,9 +623,17 @@ class DataValidatorTest(TestCase):
         expected_error = {
             "Diccionario-Zonificaciones.csv": [
                 {
-                    "name": "Coordenadas inválidas",
+                    "cols": ["X", "Y"],
+                    "message": "Las coordenadas "
+                    "320439.3733, "
+                    "6299473.56 en la "
+                    "fila 149819 no se "
+                    "encuentran en el "
+                    "rango geográfico "
+                    "correcto.",
+                    "name": "Coordenadas " "inválidas",
+                    "row": 149819,
                     "type": "valor",
-                    "message": "Las coordenadas 320439.3733, 6299473.56 en al fila 149819 no se encuentran en el rango geográfico correcto.",
                 }
             ]
         }
@@ -648,6 +696,7 @@ class DataValidatorTest(TestCase):
         expected_data_error = {
             "Diccionario-EstacionesMetro.csv": [
                 {
+                    "cols": ["LINEA"],
                     "message": "Existe un valor "
                     "incorrecto en la "
                     "fila 8, columna "
@@ -658,9 +707,11 @@ class DataValidatorTest(TestCase):
                     "'L3', 'L4', "
                     "'L4A', 'L5']",
                     "name": "Valores incorrectos",
+                    "row": 8,
                     "type": "formato",
                 },
                 {
+                    "cols": ["LINEA"],
                     "message": "Existe un valor "
                     "incorrecto en la "
                     "fila 13, columna "
@@ -671,9 +722,11 @@ class DataValidatorTest(TestCase):
                     "'L3', 'L4', "
                     "'L4A', 'L5']",
                     "name": "Valores incorrectos",
+                    "row": 13,
                     "type": "formato",
                 },
                 {
+                    "cols": ["LINEA"],
                     "message": "Existe un valor "
                     "incorrecto en la "
                     "fila 28, columna "
@@ -684,9 +737,11 @@ class DataValidatorTest(TestCase):
                     "'L3', 'L4', "
                     "'L4A', 'L5']",
                     "name": "Valores incorrectos",
+                    "row": 28,
                     "type": "formato",
                 },
                 {
+                    "cols": ["LINEA"],
                     "message": "Existe un valor "
                     "incorrecto en la "
                     "fila 34, columna "
@@ -697,9 +752,11 @@ class DataValidatorTest(TestCase):
                     "'L3', 'L4', "
                     "'L4A', 'L5']",
                     "name": "Valores incorrectos",
+                    "row": 34,
                     "type": "formato",
                 },
                 {
+                    "cols": ["LINEA"],
                     "message": "Existe un valor "
                     "incorrecto en la "
                     "fila 48, columna "
@@ -710,9 +767,11 @@ class DataValidatorTest(TestCase):
                     "'L3', 'L4', "
                     "'L4A', 'L5']",
                     "name": "Valores incorrectos",
+                    "row": 48,
                     "type": "formato",
                 },
                 {
+                    "cols": ["LINEA"],
                     "message": "Existe un valor "
                     "incorrecto en la "
                     "fila 76, columna "
@@ -723,6 +782,7 @@ class DataValidatorTest(TestCase):
                     "'L3', 'L4', "
                     "'L4A', 'L5']",
                     "name": "Valores incorrectos",
+                    "row": 76,
                     "type": "formato",
                 },
             ]

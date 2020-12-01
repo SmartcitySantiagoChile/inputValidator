@@ -11,7 +11,6 @@ from pyfiglet import Figlet
 
 from data_validator import DataValidator
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -25,6 +24,8 @@ def main(argv):
     """
     Script to validate Transantiago Data
     """
+    logging.basicConfig(level=logging.INFO)
+
     f = Figlet()
     logger.info(f.renderText("Input Validator"))
 
@@ -38,7 +39,14 @@ def main(argv):
         help="path where report will be saved, if it is not provided we will use output path",
     )
     parser.add_argument("--path-list", help="Path is a path list.", action="store_true")
+    parser.add_argument(
+        "-v", "--verbose", help="increase output verbosity", action="store_true"
+    )
+
     args = parser.parse_args(argv[1:])
+    if args.verbose:
+        logging.basicConfig(level=logging.DEBUG)
+
     is_path_list = args.path_list
     if is_path_list:
         input_path = args.path
