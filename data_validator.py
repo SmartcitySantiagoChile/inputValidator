@@ -187,6 +187,8 @@ class DataValidator:
                 "name": "Error de encoding",
                 "type": "formato",
                 "message": "El archivo {0} no se encuentra en UTF-8.".format(name),
+                "row": "",
+                "cols": "",
             }
             report.append(error)
         file.close()

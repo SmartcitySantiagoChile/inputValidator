@@ -44,8 +44,6 @@ def main(argv):
     )
 
     args = parser.parse_args(argv[1:])
-    if args.verbose:
-        logging.basicConfig(level=logging.DEBUG)
 
     is_path_list = args.path_list
     if is_path_list:
@@ -68,12 +66,14 @@ def main(argv):
 
     output_path = args.output if args.output else OUTPUT_PATH
 
-    for success in validator.report:
-        logger.info("{0} found in {1}".format(success[0], success[1]))
-    for key, value in validator.report_errors.items():
-        logger.error("{0} contiene los siguientes errores:".format(key))
-        for error in value:
-            logger.error(error)
+    # for success in validator.report:
+    #    logger.info("{0} found in {1}".format(success[0], success[1]))
+    if args.verbose:
+        logging.basicConfig(level=logging.DEBUG)
+        for key, value in validator.report_errors.items():
+            logger.error("{0} contiene los siguientes errores:".format(key))
+            for error in value:
+                logger.error(error)
     with open(os.path.join(OUTPUT_PATH, OUTPUT_NAME), "w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(["Archivo", "Error", "Tipo", "Fila", "Columna(s)" "Detalle"])

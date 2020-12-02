@@ -150,9 +150,12 @@ class DataValidatorTest(TestCase):
         )
         expected_error = [
             {
+                "cols": "",
+                "message": "El archivo Diccionario-Servicios-Latin1.csv no se encuentra en "
+                "UTF-8.",
                 "name": "Error de encoding",
+                "row": "",
                 "type": "formato",
-                "message": "El archivo Diccionario-Servicios-Latin1.csv no se encuentra en UTF-8.",
             }
         ]
 
