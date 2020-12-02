@@ -69,7 +69,6 @@ def main(argv):
     # for success in validator.report:
     #    logger.info("{0} found in {1}".format(success[0], success[1]))
     if args.verbose:
-        logging.basicConfig(level=logging.DEBUG)
         for key, value in validator.report_errors.items():
             logger.error("{0} contiene los siguientes errores:".format(key))
             for error in value:
