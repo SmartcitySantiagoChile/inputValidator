@@ -693,8 +693,7 @@
                     12,
                     13,
                     14,
-                    15,
-                    16
+                    15
                   ]
                 }
               },
@@ -707,6 +706,18 @@
                   "domain": [
                     "Ida",
                     "Ret"
+                  ]
+                }
+              },
+              {
+                "function": "string_domain",
+                "args": {
+                  "col_indexes": [
+                    15
+                  ],
+                  "domain": [
+                    "",
+                    "Zona Paga"
                   ]
                 }
               }

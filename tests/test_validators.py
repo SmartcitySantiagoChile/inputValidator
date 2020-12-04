@@ -57,9 +57,9 @@ class DataValidatorTest(TestCase):
         validator = NameValidator(args)
         error_message = {
             "cols": "",
-            "message": "El nombre del directorio o archivo Diccionario no se encuentra en "
-            "el directorio "
-            "/home/bastianleaf/PycharmProjects/inputValidator/tests/input/check_name_data.",
+            "message": "El nombre del directorio o archivo 'Diccionario' no se encuentra "
+            "en el directorio "
+            "'/home/bastianleaf/PycharmProjects/inputValidator/tests/input/check_name_data'.",
             "row": "",
             "title": "Nombre incorrecto",
             "type": "formato",
@@ -88,8 +88,8 @@ class DataValidatorTest(TestCase):
         error_message = {
             "cols": "",
             "message": "No existe directorio o archivo con la expresión regular "
-            "Diccionario-DetalleServicioZP_*_*.csv en el directorio "
-            "/home/bastianleaf/PycharmProjects/inputValidator/tests/input/check_name_data/Diccionario "
+            "'Diccionario-DetalleServicioZP_*_*.csv' en el directorio "
+            "'/home/bastianleaf/PycharmProjects/inputValidator/tests/input/check_name_data/Diccionario' "
             ".",
             "row": "",
             "title": "No existe archivo con expresión regular",
@@ -109,7 +109,7 @@ class DataValidatorTest(TestCase):
         error_message = {
             "cols": "",
             "message": "El archivo posee 1 filas, cuando debería tener 3 filas como "
-            "mínimo",
+            "mínimo.",
             "name": "Número de filas menor al correcto",
             "row": "",
             "type": "formato",
@@ -134,7 +134,7 @@ class DataValidatorTest(TestCase):
         self.assertFalse(validator.apply(row))
         error_message = {
             "cols": ["COMUNA"],
-            "message": "La variable ['ÑUÑOA'] posee ñ o acentos en la fila 2 columna "
+            "message": "La variable '['ÑUÑOA']' posee ñ o acentos en la fila 2 columna "
             "COMUNA.",
             "name": "Valores contienen ñ o acentos",
             "row": 2,
@@ -147,7 +147,7 @@ class DataValidatorTest(TestCase):
         self.assertFalse(validator.apply(row))
         error_message = {
             "cols": ["COMUNA"],
-            "message": "La variable ['Pucón'] posee ñ o acentos en la fila 3 columna "
+            "message": "La variable '['Pucón']' posee ñ o acentos en la fila 3 columna "
             "COMUNA.",
             "name": "Valores contienen ñ o acentos",
             "row": 3,
@@ -161,8 +161,8 @@ class DataValidatorTest(TestCase):
         self.assertFalse(validator.apply(row))
         error_message = {
             "cols": ["ID", "COMUNA"],
-            "message": "Las variables ['Ñuñoa', 'Pucón'] poseen ñ o acentos en la fila 1 "
-            "columnas ID, COMUNA.",
+            "message": "Las variables '['Ñuñoa', 'Pucón']' poseen ñ o acentos en la fila "
+            "1 columnas ID, COMUNA.",
             "name": "Valores contienen ñ o acentos",
             "row": 1,
             "type": "formato",
@@ -183,7 +183,7 @@ class DataValidatorTest(TestCase):
         self.assertFalse(validator.apply(row))
         error_message = {
             "cols": "ID",
-            "message": "La variable 0 está duplicada en la fila 2, columna ID.",
+            "message": "La variable '0' está duplicada en la fila 2, columna ID.",
             "name": "Valor duplicado",
             "row": 2,
             "type": "formato",
@@ -224,7 +224,8 @@ class DataValidatorTest(TestCase):
 
         error_message = {
             "cols": "",
-            "message": "El header no corresponde al archivo.",
+            "message": "El header no corresponde al archivo. Este debe ser: ['ID', "
+            "'COMUNA']",
             "name": "Header incorrecto",
             "row": "",
             "type": "formato",
@@ -425,7 +426,7 @@ class DataValidatorTest(TestCase):
         error_message = {
             "cols": ["SENTIDO"],
             "message": "Existe un valor incorrecto en la fila 2, columna SENTIDO. Los "
-            "valores solo pueden ser ['I', 'R']",
+            "valores solo pueden ser '['I', 'R']'",
             "name": "Valores incorrectos",
             "row": 2,
             "type": "formato",
@@ -465,7 +466,7 @@ class DataValidatorTest(TestCase):
         error_message = {
             "cols": ["SENTIDO", "COD_USUARI"],
             "message": "Existen valores incorrectos en la fila 1, columnas SENTIDO, "
-            "COD_USUARI. Los valores solo pueden ser ['I', 'R']",
+            "COD_USUARI. Los valores solo pueden ser '['I', 'R']'",
             "name": "Valores incorrectos",
             "row": 1,
             "type": "formato",
@@ -518,8 +519,8 @@ class DataValidatorTest(TestCase):
 
         expected_message = {
             "cols": "PLACA",
-            "message": "La variable BXBXBX no cumple con el formato AAAA11 o AA1111 en la "
-            "fila 3, columna PLACA.",
+            "message": "La variable 'BXBXBX' no cumple con el formato AAAA11 o AA1111 en "
+            "la fila 3, columna PLACA.",
             "name": "El valor no cumple con la expresión regular",
             "row": 3,
             "type": "formato",
@@ -688,8 +689,8 @@ class DataValidatorTest(TestCase):
         self.assertFalse(validator.apply(row))
         expected_error = {
             "cols": "ROUTE_NAME",
-            "message": "La variable 201R no se encuentra en los valores válidos para "
-            "route_name en la fila 2, columna ROUTE_NAME.",
+            "message": "La variable '201R' no se encuentra en los valores válidos para "
+            "'route_name' en la fila 2, columna ROUTE_NAME.",
             "name": "El valor no es válido",
             "row": 2,
             "type": "valor",
@@ -722,13 +723,12 @@ class DataValidatorTest(TestCase):
         row = ["131985", "430I", "28029", "1006246"]
         expected_error = {
             "cols": ["X-Coordinate", "Y-Coordinate"],
-            "message": "Las coordenadas 28029.0, 1006246.0 en la fila 2 no se encuentran "
-            "en el rango geográfico correcto.",
+            "message": "Las coordenadas '28029.0', '1006246.0' en la fila 2 no se "
+            "encuentran en el rango geográfico correcto.",
             "name": "Coordenadas inválidas",
             "row": 2,
             "type": "valor",
         }
-
         self.assertFalse(validator.apply(row))
         self.assertEqual(expected_error, validator.get_error())
         self.assertEqual("row", validator.get_fun_type())
@@ -914,7 +914,7 @@ class DataValidatorTest(TestCase):
 
         expected_error = {
             "cols": ["LATITUD", "LONGITUD"],
-            "message": "['-33.491584', '-75.617529'] no se encuentran en los valores "
+            "message": "'['-33.491584', '-75.617529']' no se encuentran en los valores "
             "válidos para zonas_6 en la fila 1, columnas ['LATITUD', "
             "'LONGITUD'].",
             "name": "El valor no es válido",
@@ -994,11 +994,12 @@ class DataValidatorTest(TestCase):
 
         self.assertFalse(validator.apply(row))
         expected_error = {
-            "name": "El valor no es válido",
-            "type": "valor",
-            "message": "La variable ['B01 00I'] no se encuentra en los valores válidos para servicios en la fila 2, columna Servicios.",
-            "row": 2,
             "cols": "Servicios",
+            "message": "La variable '['B01 00I']' no se encuentra en los valores válidos "
+            "para servicios en la fila 2, columna Servicios.",
+            "name": "El valor no es válido",
+            "row": 2,
+            "type": "valor",
         }
 
         self.assertEqual(expected_error, validator.get_error())

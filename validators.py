@@ -140,7 +140,7 @@ class NameValidator(Validator):
         return {
             "title": "Nombre incorrecto",
             "type": "formato",
-            "message": "El nombre del directorio o archivo {0} no se encuentra en el directorio {1}.".format(
+            "message": "El nombre del directorio o archivo '{0}' no se encuentra en el directorio '{1}'.".format(
                 self.args["name"], self.args["path"]
             ),
             "row": "",
@@ -170,7 +170,7 @@ class RegexNameValidator(Validator):
         return {
             "title": "No existe archivo con expresión regular",
             "type": "formato",
-            "message": "No existe directorio o archivo con la expresión regular {0} en el directorio {1} .".format(
+            "message": "No existe directorio o archivo con la expresión regular '{0}' en el directorio '{1}' .".format(
                 self.args["name"], self.args["path"]
             ),
             "row": "",
@@ -201,7 +201,7 @@ class MinRowsValidator(Validator):
         return {
             "name": "Número de filas menor al correcto",
             "type": "formato",
-            "message": "El archivo posee {0} filas, cuando debería tener {1} filas como mínimo".format(
+            "message": "El archivo posee {0} filas, cuando debería tener {1} filas como mínimo.".format(
                 self.counter, self.args["min"]
             ),
             "row": "",
@@ -252,7 +252,7 @@ class ASCIIColValidator(Validator):
         return {
             "name": "Valores contienen ñ o acentos",
             "type": "formato",
-            "message": "{0} {1} {2} {3} {4} {5}.".format(
+            "message": "{0} '{1}' {2} {3} {4} {5}.".format(
                 head, var, mid, self.row_counter, tail, ", ".join(cols_names)
             ),
             "row": self.row_counter,
@@ -293,7 +293,7 @@ class DuplicateValueValidator(Validator):
         return {
             "name": "Valor duplicado",
             "type": "formato",
-            "message": "La variable {0} está duplicada en la fila {1}, columna {2}.".format(
+            "message": "La variable '{0}' está duplicada en la fila {1}, columna {2}.".format(
                 var, self.row_counter, col_name
             ),
             "row": self.row_counter,
@@ -345,7 +345,9 @@ class HeaderValidator(Validator):
         return {
             "name": "Header incorrecto",
             "type": "formato",
-            "message": "El header no corresponde al archivo.",
+            "message": "El header no corresponde al archivo. Este debe ser: {0}".format(
+                self.args["header"]
+            ),
             "row": "",
             "cols": "",
         }
@@ -443,7 +445,7 @@ class StringDomainValueValidator(Validator):
         return {
             "name": "Valores incorrectos",
             "type": "formato",
-            "message": "{0} en la fila {1}, {2} {3}. Los valores solo pueden ser {4}".format(
+            "message": "{0} en la fila {1}, {2} {3}. Los valores solo pueden ser '{4}'".format(
                 head, self.row_counter, tail, ", ".join(cols_names), self.args["domain"]
             ),
             "row": self.row_counter,
@@ -480,7 +482,7 @@ class RegexValueValidator(Validator):
         return {
             "name": "El valor no cumple con la expresión regular",
             "type": "formato",
-            "message": "La variable {0} no cumple con el formato {1} en la fila {2}, columna {3}.".format(
+            "message": "La variable '{0}' no cumple con el formato {1} en la fila {2}, columna {3}.".format(
                 var, self.args["regex_name"], self.row_counter, col_name
             ),
             "row": self.row_counter,
@@ -705,7 +707,7 @@ class CheckColStorageValueValidator(Validator):
         return {
             "name": "El valor no es válido",
             "type": "valor",
-            "message": "La variable {0} no se encuentra en los valores válidos para {1} en la fila {2}, columna {3}.".format(
+            "message": "La variable '{0}' no se encuentra en los valores válidos para '{1}' en la fila {2}, columna {3}.".format(
                 var, self.args["storage_name"], self.row_counter, col_name
             ),
             "row": self.row_counter,
@@ -746,7 +748,7 @@ class BoundingBoxValueValidator(Validator):
         return {
             "name": "Coordenadas inválidas",
             "type": "valor",
-            "message": "Las coordenadas {0}, {1} en la fila {2} no se encuentran en el rango geográfico correcto.".format(
+            "message": "Las coordenadas '{0}', '{1}' en la fila {2} no se encuentran en el rango geográfico correcto.".format(
                 x, y, self.row_counter
             ),
             "row": self.row_counter,
@@ -859,7 +861,7 @@ class CheckStoreColDictValuesValidator(Validator):
         return {
             "name": "El valor no es válido",
             "type": "valor",
-            "message": "{0} {1} en los valores válidos para {2} en la fila {3}, {4} {5}.".format(
+            "message": "'{0}' {1} en los valores válidos para {2} en la fila {3}, {4} {5}.".format(
                 var, head, self.args["key_name"], self.row_counter, tail, cols_names
             ),
             "row": self.row_counter,
@@ -908,7 +910,7 @@ class CheckColStorageMultiValueValidator(Validator):
         return {
             "name": "El valor no es válido",
             "type": "valor",
-            "message": "La variable {0} no se encuentra en los valores válidos para {1} en la fila {2}, columna {3}.".format(
+            "message": "La variable '{0}' no se encuentra en los valores válidos para {1} en la fila {2}, columna {3}.".format(
                 self.args["error_values"],
                 self.args["storage_name"],
                 self.row_counter,

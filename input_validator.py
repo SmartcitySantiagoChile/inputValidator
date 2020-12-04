@@ -75,7 +75,7 @@ def main(argv):
                 logger.error(error)
     with open(os.path.join(OUTPUT_PATH, OUTPUT_NAME), "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["Archivo", "Error", "Tipo", "Fila", "Columna(s)" "Detalle"])
+        writer.writerow(["Archivo", "Error", "Tipo", "Fila", "Columna(s)", "Detalle"])
         for key, value in validator.report_errors.items():
             for error in value:
                 writer.writerow(
