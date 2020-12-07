@@ -1,6 +1,7 @@
 import csv
 import json
 import os
+import sys
 from collections import defaultdict
 
 from validators import (
@@ -67,6 +68,26 @@ class DataValidator:
         self.log = logger
         self.temp_name = None
 
+    def configuration_file_error(self, exception):
+        if self.log:
+            self.log.error("Archivo de configuración mal formado")
+            # self.log.error(exception)
+        sys.exit("Procesamiento cancelado.")
+
+    def configuration_fun_error(self, exception, fun_name):
+        if self.log:
+            self.log.error("Nombre de función '{0}' no válida.".format(fun_name))
+        self.configuration_file_error(exception)
+
+    def configuration_args_error(self, exception, fun_name):
+        if self.log:
+            self.log.error(
+                "Error en la función {0}, problema con el argumento {1}".format(
+                    fun_name.__class__.__name__, exception
+                )
+            )
+        self.configuration_file_error(exception)
+
     def start_iteration_over_configuration_tree(self):
         """
         Start iteration over a configuration file
@@ -80,12 +101,15 @@ class DataValidator:
         :param path: node path
         """
         # get variables
-        name = node["path"]["name"]
-        type_name = node["path"]["type"]
-        header = node["path"].get("header", "")
-        new_path = os.path.join(path, name)
-        rules = node["rules"]
-        absolute_path = os.path.join(self.data_path, path)
+        try:
+            name = node["path"]["name"]
+            type_name = node["path"]["type"]
+            header = node["path"].get("header", "")
+            new_path = os.path.join(path, name)
+            rules = node["rules"]
+            absolute_path = os.path.join(self.data_path, path)
+        except KeyError as e:
+            self.configuration_file_error(e)
         # check name and path format
         validator = check_name_functions[type_name](
             {"path": absolute_path, "name": name}
@@ -126,8 +150,11 @@ class DataValidator:
             rule_name = rule["function"]
             rule_args = rule["args"]
             rule_args["header"] = header
-            fun_object = file_functions[rule_name](rule_args)
-            fun_type = fun_object.get_fun_type()
+            try:
+                fun_object = file_functions[rule_name](rule_args)
+            except KeyError as e:
+                self.configuration_fun_error(e, rule_name)
+            fun_type = fun_object.get_fun_type().name
             rules_dict[fun_type].append(fun_object)
         return rules_dict
 
@@ -141,9 +168,9 @@ class DataValidator:
         :return: list
         """
         report = []
-        files_rules_list = rules_dict.get("file", [])
-        row_rules_list = rules_dict.get("row", [])
-        storage_rule_list = rules_dict.get("storage", [])
+        files_rules_list = rules_dict.get("FILE", [])
+        row_rules_list = rules_dict.get("ROW", [])
+        storage_rule_list = rules_dict.get("STORAGE", [])
         for storage_fun in storage_rule_list:
             storage_fun.args["data_validator"] = self
 
@@ -169,19 +196,20 @@ class DataValidator:
                     continue
 
                 # check row fun
-                for row_fun in row_rules_list:
-                    if not row_fun.apply(row):
-                        report.append(row_fun.get_error())
-
-                # apply file fun
-                for file_fun in files_rules_list:
-                    file_fun.apply(row)
-
-                # apply storage fun
-                for storage_fun in storage_rule_list:
-                    if not storage_fun.apply(row):
-                        report.append(storage_fun.get_error())
-
+                try:
+                    for named_fun in row_rules_list:
+                        if not named_fun.apply(row):
+                            report.append(named_fun.get_error())
+                    # apply file fun
+                    for named_fun in files_rules_list:
+                        named_fun.apply(row)
+                    # apply storage fun
+                    for named_fun in storage_rule_list:
+                        if not named_fun.apply(row):
+                            report.append(named_fun.get_error())
+                except Exception as e:
+                    file.close()
+                    self.configuration_args_error(e, named_fun)
         except UnicodeDecodeError:
             error = {
                 "name": "Error de encoding",
