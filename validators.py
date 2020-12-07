@@ -4,8 +4,16 @@ import math
 import os
 import re
 from abc import ABCMeta, abstractmethod
+from enum import Enum
 
 from shapely.geometry import Point, Polygon
+
+
+class FunType(Enum):
+    NAME = 1
+    ROW = 2
+    FILE = 3
+    STORAGE = 4
 
 
 def utm_to_wsg84(
@@ -14,6 +22,14 @@ def utm_to_wsg84(
     zone: int = 19,
     north_hemisphere: bool = False,
 ) -> tuple:
+    """
+    Convert utm to wsg84
+    :param east_coordinate: easting
+    :param north_coordinate: northing
+    :param zone: zone
+    :param north_hemisphere: true | false
+    :return: (lat, long)
+    """
     if not north_hemisphere:
         north_coordinate = 10000000 - north_coordinate
 
@@ -122,7 +138,7 @@ class RootValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "name"
+        return FunType.NAME
 
 
 class NameValidator(Validator):
@@ -148,7 +164,7 @@ class NameValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "name"
+        return FunType.NAME
 
 
 class RegexNameValidator(Validator):
@@ -178,7 +194,7 @@ class RegexNameValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "name"
+        return FunType.NAME
 
 
 class MinRowsValidator(Validator):
@@ -209,7 +225,7 @@ class MinRowsValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "file"
+        return FunType.FILE
 
 
 class ASCIIColValidator(Validator):
@@ -260,7 +276,7 @@ class ASCIIColValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "row"
+        return FunType.ROW
 
 
 class DuplicateValueValidator(Validator):
@@ -301,7 +317,7 @@ class DuplicateValueValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "row"
+        return FunType.ROW
 
 
 class NotEmptyRowValidator(Validator):
@@ -330,7 +346,7 @@ class NotEmptyRowValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "row"
+        return FunType.ROW
 
 
 class HeaderValidator(Validator):
@@ -353,7 +369,7 @@ class HeaderValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "row"
+        return FunType.ROW
 
 
 class NotEmptyValueValidator(Validator):
@@ -400,7 +416,7 @@ class NotEmptyValueValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "row"
+        return FunType.ROW
 
 
 class StringDomainValueValidator(Validator):
@@ -453,7 +469,7 @@ class StringDomainValueValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "row"
+        return FunType.ROW
 
 
 class RegexValueValidator(Validator):
@@ -490,7 +506,7 @@ class RegexValueValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "row"
+        return FunType.ROW
 
 
 class NumericRangeValueValidator(Validator):
@@ -545,7 +561,7 @@ class NumericRangeValueValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "row"
+        return FunType.ROW
 
 
 class TimeValueValidator(Validator):
@@ -596,7 +612,7 @@ class TimeValueValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "row"
+        return FunType.ROW
 
 
 class GreaterThanValueValidator(Validator):
@@ -640,7 +656,7 @@ class GreaterThanValueValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "row"
+        return FunType.ROW
 
 
 class StoreColValue(Validator):
@@ -673,7 +689,7 @@ class StoreColValue(Validator):
         }
 
     def get_fun_type(self):
-        return "storage"
+        return FunType.STORAGE
 
 
 class CheckColStorageValueValidator(Validator):
@@ -715,7 +731,7 @@ class CheckColStorageValueValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "storage"
+        return FunType.STORAGE
 
 
 class BoundingBoxValueValidator(Validator):
@@ -759,7 +775,7 @@ class BoundingBoxValueValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "row"
+        return FunType.ROW
 
 
 class StoreColDictValues(Validator):
@@ -799,7 +815,7 @@ class StoreColDictValues(Validator):
         }
 
     def get_fun_type(self):
-        return "storage"
+        return FunType.STORAGE
 
 
 class CheckStoreColDictValuesValidator(Validator):
@@ -869,7 +885,7 @@ class CheckStoreColDictValuesValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "storage"
+        return FunType.STORAGE
 
 
 class CheckColStorageMultiValueValidator(Validator):
@@ -921,4 +937,4 @@ class CheckColStorageMultiValueValidator(Validator):
         }
 
     def get_fun_type(self):
-        return "storage"
+        return FunType.STORAGE

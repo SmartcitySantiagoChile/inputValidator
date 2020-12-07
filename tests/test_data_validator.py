@@ -1,5 +1,6 @@
 import json
 import os
+import logging
 from unittest import TestCase
 
 import mock
@@ -60,6 +61,45 @@ class DataValidatorTest(TestCase):
         self.assertEqual(expected_errors, data.report_errors)
 
     @mock.patch("data_validator.DataValidator.validate_node_rules")
+    def test_file_wrong_configuration(self, validate_node_rules):
+        validate_node_rules.return_value = []
+        data = DataValidator(
+            data_path=self.data_path,
+            config_path=os.path.join(
+                self.configuration_path, "configuration_wrong_file.json"
+            ),
+        )
+        with self.assertRaises(SystemExit) as cm:
+            data.start_iteration_over_configuration_tree()
+            self.assertEqual(cm.exception, 1)
+
+    def test_file_wrong_fun_name(self):
+        logger = logging.getLogger(__name__)
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_fun_name"),
+            config_path=os.path.join(
+                self.configuration_path, "configuration_wrong_fun_name.json"
+            ),
+            logger=logger,
+        )
+        with self.assertRaises(SystemExit) as cm:
+            data.start_iteration_over_configuration_tree()
+            self.assertEqual(cm.exception, 1)
+
+    def test_file_wrong_fun_args(self):
+        logger = logging.getLogger(__name__)
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_fun_name"),
+            config_path=os.path.join(
+                self.configuration_path, "configuration_wrong_fun_args.json"
+            ),
+            logger=logger,
+        )
+        with self.assertRaises(SystemExit) as cm:
+            data.start_iteration_over_configuration_tree()
+            self.assertEqual(cm.exception, 1)
+
+    @mock.patch("data_validator.DataValidator.validate_node_rules")
     def test_file_iterator_rules_error(self, validate_node_rules):
         validate_node_rules.return_value = [{"error1", "error2"}]
         expected_errors = {
@@ -112,8 +152,8 @@ class DataValidatorTest(TestCase):
             rules = configuration_file["children"][0]["children"][0]["rules"]
             header = ["ID", "COMUNA"]
             rules_dict = data_validator.dispatch_rules(rules, header)
-            self.assertEqual(1, len(rules_dict["file"]))
-            self.assertEqual(3, len(rules_dict["row"]))
+            self.assertEqual(1, len(rules_dict["FILE"]))
+            self.assertEqual(3, len(rules_dict["ROW"]))
 
     def test_check_rules_utf8(self):
         path = os.path.join(self.input_path, "utf8_data")

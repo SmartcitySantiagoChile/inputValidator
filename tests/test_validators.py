@@ -23,6 +23,7 @@ from validators import (
     StoreColDictValues,
     CheckStoreColDictValuesValidator,
     CheckColStorageMultiValueValidator,
+    FunType,
 )
 
 
@@ -48,7 +49,7 @@ class DataValidatorTest(TestCase):
             "type": "formato",
         }
         self.assertTrue(validator.apply())
-        self.assertEqual("name", validator.get_fun_type())
+        self.assertEqual(FunType.NAME, validator.get_fun_type())
         self.assertEqual(error_message, validator.get_error())
 
     def test_name_validator(self):
@@ -65,7 +66,7 @@ class DataValidatorTest(TestCase):
             "type": "formato",
         }
         self.assertTrue(validator.apply())
-        self.assertEqual("name", validator.get_fun_type())
+        self.assertEqual(FunType.NAME, validator.get_fun_type())
         self.assertEqual(error_message, validator.get_error())
 
         # file case
@@ -96,7 +97,7 @@ class DataValidatorTest(TestCase):
             "type": "formato",
         }
         self.assertTrue(validator.apply(dummy_validator))
-        self.assertEqual("name", validator.get_fun_type())
+        self.assertEqual(FunType.NAME, validator.get_fun_type())
         self.assertEqual(error_message, validator.get_error())
 
         # wrong case
@@ -117,7 +118,7 @@ class DataValidatorTest(TestCase):
         self.assertFalse(validator.apply())
         self.assertEqual(error_message, validator.get_error())
         self.assertFalse(validator.apply())
-        self.assertEqual("file", validator.get_fun_type())
+        self.assertEqual(FunType.FILE, validator.get_fun_type())
 
         # get condition
         self.assertTrue(validator.apply())
@@ -169,7 +170,7 @@ class DataValidatorTest(TestCase):
         }
         self.assertEqual(error_message, validator.get_error())
 
-        self.assertEqual("row", validator.get_fun_type())
+        self.assertEqual(FunType.ROW, validator.get_fun_type())
 
     def test_duplicate_value_validator(self):
         # base case
@@ -190,7 +191,7 @@ class DataValidatorTest(TestCase):
         }
         self.assertEqual(error_message, validator.get_error())
 
-        self.assertEqual("row", validator.get_fun_type())
+        self.assertEqual(FunType.ROW, validator.get_fun_type())
 
     def test_not_empty_row_validator(self):
         # base case
@@ -210,7 +211,7 @@ class DataValidatorTest(TestCase):
         }
         self.assertEqual(error_message, validator.get_error())
 
-        self.assertEqual("row", validator.get_fun_type())
+        self.assertEqual(FunType.ROW, validator.get_fun_type())
 
     def test_header_validator(self):
         # base case
@@ -232,7 +233,7 @@ class DataValidatorTest(TestCase):
         }
         self.assertEqual(error_message, validator.get_error())
 
-        self.assertEqual("row", validator.get_fun_type())
+        self.assertEqual(FunType.ROW, validator.get_fun_type())
 
     def test_not_empty_value_validator(self):
         # base case
@@ -338,7 +339,7 @@ class DataValidatorTest(TestCase):
 
         self.assertEqual(error_message, validator.get_error())
 
-        self.assertEqual("row", validator.get_fun_type())
+        self.assertEqual(FunType.ROW, validator.get_fun_type())
 
     def test_string_domain_value_validator(self):
         # base case
@@ -475,7 +476,7 @@ class DataValidatorTest(TestCase):
 
         self.assertEqual(error_message, validator.get_error())
 
-        self.assertEqual("row", validator.get_fun_type())
+        self.assertEqual(FunType.ROW, validator.get_fun_type())
 
     def test_regex_value_validator(self):
         # base case
@@ -528,7 +529,7 @@ class DataValidatorTest(TestCase):
 
         self.assertEqual(expected_message, validator.get_error())
 
-        self.assertEqual("row", validator.get_fun_type())
+        self.assertEqual(FunType.ROW, validator.get_fun_type())
 
     def test_numeric_domain_value_validator(self):
         # base case
@@ -577,7 +578,7 @@ class DataValidatorTest(TestCase):
         }
         self.assertEqual(expected_message, validator.get_error())
 
-        self.assertEqual("row", validator.get_fun_type())
+        self.assertEqual(FunType.ROW, validator.get_fun_type())
 
     def test_time_value_validator(self):
         # base case
@@ -608,7 +609,7 @@ class DataValidatorTest(TestCase):
         }
         self.assertEqual(expected_error, validator.get_error())
 
-        self.assertEqual("row", validator.get_fun_type())
+        self.assertEqual(FunType.ROW, validator.get_fun_type())
 
     def test_greater_than_value_validator(self):
         # base case
@@ -631,7 +632,7 @@ class DataValidatorTest(TestCase):
             "type": "formato",
         }
         self.assertEqual(expected_error, validator.get_error())
-        self.assertEqual("row", validator.get_fun_type())
+        self.assertEqual(FunType.ROW, validator.get_fun_type())
 
     def test_store_col_value(self):
         # base case
@@ -665,7 +666,7 @@ class DataValidatorTest(TestCase):
         }
 
         self.assertEqual(expected_error, validator.get_error())
-        self.assertEqual("storage", validator.get_fun_type())
+        self.assertEqual(FunType.STORAGE, validator.get_fun_type())
 
     def test_check_col_storage_value(self):
         # base case
@@ -697,7 +698,7 @@ class DataValidatorTest(TestCase):
         }
 
         self.assertEqual(expected_error, validator.get_error())
-        self.assertEqual("storage", validator.get_fun_type())
+        self.assertEqual(FunType.STORAGE, validator.get_fun_type())
 
     def test_bounding_box_value_validator(self):
         # base case
@@ -731,7 +732,7 @@ class DataValidatorTest(TestCase):
         }
         self.assertFalse(validator.apply(row))
         self.assertEqual(expected_error, validator.get_error())
-        self.assertEqual("row", validator.get_fun_type())
+        self.assertEqual(FunType.ROW, validator.get_fun_type())
 
     def test_utm_to_wsg84(self):
         test_case = [338029, 6306246]
@@ -772,7 +773,7 @@ class DataValidatorTest(TestCase):
         }
 
         self.assertEqual(expected_error, validator.get_error())
-        self.assertEqual("storage", validator.get_fun_type())
+        self.assertEqual(FunType.STORAGE, validator.get_fun_type())
 
     def test_check_store_col_dict_values_validator(self):
         # base case
@@ -924,7 +925,7 @@ class DataValidatorTest(TestCase):
 
         self.assertEqual(expected_error, validator.get_error())
 
-        self.assertEqual("storage", validator.get_fun_type())
+        self.assertEqual(FunType.STORAGE, validator.get_fun_type())
 
     def test_check_col_storage_multi_value(self):
         # base case
@@ -1003,4 +1004,4 @@ class DataValidatorTest(TestCase):
         }
 
         self.assertEqual(expected_error, validator.get_error())
-        self.assertEqual("storage", validator.get_fun_type())
+        self.assertEqual(FunType.STORAGE, validator.get_fun_type())
