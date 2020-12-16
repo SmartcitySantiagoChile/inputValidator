@@ -197,6 +197,37 @@ class RegexNameValidator(Validator):
         return FunType.NAME
 
 
+class RegexMultiNameValidator(Validator):
+    def apply(self, args=None) -> bool:
+        """
+        Check if regex file list exist in path
+        :return: bool
+        """
+        path = self.args["path"]
+        regex_list = self.args["name"]
+        name_list = [glob.glob(os.path.join(path, regex)) for regex in regex_list]
+
+        if name_list:
+            name_list = [os.path.split(name[0])[1] for name in name_list]
+        validator = args
+        validator.temp_name = name_list
+        return True if len(name_list) > 0 else False
+
+    def get_error(self):
+        return {
+            "title": "No existen archivos con expresiones regulares",
+            "type": "formato",
+            "message": "No existen directorios o archivos con la expresión regular '{0}' en el directorio '{1}' .".format(
+                self.args["name"], self.args["path"]
+            ),
+            "row": "",
+            "cols": "",
+        }
+
+    def get_fun_type(self):
+        return FunType.NAME
+
+
 class MinRowsValidator(Validator):
     counter = 0
     status = False

@@ -24,6 +24,7 @@ from validators import (
     CheckStoreColDictValuesValidator,
     CheckColStorageMultiValueValidator,
     FunType,
+    RegexMultiNameValidator,
 )
 
 
@@ -103,6 +104,42 @@ class DataValidatorTest(TestCase):
         # wrong case
         validator = RegexNameValidator({"path": path, "name": "wrong.csv"})
         self.assertFalse(validator.apply(dummy_validator))
+
+    def test_multi_regex_name_validator(self):
+        # base case
+        path = os.path.join(self.check_name_data_path, "Frecuencias")
+        dummy_validator = Dummy()
+        dummy_validator.temp_name = "test"
+        args = {
+            "path": path,
+            "name": [
+                "Capacidades_PO*.csv",
+                "Distancias_PO*.csv",
+                "Frecuencias_PO*.csv",
+                "Velocidades_PO*.csv",
+            ],
+        }
+        validator = RegexMultiNameValidator(args)
+
+        expected_temporal_name = [
+            "Capacidades_PO20200627.csv",
+            "Distancias_PO20200627.csv",
+            "Frecuencias_PO20200627.csv",
+            "Velocidades_PO20200627.csv",
+        ]
+
+        expected_error = {
+            "title": "No existen archivos con expresiones regulares",
+            "type": "formato",
+            "message": "No existen directorios o archivos con la expresión regular '['Capacidades_PO*.csv', 'Distancias_PO*.csv', 'Frecuencias_PO*.csv', 'Velocidades_PO*.csv']' en el directorio '/home/bastianleaf/PycharmProjects/inputValidator/tests/input/check_name_data/Frecuencias' .",
+            "row": "",
+            "cols": "",
+        }
+
+        self.assertTrue(validator.apply(dummy_validator))
+        self.assertEqual(expected_temporal_name, dummy_validator.temp_name)
+        self.assertEqual(FunType.NAME, validator.get_fun_type())
+        self.assertEqual(expected_error, validator.get_error())
 
     def test_min_rows_validator(self):
         # base case

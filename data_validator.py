@@ -158,7 +158,7 @@ class DataValidator:
             rules_dict[fun_type].append(fun_object)
         return rules_dict
 
-    def check_rules(self, rules_dict, path, name, header):
+    def check_rules(self, rules_dict, path, name, header) -> list:
         """
         Check all rules over a csv file
         :param rules_dict: rules to check
@@ -227,7 +227,7 @@ class DataValidator:
                 report.append(file_fun.get_error())
         return report
 
-    def validate_node_rules(self, path, name, rules, header):
+    def validate_node_rules(self, path, name, rules, header) -> list:
         report = []
         if rules:
             rules_dict = self.dispatch_rules(rules, header)
