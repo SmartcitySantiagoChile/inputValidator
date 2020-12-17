@@ -14,6 +14,7 @@ class FunType(Enum):
     ROW = 2
     FILE = 3
     STORAGE = 4
+    MULTIROW = 5
 
 
 def utm_to_wsg84(
@@ -105,6 +106,7 @@ def utm_to_wsg84(
 class Validator(object, metaclass=ABCMeta):
     def __init__(self, args):
         self.args = args
+        self.row_counter = 0
         super().__init__()
 
     @abstractmethod
@@ -207,7 +209,7 @@ class RegexMultiNameValidator(Validator):
         regex_list = self.args["name"]
         name_list = [glob.glob(os.path.join(path, regex)) for regex in regex_list]
 
-        if name_list:
+        if name_list[0]:
             name_list = [os.path.split(name[0])[1] for name in name_list]
         validator = args
         validator.temp_name = name_list
@@ -261,7 +263,7 @@ class MinRowsValidator(Validator):
 
 class ASCIIColValidator(Validator):
     def __init__(self, args):
-        self.row_counter = 0
+
         self.cols_error = []
         super().__init__(args)
 
@@ -312,7 +314,7 @@ class ASCIIColValidator(Validator):
 
 class DuplicateValueValidator(Validator):
     def __init__(self, args):
-        self.row_counter = 0
+
         self.values = []
         super().__init__(args)
 
@@ -405,7 +407,7 @@ class HeaderValidator(Validator):
 
 class NotEmptyValueValidator(Validator):
     def __init__(self, args):
-        self.row_counter = 0
+
         self.cols_error = []
         super().__init__(args)
 
@@ -452,7 +454,7 @@ class NotEmptyValueValidator(Validator):
 
 class StringDomainValueValidator(Validator):
     def __init__(self, args):
-        self.row_counter = 0
+
         self.cols_error = []
         super().__init__(args)
 
@@ -505,7 +507,6 @@ class StringDomainValueValidator(Validator):
 
 class RegexValueValidator(Validator):
     def __init__(self, args):
-        self.row_counter = 0
         super().__init__(args)
 
     def apply(self, args=None) -> bool:
@@ -542,7 +543,7 @@ class RegexValueValidator(Validator):
 
 class NumericRangeValueValidator(Validator):
     def __init__(self, args):
-        self.row_counter = 0
+
         self.cols_error = []
         super().__init__(args)
 
@@ -597,7 +598,7 @@ class NumericRangeValueValidator(Validator):
 
 class TimeValueValidator(Validator):
     def __init__(self, args):
-        self.row_counter = 0
+
         self.cols_error = []
         super().__init__(args)
 
@@ -648,7 +649,7 @@ class TimeValueValidator(Validator):
 
 class FloatValueValidator(Validator):
     def __init__(self, args):
-        self.row_counter = 0
+
         self.cols_error = []
         super().__init__(args)
 
@@ -695,7 +696,7 @@ class FloatValueValidator(Validator):
 
 class GreaterThanValueValidator(Validator):
     def __init__(self, args):
-        self.row_counter = 0
+
         super().__init__(args)
 
     def apply(self, args=None) -> bool:
@@ -772,7 +773,6 @@ class StoreColValue(Validator):
 
 class CheckColStorageValueValidator(Validator):
     def __init__(self, args):
-        self.row_counter = 0
         super().__init__(args)
 
     def apply(self, args=None) -> bool:
@@ -814,7 +814,6 @@ class CheckColStorageValueValidator(Validator):
 
 class BoundingBoxValueValidator(Validator):
     def __init__(self, args):
-        self.row_counter = 0
         super().__init__(args)
 
     def apply(self, args=None) -> bool:
@@ -898,7 +897,7 @@ class StoreColDictValues(Validator):
 
 class CheckStoreColDictValuesValidator(Validator):
     def __init__(self, args):
-        self.row_counter = 0
+
         super().__init__(args)
 
     def apply(self, args=None) -> bool:
@@ -968,7 +967,7 @@ class CheckStoreColDictValuesValidator(Validator):
 
 class CheckColStorageMultiValueValidator(Validator):
     def __init__(self, args):
-        self.row_counter = 0
+
         super().__init__(args)
 
     def apply(self, args=None) -> bool:
@@ -1016,3 +1015,57 @@ class CheckColStorageMultiValueValidator(Validator):
 
     def get_fun_type(self):
         return FunType.STORAGE
+
+
+class MultiRowColValueValidator(Validator):
+    def __init__(self, args):
+        self.cols_error = []
+        self.row_number_error = [0]
+        super().__init__(args)
+
+    def apply(self, args=None) -> bool:
+        """
+        Check if multiples rows have the same cols value
+        :return: bool
+        """
+        self.cols_error = []
+        self.row_counter += 1
+        # multiple rows
+        self.args["row"] = args
+        cols_to_check = self.args["col_indexes"]
+        base_row = self.args["row"][0]
+        row_number = 0
+        for row in self.args["row"]:
+            for col in cols_to_check:
+                if not row[col] == base_row[col]:
+                    self.cols_error.append(col)
+                    self.row_number_error.append(row_number)
+            row_number += 1
+        if len(self.cols_error) == 0:
+            return True
+        else:
+            return False
+
+    def get_error(self):
+        header = self.args["header"]
+        file_names = self.args["file_names"]
+        error_file_names = [file_names[index] for index in self.row_number_error]
+        cols_names = [header[index] for index in self.cols_error]
+        head = "Existe un valor en distinto en los archivos"
+        tail = "columna"
+        if len(cols_names) > 1:
+            head = "Existen valores distintos en los archivos"
+            tail = "columnas"
+
+        return {
+            "name": "Valores distintos en archivos",
+            "type": "formato",
+            "message": "{0} {4} en la fila {1}, {2} {3}.".format(
+                head, self.row_counter, tail, ", ".join(cols_names), error_file_names
+            ),
+            "row": self.row_counter,
+            "cols": cols_names,
+        }
+
+    def get_fun_type(self):
+        return FunType.MULTIROW
