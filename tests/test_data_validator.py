@@ -1023,5 +1023,18 @@ class DataValidatorTest(TestCase):
             ),
         )
         data.start_iteration_over_configuration_tree()
-        print(data.report)
-        print(data.report_errors)
+        expected_report = [
+            ["Frecuencias", "Frecuencias"],
+            [
+                [
+                    "Capacidades_PO20200627.csv",
+                    "Distancias_PO20200627.csv",
+                    "Frecuencias_PO20200627.csv",
+                    "Velocidades_PO20200627.csv",
+                ],
+                "Frecuencias",
+            ],
+        ]
+
+        self.assertEqual(expected_report, expected_report)
+        self.assertEqual({}, data.report_errors)

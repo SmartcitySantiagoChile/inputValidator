@@ -115,7 +115,7 @@ class DataValidator:
             if type_name != "multi-regex":
                 new_path = os.path.join(path, name)
             else:
-                new_path = absolute_path
+                new_path = path
             rules = node["rules"]
         except KeyError as e:
             self.configuration_file_error(e)
@@ -316,7 +316,6 @@ class DataValidator:
         report = []
         if rules:
             rules_dict = self.dispatch_rules(rules, header)
-            # print(rules_dict)
             report = self.check_multiple_rules(rules_dict, path, name_list, header)
 
         return report
@@ -400,4 +399,5 @@ class DataValidator:
                 report.append(error)
         for file in opened_files:
             file.close()
+
         return report
