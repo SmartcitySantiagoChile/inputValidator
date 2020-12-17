@@ -138,7 +138,7 @@ class DataValidator:
                         absolute_path, name, rules, header
                     )
                 for error in status:
-                    if len(name) > 1:
+                    if isinstance(name, list):
                         for name_file in name:
                             self.report_errors[name_file].append(error)
                     else:
@@ -340,24 +340,37 @@ class DataValidator:
         not_empty_row_validator = NotEmptyRowValidator({})
 
         # open all files
-        for name in name_list:
-            # open file
-            file = open(os.path.join(path, name), encoding="UTF-8", errors="strict")
-            opened_files.append(file)
-            csv_reader = csv.reader(file, delimiter=";")
-            opened_csv_files.append(csv_reader)
-            if self.log:
-                self.log.info("Procesando {0} ...".format(name))
-            # skip offset
-            for i in range(offset):
-                next(csv_reader)
+        try:
 
-        # check header
-        for file_num in range(len(opened_files)):
-            if not header_validator.apply(next(opened_csv_files[file_num])):
-                report.append(header_validator.get_error())
-                opened_files[file_num].close()
-                continue
+            for name in name_list:
+                # open file
+                file = open(os.path.join(path, name), encoding="UTF-8", errors="strict")
+                opened_files.append(file)
+                csv_reader = csv.reader(file, delimiter=";")
+                opened_csv_files.append(csv_reader)
+                if self.log:
+                    self.log.info("Procesando {0} ...".format(name))
+                # skip offset
+                for i in range(offset):
+                    next(csv_reader)
+            # check header
+            for file_num in range(len(opened_files)):
+                if not header_validator.apply(next(opened_csv_files[file_num])):
+                    report.append(header_validator.get_error())
+                    opened_files[file_num].close()
+                    continue
+        except UnicodeDecodeError:
+            error = {
+                "name": "Error de encoding",
+                "type": "formato",
+                "message": "El archivo {0} no se encuentra en UTF-8.".format(name),
+                "row": "",
+                "cols": "",
+            }
+            report.append(error)
+            for file in opened_files:
+                file.close()
+            return report
 
         # check rules
         for csv_files in zip(*opened_csv_files):
