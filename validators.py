@@ -646,6 +646,53 @@ class TimeValueValidator(Validator):
         return FunType.ROW
 
 
+class FloatValueValidator(Validator):
+    def __init__(self, args):
+        self.row_counter = 0
+        self.cols_error = []
+        super().__init__(args)
+
+    def apply(self, args=None) -> bool:
+        """
+        Check if col has float value
+        :return: bool
+        """
+        self.cols_error = []
+        self.row_counter += 1
+        self.args["row"] = args
+        cols_to_check = self.args["col_indexes"]
+        for col in cols_to_check:
+            value = self.args["row"][col]
+            if not value.replace(".", "", 1).isdigit():
+                self.cols_error.append(col)
+        if len(self.cols_error) == 0:
+            return True
+        else:
+            return False
+
+    def get_error(self):
+        header = self.args["header"]
+        cols_names = [header[index] for index in self.cols_error]
+        head = "Existe un valor en formato distinto a float"
+        tail = "columna"
+        if len(cols_names) > 1:
+            head = "Existen valores en formato distinto a float"
+            tail = "columnas"
+
+        return {
+            "name": "Formato float incorrecto",
+            "type": "formato",
+            "message": "{0} en la fila {1}, {2} {3}.".format(
+                head, self.row_counter, tail, ", ".join(cols_names)
+            ),
+            "row": self.row_counter,
+            "cols": cols_names,
+        }
+
+    def get_fun_type(self):
+        return FunType.ROW
+
+
 class GreaterThanValueValidator(Validator):
     def __init__(self, args):
         self.row_counter = 0

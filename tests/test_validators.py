@@ -25,6 +25,7 @@ from validators import (
     CheckColStorageMultiValueValidator,
     FunType,
     RegexMultiNameValidator,
+    FloatValueValidator,
 )
 
 
@@ -1042,3 +1043,169 @@ class DataValidatorTest(TestCase):
 
         self.assertEqual(expected_error, validator.get_error())
         self.assertEqual(FunType.STORAGE, validator.get_fun_type())
+
+    def test_float_value_validator(self):
+        # base case
+        header = [
+            "Unidad de Negocio",
+            "Código TS",
+            "Código Usuario",
+            "Sentido",
+            "Tipo",
+            "0:59",
+            "5:29",
+            "6:29",
+            "7:59",
+            "9:29",
+            "12:29",
+            "13:59",
+            "16:29",
+            "18:29",
+            "20:29",
+            "22:59",
+            "23:59",
+            "0:59",
+            "5:29",
+            "6:29",
+            "10:59",
+            "13:29",
+            "17:29",
+            "20:29",
+            "22:59",
+            "23:59",
+            "0:59",
+            "5:29",
+            "9:29",
+            "13:29",
+            "17:29",
+            "20:59",
+            "22:59",
+            "23:59",
+        ]
+
+        validator = FloatValueValidator(
+            {
+                "header": header,
+                "col_indexes": [
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19,
+                    20,
+                    21,
+                    22,
+                    23,
+                    24,
+                    25,
+                    26,
+                    27,
+                    28,
+                    29,
+                    30,
+                    31,
+                    32,
+                    33,
+                ],
+            }
+        )
+        row = [
+            "2",
+            "201",
+            "201",
+            "Ida",
+            "",
+            "0",
+            "0",
+            "736",
+            "736",
+            "674.6666667",
+            "613.3333333",
+            "613.3333333",
+            "625.6",
+            "736",
+            "644",
+            "0",
+            "0",
+            "0",
+            "0",
+            "460",
+            "531.5555556",
+            "588.8",
+            "621",
+            "613.3333333",
+            "0",
+            "0",
+            "0",
+            "0",
+            "437",
+            "529",
+            "529",
+            "473.1428571",
+            "0",
+            "0",
+        ]
+
+        self.assertTrue(validator.apply(row))
+
+        # wrong case
+        row = [
+            "2",
+            "201",
+            "201",
+            "Ida",
+            "",
+            "0",
+            "0",
+            "a",
+            "736",
+            "674.6666667",
+            "613.3333333",
+            "613.3333333",
+            "625.6",
+            "736",
+            "644",
+            "0",
+            "0",
+            "0",
+            "0",
+            "460",
+            "531.5555556",
+            "588.8",
+            "621",
+            "613.3333333",
+            "0",
+            "0",
+            "0",
+            "0",
+            "437",
+            "529",
+            "529",
+            "473.1428571",
+            "0",
+            "0",
+        ]
+
+        self.assertFalse(validator.apply(row))
+
+        expected_error = {
+            "name": "Formato float incorrecto",
+            "type": "formato",
+            "message": "Existe un valor en formato distinto a float en la fila 2, columna 6:29.",
+            "row": 2,
+            "cols": ["6:29"],
+        }
+
+        self.assertEqual(expected_error, validator.get_error())
+
+        self.assertEqual(FunType.ROW, validator.get_fun_type())
