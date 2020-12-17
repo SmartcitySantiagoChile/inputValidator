@@ -1012,3 +1012,16 @@ class DataValidatorTest(TestCase):
         data.start_iteration_over_configuration_tree()
         print(data.report)
         print(data.report_errors)
+
+    def test_frecuencias(self):
+        # base case
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_frecuencias"),
+            config_path=os.path.join(
+                self.configuration_path,
+                "configuration_frecuencias.json",
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+        print(data.report)
+        print(data.report_errors)

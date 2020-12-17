@@ -1,6 +1,6 @@
 python-decouple==3.3
 pyfiglet==0.8.post1
-mock==4.0.2
+mock==4.0.3
 coverage==5.3
-pre-commit==2.9.0
+pre-commit==2.9.3
 shapely==1.7.1

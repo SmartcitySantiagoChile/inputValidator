@@ -18,6 +18,7 @@ from validators import (
     NotEmptyRowValidator,
     NotEmptyValueValidator,
     NumericRangeValueValidator,
+    RegexMultiNameValidator,
     RegexNameValidator,
     RegexValueValidator,
     RootValidator,
@@ -31,6 +32,7 @@ check_name_functions = {
     "name": NameValidator,
     "regex": RegexNameValidator,
     "root": RootValidator,
+    "multi-regex": RegexMultiNameValidator,
 }
 
 file_functions = {
@@ -105,9 +107,12 @@ class DataValidator:
             name = node["path"]["name"]
             type_name = node["path"]["type"]
             header = node["path"].get("header", "")
-            new_path = os.path.join(path, name)
-            rules = node["rules"]
             absolute_path = os.path.join(self.data_path, path)
+            if type_name != "multi-regex":
+                new_path = os.path.join(path, name)
+            else:
+                new_path = absolute_path
+            rules = node["rules"]
         except KeyError as e:
             self.configuration_file_error(e)
         # check name and path format
@@ -120,11 +125,22 @@ class DataValidator:
                 name = self.temp_name
                 self.temp_name = None
             if rules:
-                status = self.validate_node_rules(absolute_path, name, rules, header)
+                if type_name == "multi-regex":
+                    status = self.validate_multi_node_rules(
+                        absolute_path, name, rules, header
+                    )
+                else:
+                    status = self.validate_node_rules(
+                        absolute_path, name, rules, header
+                    )
                 for error in status:
-                    self.report_errors[name].append(error)
+                    if len(name) > 1:
+                        for name_file in name:
+                            self.report_errors[name_file].append(error)
+                    else:
+                        self.report_errors[name].append(error)
                 # if not root case
-            if name:
+            if name and new_path:
                 self.report.append([name, new_path])
 
             # iterate over childs
@@ -228,6 +244,14 @@ class DataValidator:
         return report
 
     def validate_node_rules(self, path, name, rules, header) -> list:
+        """
+        Validate node rules for a file
+        :param path: file path
+        :param name: file name
+        :param rules: format and semantic rules
+        :param header: file header
+        :return:
+        """
         report = []
         if rules:
             rules_dict = self.dispatch_rules(rules, header)
@@ -283,3 +307,75 @@ class DataValidator:
             self.path_list_dict.append(node)
         for child in node["children"]:
             self.create_path_dict(child, name_list)
+
+    def validate_multi_node_rules(self, path, name_list, rules, header):
+        report = []
+        if rules:
+            rules_dict = self.dispatch_rules(rules, header)
+            # print(rules_dict)
+            report = self.check_multiple_rules(rules_dict, path, name_list, header)
+
+        return report
+
+    def check_multiple_rules(self, rules_dict, path, name_list, header) -> list:
+        offset = 4
+        report = []
+        files_rules_list = rules_dict.get("FILE", [])
+        row_rules_list = rules_dict.get("ROW", [])
+        storage_rule_list = rules_dict.get("STORAGE", [])
+        for storage_fun in storage_rule_list:
+            storage_fun.args["data_validator"] = self
+        header_validator = HeaderValidator({"header": header})
+        not_empty_row_validator = NotEmptyRowValidator({})
+        opened_files = []
+        opened_csv_files = []
+        for name in name_list:
+            # open file
+            file = open(os.path.join(path, name), encoding="UTF-8", errors="strict")
+            opened_files.append(file)
+            opened_csv_files.append(csv.reader(file, delimiter=";"))
+            if self.log:
+                self.log.info("Procesando {0} ...".format(name))
+        for file_num in range(len(opened_files)):
+            try:
+                # skip offset
+                for i in range(offset):
+                    next(opened_csv_files[file_num])
+
+                # check header
+                if not header_validator.apply(next(opened_csv_files[file_num])):
+                    report.append(header_validator.get_error())
+                    opened_files[file_num].close()
+                    continue
+
+                # check rules
+                for row in opened_csv_files[file_num]:
+                    if not not_empty_row_validator.apply(row):
+                        report.append(not_empty_row_validator.get_error())
+                        continue
+
+                    # check row fun
+                    try:
+                        # apply file fun
+                        for named_fun in files_rules_list:
+                            named_fun.apply(row)
+
+                        for named_fun in row_rules_list + storage_rule_list:
+                            if not named_fun.apply(row):
+                                report.append(named_fun.get_error())
+
+                    except Exception as e:
+                        opened_files[file_num].close()
+                        self.configuration_args_error(e, named_fun)
+            except UnicodeDecodeError:
+                error = {
+                    "name": "Error de encoding",
+                    "type": "formato",
+                    "message": "El archivo {0} no se encuentra en UTF-8.".format(name),
+                    "row": "",
+                    "cols": "",
+                }
+                report.append(error)
+        for file in opened_files:
+            file.close()
+        return report

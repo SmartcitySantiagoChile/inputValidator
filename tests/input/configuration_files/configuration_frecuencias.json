@@ -8,33 +8,336 @@
     {
       "path": {
         "type": "name",
-        "name": "Frecuecias"
+        "name": "Frecuencias"
       },
       "rules": [],
       "children": [
         {
           "path": {
             "type": "multi-regex",
-            "name": ["Diccionario-Comunas.csv"],
-            "header": ["ID", "NOMBRE"]
+            "name": [
+              "Capacidades_PO20200627.csv",
+              "Distancias_PO20200627.csv",
+              "Frecuencias_PO20200627.csv",
+              "Velocidades_PO20200627.csv"
+            ],
+            "header": [
+              "Unidad de Negocio",
+              "Código TS",
+              "Código Usuario",
+              "Sentido",
+              "Tipo",
+              "0:59",
+              "5:29",
+              "6:29",
+              "7:59",
+              "9:29",
+              "12:29",
+              "13:59",
+              "16:29",
+              "18:29",
+              "20:29",
+              "22:59",
+              "23:59",
+              "0:59",
+              "5:29",
+              "6:29",
+              "10:59",
+              "13:29",
+              "17:29",
+              "20:29",
+              "22:59",
+              "23:59",
+              "0:59",
+              "5:29",
+              "9:29",
+              "13:29",
+              "17:29",
+              "20:59",
+              "22:59",
+              "23:59"
+            ]
           },
           "rules": {
             "formatRules": [
               {
-                "function": "min_rows",
-                "args": {"min": 42}
+                "function": "not_empty_col",
+                "args": {
+                  "col_indexes": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19,
+                    20,
+                    21,
+                    22,
+                    23,
+                    24,
+                    25,
+                    26,
+                    27,
+                    28,
+                    29,
+                    30,
+                    31,
+                    32,
+                    33
+                  ]
+                }
               },
               {
-                "function": "ascii",
-                "args": {"col_indexes":  [1]}
+                "function": "string_domain",
+                "args": {
+                  "col_indexes": [3],
+                  "domain": ["Ida", "Ret"]
+                }
               },
               {
-                "function": "duplicate",
-                "args": {"col_index":  0}
+                "function": "regex_value",
+                "args": {
+                  "col_index": 5,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
               },
               {
-                "function": "duplicate",
-                "args": {"col_index":  1}
+                "function": "regex_value",
+                "args": {
+                  "col_index": 6,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 7,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 8,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 9,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 10,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 11,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 12,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 13,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 14,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 15,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 16,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 17,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 18,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 19,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 20,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 21,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 22,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 23,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 24,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 25,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 26,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 27,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 28,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 29,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 30,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 31,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 32,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
+              },
+              {
+                "function": "regex_value",
+                "args": {
+                  "col_index": 33,
+                  "regex": "r'^-?\\d+(?:\\.\\d+)?$'|0",
+                  "regex_name": "Número de tipo float"
+                }
               }
             ],
             "semanticRules": [
