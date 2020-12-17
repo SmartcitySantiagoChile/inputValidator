@@ -145,6 +145,14 @@
               }
             ],
             "semanticRules": [
+              {
+                "function": "multi_row_col_value",
+                "args": {
+                  "col_indexes": [
+                    1,2,3
+                  ]
+                }
+              }
             ]
           },
           "children": []

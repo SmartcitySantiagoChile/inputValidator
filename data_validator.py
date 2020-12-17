@@ -11,9 +11,11 @@ from validators import (
     CheckColStorageValueValidator,
     CheckStoreColDictValuesValidator,
     DuplicateValueValidator,
+    FloatValueValidator,
     GreaterThanValueValidator,
     HeaderValidator,
     MinRowsValidator,
+    MultiRowColValueValidator,
     NameValidator,
     NotEmptyRowValidator,
     NotEmptyValueValidator,
@@ -44,6 +46,7 @@ file_functions = {
     "regex_value": RegexValueValidator,
     "numeric_range": NumericRangeValueValidator,
     "greater_than": GreaterThanValueValidator,
+    "float": FloatValueValidator,
     "time": TimeValueValidator,
     "not_empty_col": NotEmptyValueValidator,
     "store_col_value": StoreColValue,
@@ -52,6 +55,7 @@ file_functions = {
     "store_col_dict_values": StoreColDictValues,
     "check_store_col_dict_values": CheckStoreColDictValuesValidator,
     "check_col_storage_multi_value": CheckColStorageMultiValueValidator,
+    "multi_row_col_value": MultiRowColValueValidator,
 }
 
 
@@ -318,38 +322,52 @@ class DataValidator:
         return report
 
     def check_multiple_rules(self, rules_dict, path, name_list, header) -> list:
+        # set variables
         offset = 4
         report = []
         files_rules_list = rules_dict.get("FILE", [])
         row_rules_list = rules_dict.get("ROW", [])
         storage_rule_list = rules_dict.get("STORAGE", [])
-        for storage_fun in storage_rule_list:
-            storage_fun.args["data_validator"] = self
-        header_validator = HeaderValidator({"header": header})
-        not_empty_row_validator = NotEmptyRowValidator({})
+        multi_row_rules_list = rules_dict.get("MULTIROW", [])
         opened_files = []
         opened_csv_files = []
+
+        # add self to storage fun
+        for storage_fun in storage_rule_list:
+            storage_fun.args["data_validator"] = self
+
+        # set always validators
+        header_validator = HeaderValidator({"header": header})
+        not_empty_row_validator = NotEmptyRowValidator({})
+
+        # open all files
         for name in name_list:
             # open file
             file = open(os.path.join(path, name), encoding="UTF-8", errors="strict")
             opened_files.append(file)
-            opened_csv_files.append(csv.reader(file, delimiter=";"))
+            csv_reader = csv.reader(file, delimiter=";")
+            opened_csv_files.append(csv_reader)
             if self.log:
                 self.log.info("Procesando {0} ...".format(name))
+            # skip offset
+            for i in range(offset):
+                next(csv_reader)
+
+        # check header
         for file_num in range(len(opened_files)):
+            if not header_validator.apply(next(opened_csv_files[file_num])):
+                report.append(header_validator.get_error())
+                opened_files[file_num].close()
+                continue
+
+        # check rules
+        for csv_files in zip(*opened_csv_files):
             try:
-                # skip offset
-                for i in range(offset):
-                    next(opened_csv_files[file_num])
+                # apply multirow fun
+                for named_fun in multi_row_rules_list:
+                    named_fun.apply(csv_files)
 
-                # check header
-                if not header_validator.apply(next(opened_csv_files[file_num])):
-                    report.append(header_validator.get_error())
-                    opened_files[file_num].close()
-                    continue
-
-                # check rules
-                for row in opened_csv_files[file_num]:
+                for row in csv_files:
                     if not not_empty_row_validator.apply(row):
                         report.append(not_empty_row_validator.get_error())
                         continue
@@ -364,6 +382,10 @@ class DataValidator:
                             if not named_fun.apply(row):
                                 report.append(named_fun.get_error())
 
+                        # apply storage fun
+                        for named_fun in storage_rule_list:
+                            if not named_fun.apply(row):
+                                report.append(named_fun.get_error())
                     except Exception as e:
                         opened_files[file_num].close()
                         self.configuration_args_error(e, named_fun)
