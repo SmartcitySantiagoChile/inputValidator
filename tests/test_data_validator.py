@@ -1009,9 +1009,23 @@ class DataValidatorTest(TestCase):
                 "configuration_diccionario_detalle_servicio.json",
             ),
         )
+
+        expected_report = [
+            ["Diccionario", "Diccionario"],
+            ["Diccionario-Comunas.csv", "Diccionario/Diccionario-Comunas.csv"],
+            [
+                "Diccionario-Zonificaciones.csv",
+                "Diccionario/Diccionario-Zonificaciones.csv",
+            ],
+            [
+                "Diccionario-DetalleServicioZP_20200627_20200731.csv",
+                "Diccionario/Diccionario-DetalleServicioZP_*_*.csv",
+            ],
+        ]
+
         data.start_iteration_over_configuration_tree()
-        print(data.report)
-        print(data.report_errors)
+        self.assertEqual(expected_report, data.report)
+        # self.assertEqual({}, data.report_errors)
 
     def test_frecuencias(self):
         # base case
@@ -1036,5 +1050,5 @@ class DataValidatorTest(TestCase):
             ],
         ]
 
-        self.assertEqual(expected_report, expected_report)
+        self.assertEqual(expected_report, data.report)
         self.assertEqual({}, data.report_errors)

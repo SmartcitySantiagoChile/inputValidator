@@ -24,7 +24,7 @@ def utm_to_wsg84(
     north_hemisphere: bool = False,
 ) -> tuple:
     """
-    Convert utm to wsg84
+    Convert utm to wsg84 coordinates
     :param east_coordinate: easting
     :param north_coordinate: northing
     :param zone: zone
@@ -598,7 +598,6 @@ class NumericRangeValueValidator(Validator):
 
 class TimeValueValidator(Validator):
     def __init__(self, args):
-
         self.cols_error = []
         super().__init__(args)
 
@@ -649,7 +648,6 @@ class TimeValueValidator(Validator):
 
 class FloatValueValidator(Validator):
     def __init__(self, args):
-
         self.cols_error = []
         super().__init__(args)
 
@@ -829,8 +827,8 @@ class BoundingBoxValueValidator(Validator):
         y = float(args[y_coordinate_index])
         if self.args["coordinate_system"] == "utm":
             x, y = utm_to_wsg84(x, y, 19)
-        point = Point(x, y)
-        bounding_box = Polygon(self.args["bounding_box"])
+            point = Point(x, y)
+            bounding_box = Polygon(self.args["bounding_box"])
         return bounding_box.contains(point)
 
     def get_error(self):
@@ -897,7 +895,6 @@ class StoreColDictValues(Validator):
 
 class CheckStoreColDictValuesValidator(Validator):
     def __init__(self, args):
-
         super().__init__(args)
 
     def apply(self, args=None) -> bool:
@@ -931,6 +928,16 @@ class CheckStoreColDictValuesValidator(Validator):
                 ) and math.isclose(storage_values[1], values[1], abs_tol=0.1):
                     res = True
                     break
+        elif transform_data == "wsg84_to_utm_as_bounding_box":
+            point = Point(*values)
+            bounding_box = []
+            for storage_values in storage_key:
+                storage_values = utm_to_wsg84(
+                    float(storage_values[0]), float(storage_values[1])
+                )
+                bounding_box.append(storage_values)
+            bounding_box = Polygon(bounding_box)
+            res = bounding_box.contains(point)
         else:
             for storage_values in storage_key:
                 storage_values = [float(storage_values[0]), float(storage_values[1])]
@@ -967,7 +974,6 @@ class CheckStoreColDictValuesValidator(Validator):
 
 class CheckColStorageMultiValueValidator(Validator):
     def __init__(self, args):
-
         super().__init__(args)
 
     def apply(self, args=None) -> bool:

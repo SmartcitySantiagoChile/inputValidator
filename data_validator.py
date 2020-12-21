@@ -73,6 +73,7 @@ class DataValidator:
         self.storage = {}
         self.log = logger
         self.temp_name = None
+        self.files_checked = set()
 
     def configuration_file_error(self, exception):
         if self.log:
@@ -112,6 +113,7 @@ class DataValidator:
             type_name = node["path"]["type"]
             header = node["path"].get("header", "")
             absolute_path = os.path.join(self.data_path, path)
+            dependencies = node["path"].get("dependencies", [])
             if type_name != "multi-regex":
                 new_path = os.path.join(path, name)
             else:
@@ -123,6 +125,25 @@ class DataValidator:
         validator = check_name_functions[type_name](
             {"path": absolute_path, "name": name}
         )
+
+        # check dependencies
+        missing_dependencies = [
+            dependency
+            for dependency in dependencies
+            if dependency not in self.files_checked
+        ]
+        if missing_dependencies:
+            for dependency in missing_dependencies:
+                error = {
+                    "name": "Error de dependencias",
+                    "type": "formato",
+                    "message": f"El archivo {name} requiere el procesamiento del archivo {dependency}.",
+                    "row": "",
+                    "cols": "",
+                }
+                self.report_errors[name].append(error)
+            return
+
         if validator.apply(self):
             # if name correct check rules and report errors
             if type_name == "regex":
@@ -245,6 +266,9 @@ class DataValidator:
         for file_fun in files_rules_list:
             if not file_fun.status:
                 report.append(file_fun.get_error())
+
+        # save file
+        self.files_checked.add(name)
         return report
 
     def validate_node_rules(self, path, name, rules, header) -> list:

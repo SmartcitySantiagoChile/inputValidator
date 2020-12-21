@@ -89,6 +89,9 @@
               "SEL_PT",
               "SEN1",
               "VALIDA"
+            ],
+            "dependencies": [
+              "Diccionario-Comunas.csv"
             ]
           },
           "rules": {
@@ -356,6 +359,10 @@
               "ESTANDAR_ESTACION_UNICA",
               "CODIGO",
               "COLOR"
+            ],
+            "dependencies": [
+              "Diccionario-Comunas.csv",
+              "Diccionario-Zonificaciones.csv"
             ]
           },
           "rules": {
@@ -446,6 +453,10 @@
               "COMUNA",
               "LATITUD",
               "LONGITUD"
+            ],
+            "dependencies": [
+              "Diccionario-Comunas.csv",
+              "Diccionario-Servicios.csv"
             ]
           },
           "rules": {
@@ -508,6 +519,10 @@
               "Mixta",
               "Unidades",
               "Servicios"
+            ],
+            "dependencies": [
+              "Diccionario-Comunas.csv",
+              "Diccionario-Servicios.csv"
             ]
           },
           "rules": {
@@ -597,6 +612,9 @@
               "ROUTE_NAME",
               "X-Coordinate",
               "Y-Coordinate"
+            ],
+            "dependencies": [
+              "Diccionario-Zonificaciones.csv"
             ]
           },
           "rules": {
@@ -671,6 +689,9 @@
               "Nombre Paradero",
               "Operación con Zona Paga",
               "Paradas con Excepciones"
+            ],
+            "dependencies": [
+              "Diccionario-Comunas.csv"
             ]
           },
           "rules": {
@@ -692,8 +713,7 @@
                     11,
                     12,
                     13,
-                    14,
-                    15
+                    14
                   ]
                 }
               },
@@ -834,8 +854,13 @@
               {
                 "function": "string_domain",
                 "args": {
-                  "col_indexes": [3],
-                  "domain": ["Ida", "Ret"]
+                  "col_indexes": [
+                    3
+                  ],
+                  "domain": [
+                    "Ida",
+                    "Ret"
+                  ]
                 }
               },
               {
@@ -880,7 +905,9 @@
                 "function": "multi_row_col_value",
                 "args": {
                   "col_indexes": [
-                    1,2,3
+                    1,
+                    2,
+                    3
                   ]
                 }
               }
