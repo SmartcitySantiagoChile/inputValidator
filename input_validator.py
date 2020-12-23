@@ -38,14 +38,12 @@ def main(argv):
         default=None,
         help="path where report will be saved, if it is not provided we will use output path",
     )
-    parser.add_argument("--path-list", help="Path is a path list.", action="store_true")
     parser.add_argument(
         "-v", "--verbose", help="increase output verbosity", action="store_true"
     )
 
     args = parser.parse_args(argv[1:])
-
-    is_path_list = args.path_list
+    is_path_list = len(args.path) > 1
     if is_path_list:
         input_path = args.path
     else:
@@ -64,7 +62,7 @@ def main(argv):
     else:
         validator.start_iteration_over_configuration_tree()
 
-    output_path = args.output if args.output else OUTPUT_PATH
+    output_name = args.output if args.output else OUTPUT_NAME
 
     # for success in validator.report:
     #    logger.info("{0} found in {1}".format(success[0], success[1]))
@@ -93,7 +91,7 @@ def main(argv):
         shutil.rmtree(os.path.join(INPUTS_PATH, "tmp"))
     logger.info(
         "Archivos procesados, los resultados se encuentran en {0}".format(
-            os.path.join(output_path, OUTPUT_NAME)
+            os.path.join(os.path.dirname(OUTPUT_PATH), output_name)
         )
     )
 

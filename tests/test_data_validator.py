@@ -9,6 +9,8 @@ from data_validator import (
     DataValidator,
 )
 
+logging.basicConfig(level=logging.CRITICAL)
+
 
 class DataValidatorTest(TestCase):
     def setUp(self):
@@ -75,6 +77,7 @@ class DataValidatorTest(TestCase):
 
     def test_file_wrong_fun_name(self):
         logger = logging.getLogger(__name__)
+
         data = DataValidator(
             data_path=os.path.join(self.input_path, "check_fun_name"),
             config_path=os.path.join(
@@ -897,7 +900,6 @@ class DataValidatorTest(TestCase):
         )
         data.start_iteration_over_configuration_tree()
         self.assertEqual(expected_report, data.report)
-        print(data.report_errors)
         expected_data_error = {
             "Diccionario-EstacionesMetroTren.csv": [
                 {

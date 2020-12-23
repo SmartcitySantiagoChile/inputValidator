@@ -125,7 +125,7 @@ class Validator(object, metaclass=ABCMeta):
 class RootValidator(Validator):
     def apply(self, args=None) -> bool:
         """
-        Return alwasy true
+        Return always true
         :return: bool
         """
         return True
