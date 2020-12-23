@@ -614,7 +614,7 @@
               "Y-Coordinate"
             ],
             "dependencies": [
-              "Diccionario-Zonificaciones.csv"
+              "Diccionario-Servicios.csv"
             ]
           },
           "rules": {
