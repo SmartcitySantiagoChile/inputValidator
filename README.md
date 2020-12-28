@@ -198,15 +198,119 @@ structure:
 ```python
 class ValidatorClass(Validator):
     def apply(self, args=None) -> bool:
-        pass
+        """
+        validate args and return status
+        """
+        status = True
+        return status
 
-    def get_error(self):
-        pass
-
-    def get_fun_type(self):
-        pass
+    def get_error(self) -> dict:
+        """
+          return a error dict message with the next structure:
+        """
+        message = {
+            "title": "error title",
+            "type": "error type",
+            "message": "error message",
+            "row": "row number",
+            "cols": "column number"
+        }
+        return message
+        
+    def get_fun_type(self) -> FunType:
+        """
+        return the Funtype
+        """
+        return FunType.NAME
+        
+```
+The validator name must be added to check_name_functions or file_functions:
+```python
+file_functions = {
+  "validator_example": ValidatorClass
+}
 ```
 
+#### Example:
+
+This validators check of a list of columns has empty values.
+If found an empty value, it returns False.
+
+```python
+class RegexValueValidator(Validator):
+
+  def apply(self, args=None) -> bool:
+    """
+    Check col value with regex
+    :return: bool
+    """
+    self.row_counter += 1  # count row 
+    self.args["row"] = args  # save row to check
+    col_to_check = self.args["col_index"] # get col index to check
+    value = self.args["row"][col_to_check] # get value of col index
+    regex = self.args["regex"] # get regex value to compare
+    return True if re.search(regex, value) else False # execute the comparation
+
+  def get_error(self) -> dict:
+    index = self.args["col_index"] # get col index
+    var = self.args["row"][index] # get col index value
+    header = self.args["header"] # get header 
+    col_name = header[index] # get header col index name
+
+    return {
+      "name": "El valor no cumple con la expresión regular",
+      "type": "formato",
+      "message": "La variable '{0}' no cumple con el formato {1} en la fila {2}, columna {3}.".format(
+        var, self.args["regex_name"], self.row_counter, col_name
+      ),
+      "row": self.row_counter,
+      "cols": col_name,
+    }
+
+    def get_fun_type(self) -> FunType:
+      return FunType.ROW # this validator is a row function
+
+    file_functions = {
+      "regex_value": RegexValueValidator
+    }
+
+```
+A list of validator classes, arguments and names are at the end of this file.
 
 
 
+
+
+
+
+
+
+## Validators
+### Validators Type
+There are 5 types of validators:
+
+|FunType   | Explanation  | 
+| ------------- | ------------- |
+| NAME| Validators that checks filename|
+| ROW| Validators that checks row values|
+| FILE| Validators that checks all file values|
+| STORAGE| Validators that check and storage row values|
+| MULTIROW| Validators that check multiple files|
+
+### Validators List
+#### Name Functions
+
+| Validator Class  | Validator Name |Arguments | Explanation |
+| ------------- | ------------- | ------------- | --------|
+| RootValidator| root| none|  Always true, use it to check the file root.
+| NameValidator| name| none|  Check if filename exists. |
+| RegexNameValidator| regex| none| Check if regex filename exists.|
+| RegexMultiNameValidator| multi-regex| none| Check if multiple regex filename exists.|
+
+#### Row Functions
+| Validator Class  | Validator Name |Arguments (type) | Explanation |
+| ------------- | ------------- | ------------- | --------|
+| ASCIIColValidator| ascii| col_indexes (list)|  Check if value is in ascii for all col_indexes.
+| DuplicateValueValidator| duplicate| col_index (string)|  Check if value in col_index is duplicated |
+| NotEmptyRowValidator| not_empty_row| none| Check if regex filename exists.|
+| StringDomainValueValidator| string_domain-regex| none| Check if multiple regex filename exists.|
