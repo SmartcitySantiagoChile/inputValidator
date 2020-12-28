@@ -8,14 +8,14 @@
     {
       "path": {
         "type": "name",
-        "name": "Diccionario"
+        "name": "Diccionarios"
       },
       "rules": [],
       "children": [
         {
           "path": {
-            "type": "name",
-            "name": "Diccionario-Comunas.csv",
+            "type": "regex",
+            "name": "Diccionario-Comunas*.csv",
             "header": [
               "ID",
               "NOMBRE"
@@ -64,8 +64,8 @@
         },
         {
           "path": {
-            "type": "name",
-            "name": "Diccionario-Servicios.csv",
+            "type": "regex",
+            "name": "Diccionario-Servicios*.csv",
             "header": [
               "ROUTE_ID",
               "ROUTE_NAME",
@@ -91,7 +91,7 @@
               "VALIDA"
             ],
             "dependencies": [
-              "Diccionario-Comunas.csv"
+              "Diccionario-Comunas*.csv"
             ]
           },
           "rules": {
@@ -157,8 +157,8 @@
         },
         {
           "path": {
-            "type": "name",
-            "name": "Diccionario-PeriodosTS.csv",
+            "type": "regex",
+            "name": "Diccionario-PeriodosTS*.csv",
             "header": [
               "ID",
               "TIPODIA",
@@ -227,8 +227,8 @@
         },
         {
           "path": {
-            "type": "name",
-            "name": "Diccionario-Patentes.csv",
+            "type": "regex",
+            "name": "Diccionario-Patentes*.csv",
             "header": [
               "FOLIO",
               "UN",
@@ -277,8 +277,8 @@
         },
         {
           "path": {
-            "type": "name",
-            "name": "Diccionario-Zonificaciones.csv",
+            "type": "regex",
+            "name": "Diccionario-Zonificaciones*.csv",
             "header": [
               "ID_POLIGONO",
               "X",
@@ -346,8 +346,8 @@
         },
         {
           "path": {
-            "type": "name",
-            "name": "Diccionario-EstacionesMetro.csv",
+            "type": "regex",
+            "name": "Diccionario-EstacionesMetro_*.csv",
             "header": [
               "CODIGOTRX",
               "COMUNA",
@@ -361,8 +361,8 @@
               "COLOR"
             ],
             "dependencies": [
-              "Diccionario-Comunas.csv",
-              "Diccionario-Zonificaciones.csv"
+              "Diccionario-Comunas*.csv",
+              "Diccionario-Zonificaciones*.csv"
             ]
           },
           "rules": {
@@ -415,30 +415,6 @@
                   "col_index": 1,
                   "storage_name": "comunas"
                 }
-              },
-              {
-                "function": "check_store_col_dict_values",
-                "args": {
-                  "storage_name": "zone",
-                  "key_name": "diseno_777",
-                  "value_indexes": [
-                    2,
-                    3
-                  ],
-                  "transform_data": "wsg84_to_utm"
-                }
-              },
-              {
-                "function": "check_store_col_dict_values",
-                "args": {
-                  "storage_name": "zone",
-                  "key_name": "comunas",
-                  "value_indexes": [
-                    2,
-                    3
-                  ],
-                  "transform_data": "wsg84_to_utm"
-                }
               }
             ]
           },
@@ -446,8 +422,8 @@
         },
         {
           "path": {
-            "type": "name",
-            "name": "Diccionario-EstacionesMetroTren.csv",
+            "type": "regex",
+            "name": "Diccionario-EstacionesMetroTren*.csv",
             "header": [
               "CODIGOTRX",
               "COMUNA",
@@ -455,8 +431,8 @@
               "LONGITUD"
             ],
             "dependencies": [
-              "Diccionario-Comunas.csv",
-              "Diccionario-Servicios.csv"
+              "Diccionario-Comunas*.csv",
+              "Diccionario-Servicios*.csv"
             ]
           },
           "rules": {
@@ -486,18 +462,6 @@
                   "col_index": 1,
                   "storage_name": "comunas"
                 }
-              },
-              {
-                "function": "check_store_col_dict_values",
-                "args": {
-                  "storage_name": "zone",
-                  "key_name": "comunas",
-                  "value_indexes": [
-                    2,
-                    3
-                  ],
-                  "transform_data": "wsg84_to_utm"
-                }
               }
             ]
           },
@@ -521,8 +485,8 @@
               "Servicios"
             ],
             "dependencies": [
-              "Diccionario-Comunas.csv",
-              "Diccionario-Servicios.csv"
+              "Diccionario-Comunas*.csv",
+              "Diccionario-Servicios*.csv"
             ]
           },
           "rules": {
@@ -605,8 +569,8 @@
       "children": [
         {
           "path": {
-            "type": "name",
-            "name": "ShapeRutas.csv",
+            "type": "regex",
+            "name": "ShapeRutas*.csv",
             "header": [
               "ID",
               "ROUTE_NAME",
@@ -614,7 +578,7 @@
               "Y-Coordinate"
             ],
             "dependencies": [
-              "Diccionario-Servicios.csv"
+              "Diccionario-Servicios*.csv"
             ]
           },
           "rules": {
@@ -669,8 +633,8 @@
       "children": [
         {
           "path": {
-            "type": "name",
-            "name": "ConsolidadoParadas.csv",
+            "type": "regex",
+            "name": "ConsolidadoParadas*.csv",
             "header": [
               "OrdenCirc",
               "Código TS",
@@ -691,7 +655,7 @@
               "Paradas con Excepciones"
             ],
             "dependencies": [
-              "Diccionario-Comunas.csv"
+              "Diccionario-Comunas*.csv"
             ]
           },
           "rules": {
@@ -767,10 +731,10 @@
           "path": {
             "type": "multi-regex",
             "name": [
-              "Capacidades_PO20200627.csv",
-              "Distancias_PO20200627.csv",
-              "Frecuencias_PO20200627.csv",
-              "Velocidades_PO20200627.csv"
+              "Capacidades*.csv",
+              "Distancias*.csv",
+              "Frecuencias*.csv",
+              "Velocidades*.csv"
             ],
             "header": [
               "Unidad de Negocio",

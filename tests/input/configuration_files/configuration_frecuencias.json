@@ -16,10 +16,10 @@
           "path": {
             "type": "multi-regex",
             "name": [
-              "Capacidades_PO20200627.csv",
-              "Distancias_PO20200627.csv",
-              "Frecuencias_PO20200627.csv",
-              "Velocidades_PO20200627.csv"
+              "Capacidades_*.csv",
+              "Distancias_*.csv",
+              "Frecuencias_*.csv",
+              "Velocidades_*.csv"
             ],
             "header": [
               "Unidad de Negocio",

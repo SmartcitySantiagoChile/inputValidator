@@ -1,6 +1,8 @@
 import csv
+import fnmatch
 import json
 import os
+import re
 import sys
 from collections import defaultdict
 
@@ -80,28 +82,32 @@ class DataValidator:
         )
 
         # check dependencies
-        missing_dependencies = [
-            dependency
-            for dependency in dependencies
-            if dependency not in self.files_checked
-        ]
-        if missing_dependencies:
-            for dependency in missing_dependencies:
-                error = {
-                    "name": "Error de dependencias",
-                    "type": "formato",
-                    "message": f"El archivo {name} requiere el procesamiento del archivo {dependency}.",
-                    "row": "",
-                    "cols": "",
-                }
-                self.report_errors[name].append(error)
-            return
+        missing_dependencies = []
+        for dependency in dependencies:
+            dependency_found = False
+            for file in self.files_checked:
+                if fnmatch.fnmatch(file, dependency):
+                    dependency_found = True
+            if not dependency_found:
+                missing_dependencies.append(dependency)
 
         if validator.apply(self):
             # if name correct check rules and report errors
-            if type_name == "regex":
+            if type_name == "regex" or type_name == "multi-regex":
                 name = self.temp_name
                 self.temp_name = None
+
+            if missing_dependencies:
+                for dependency in missing_dependencies:
+                    error = {
+                        "name": "Error de dependencias",
+                        "type": "formato",
+                        "message": f"El archivo {name} requiere el procesamiento del archivo con patrón {dependency}.",
+                        "row": "",
+                        "cols": "",
+                    }
+                    self.report_errors[name].append(error)
+                return
             if rules:
                 if type_name == "multi-regex":
                     status = self.validate_multi_node_rules(
@@ -172,7 +178,7 @@ class DataValidator:
         not_empty_row_validator = NotEmptyRowValidator({})
 
         # open file
-        file = open(os.path.join(path, name), encoding="UTF-8", errors="strict")
+        file = open(os.path.join(path, name), encoding="UTF-8-SIG", errors="strict")
         csv_reader = csv.reader(file, delimiter=";")
         if self.log:
             self.log.info("Procesando {0} ...".format(name))
@@ -321,7 +327,9 @@ class DataValidator:
 
             for name in name_list:
                 # open file
-                file = open(os.path.join(path, name), encoding="UTF-8", errors="strict")
+                file = open(
+                    os.path.join(path, name), encoding="UTF-8-SIG", errors="strict"
+                )
                 opened_files.append(file)
                 csv_reader = csv.reader(file, delimiter=";")
                 opened_csv_files.append(csv_reader)
@@ -333,9 +341,9 @@ class DataValidator:
             # check header
             for file_num in range(len(opened_files)):
                 if not header_validator.apply(next(opened_csv_files[file_num])):
-                    report.append(header_validator.get_error())
                     opened_files[file_num].close()
-                    continue
+                    report.append(header_validator.get_error())
+                    return report
         except UnicodeDecodeError:
             error = {
                 "name": "Error de encoding",

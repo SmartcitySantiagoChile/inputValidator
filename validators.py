@@ -132,7 +132,7 @@ class RootValidator(Validator):
 
     def get_error(self) -> dict:
         return {
-            "title": "Raiz incorrecta",
+            "name": "Raiz incorrecta",
             "type": "formato",
             "message": "La raíz del directorio debe tener un nombre vacío en la configuración.",
             "row": "",
@@ -156,7 +156,7 @@ class NameValidator(Validator):
 
     def get_error(self) -> dict:
         return {
-            "title": "Nombre incorrecto",
+            "name": "Nombre incorrecto",
             "type": "formato",
             "message": "El nombre del directorio o archivo '{0}' no se encuentra en el directorio '{1}'.".format(
                 self.args["name"], self.args["path"]
@@ -186,7 +186,7 @@ class RegexNameValidator(Validator):
 
     def get_error(self) -> dict:
         return {
-            "title": "No existe archivo con expresión regular",
+            "name": "No existe archivo con expresión regular",
             "type": "formato",
             "message": "No existe directorio o archivo con la expresión regular '{0}' en el directorio '{1}' .".format(
                 self.args["name"], self.args["path"]
@@ -208,7 +208,6 @@ class RegexMultiNameValidator(Validator):
         path = self.args["path"]
         regex_list = self.args["name"]
         name_list = [glob.glob(os.path.join(path, regex)) for regex in regex_list]
-
         if name_list[0]:
             name_list = [os.path.split(name[0])[1] for name in name_list]
         validator = args
@@ -217,7 +216,7 @@ class RegexMultiNameValidator(Validator):
 
     def get_error(self) -> dict:
         return {
-            "title": "No existen archivos con expresiones regulares",
+            "name": "No existen archivos con expresiones regulares",
             "type": "formato",
             "message": "No existen directorios o archivos con la expresión regular '{0}' en el directorio '{1}' .".format(
                 self.args["name"], self.args["path"]
@@ -388,7 +387,10 @@ class HeaderValidator(Validator):
         Check header
         :return: bool
         """
-        return self.args["header"] == args
+        for header, expected_header in zip(args, self.args["header"]):
+            if header != expected_header:
+                return False
+        return True
 
     def get_error(self) -> dict:
         return {
