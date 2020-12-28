@@ -130,7 +130,7 @@ class RootValidator(Validator):
         """
         return True
 
-    def get_error(self):
+    def get_error(self) -> dict:
         return {
             "title": "Raiz incorrecta",
             "type": "formato",
@@ -154,7 +154,7 @@ class NameValidator(Validator):
         real_path = os.path.join(path, name)
         return os.path.exists(real_path)
 
-    def get_error(self):
+    def get_error(self) -> dict:
         return {
             "title": "Nombre incorrecto",
             "type": "formato",
@@ -184,7 +184,7 @@ class RegexNameValidator(Validator):
         validator.temp_name = name
         return True if len(name) > 0 else False
 
-    def get_error(self):
+    def get_error(self) -> dict:
         return {
             "title": "No existe archivo con expresión regular",
             "type": "formato",
@@ -215,7 +215,7 @@ class RegexMultiNameValidator(Validator):
         validator.temp_name = name_list
         return True if len(name_list) > 0 else False
 
-    def get_error(self):
+    def get_error(self) -> dict:
         return {
             "title": "No existen archivos con expresiones regulares",
             "type": "formato",
@@ -246,7 +246,7 @@ class MinRowsValidator(Validator):
             self.status = True
         return res
 
-    def get_error(self):
+    def get_error(self) -> dict:
         return {
             "name": "Número de filas menor al correcto",
             "type": "formato",
@@ -286,7 +286,7 @@ class ASCIIColValidator(Validator):
         else:
             return False
 
-    def get_error(self):
+    def get_error(self) -> dict:
         var = [self.args["row"][index] for index in self.cols_error]
         header = self.args["header"]
         cols_names = [header[index] for index in self.cols_error]
@@ -333,7 +333,7 @@ class DuplicateValueValidator(Validator):
             self.values.append(value)
         return True
 
-    def get_error(self):
+    def get_error(self) -> dict:
         index = self.args["col_index"]
         var = self.args["row"][index]
         header = self.args["header"]
@@ -390,7 +390,7 @@ class HeaderValidator(Validator):
         """
         return self.args["header"] == args
 
-    def get_error(self):
+    def get_error(self) -> dict:
         return {
             "name": "Header incorrecto",
             "type": "formato",
@@ -429,7 +429,7 @@ class NotEmptyValueValidator(Validator):
         else:
             return False
 
-    def get_error(self):
+    def get_error(self) -> dict:
         header = self.args["header"]
         cols_names = [header[index] for index in self.cols_error]
         head = "Existe un valor vacío"
@@ -482,7 +482,7 @@ class StringDomainValueValidator(Validator):
         else:
             return False
 
-    def get_error(self):
+    def get_error(self) -> dict:
         header = self.args["header"]
         cols_names = [header[index] for index in self.cols_error]
         head = "Existe un valor incorrecto"
@@ -521,7 +521,7 @@ class RegexValueValidator(Validator):
         regex = self.args["regex"]
         return True if re.search(regex, value) else False
 
-    def get_error(self):
+    def get_error(self) -> dict:
         index = self.args["col_index"]
         var = self.args["row"][index]
         header = self.args["header"]
@@ -568,7 +568,7 @@ class NumericRangeValueValidator(Validator):
         else:
             return False
 
-    def get_error(self):
+    def get_error(self) -> dict:
         header = self.args["header"]
         cols_names = [header[index] for index in self.cols_error]
         head = "Valor fuera de rango"
@@ -623,7 +623,7 @@ class TimeValueValidator(Validator):
         else:
             return False
 
-    def get_error(self):
+    def get_error(self) -> dict:
         header = self.args["header"]
         cols_names = [header[index] for index in self.cols_error]
         head = "Existe un valor en formato de hora incorrecto"
@@ -669,7 +669,7 @@ class FloatValueValidator(Validator):
         else:
             return False
 
-    def get_error(self):
+    def get_error(self) -> dict:
         header = self.args["header"]
         cols_names = [header[index] for index in self.cols_error]
         head = "Existe un valor en formato distinto a float"
@@ -718,7 +718,7 @@ class GreaterThanValueValidator(Validator):
         else:
             return upper_col > lower_col
 
-    def get_error(self):
+    def get_error(self) -> dict:
         first_value_header = self.args["header"][self.args["upper_col"]]
         last_value_header = self.args["header"][self.args["lower_col"]]
 
@@ -755,8 +755,7 @@ class StoreColValue(Validator):
             data_validator.storage[storage_name].append(var)
         return True
 
-    def get_error(self):
-
+    def get_error(self) -> dict:
         return {
             "name": "No se puede almacenar valor",
             "type": "formato",
@@ -790,7 +789,7 @@ class CheckColStorageValueValidator(Validator):
         storage = data_validator.storage.get(self.args["storage_name"], [])
         return val in storage
 
-    def get_error(self):
+    def get_error(self) -> dict:
         index = self.args["col_index"]
         var = self.args["row"][index]
         header = self.args["header"]
@@ -831,7 +830,7 @@ class BoundingBoxValueValidator(Validator):
             bounding_box = Polygon(self.args["bounding_box"])
         return bounding_box.contains(point)
 
-    def get_error(self):
+    def get_error(self) -> dict:
         x_coordinate_index = self.args["x_coordinate_index"]
         y_coordinate_index = self.args["y_coordinate_index"]
         x = float(self.args["row"][x_coordinate_index])
@@ -879,8 +878,7 @@ class StoreColDictValues(Validator):
         data_validator.storage[storage_name] = value_dict
         return True
 
-    def get_error(self):
-
+    def get_error(self) -> dict:
         return {
             "name": "No se puede almacenar valor",
             "type": "formato",
@@ -948,7 +946,7 @@ class CheckStoreColDictValuesValidator(Validator):
                     break
         return res
 
-    def get_error(self):
+    def get_error(self) -> dict:
         header = self.args["header"]
         cols_names = [header[index] for index in self.args["value_indexes"]]
         var = [self.args["row"][value] for value in self.args["value_indexes"]]
@@ -1001,7 +999,7 @@ class CheckColStorageMultiValueValidator(Validator):
 
         return status
 
-    def get_error(self):
+    def get_error(self) -> dict:
         index = self.args["col_index"]
         header = self.args["header"]
         col_name = header[index]
@@ -1052,7 +1050,7 @@ class MultiRowColValueValidator(Validator):
         else:
             return False
 
-    def get_error(self):
+    def get_error(self) -> dict:
         header = self.args["header"]
         file_names = self.args["file_names"]
         error_file_names = [file_names[index] for index in self.row_number_error]
