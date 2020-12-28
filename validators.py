@@ -139,7 +139,7 @@ class RootValidator(Validator):
             "cols": "",
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.NAME
 
 
@@ -165,7 +165,7 @@ class NameValidator(Validator):
             "cols": "",
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.NAME
 
 
@@ -226,7 +226,7 @@ class RegexMultiNameValidator(Validator):
             "cols": "",
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.NAME
 
 
@@ -257,7 +257,7 @@ class MinRowsValidator(Validator):
             "cols": "",
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.FILE
 
 
@@ -308,7 +308,7 @@ class ASCIIColValidator(Validator):
             "cols": cols_names,
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.ROW
 
 
@@ -349,7 +349,7 @@ class DuplicateValueValidator(Validator):
             "cols": col_name,
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.ROW
 
 
@@ -378,7 +378,7 @@ class NotEmptyRowValidator(Validator):
             "cols": "",
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.ROW
 
 
@@ -401,7 +401,7 @@ class HeaderValidator(Validator):
             "cols": "",
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.ROW
 
 
@@ -448,7 +448,7 @@ class NotEmptyValueValidator(Validator):
             "cols": cols_names,
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.ROW
 
 
@@ -501,7 +501,7 @@ class StringDomainValueValidator(Validator):
             "cols": cols_names,
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.ROW
 
 
@@ -537,7 +537,7 @@ class RegexValueValidator(Validator):
             "cols": col_name,
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.ROW
 
 
@@ -592,7 +592,7 @@ class NumericRangeValueValidator(Validator):
             "cols": cols_names,
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.ROW
 
 
@@ -642,7 +642,7 @@ class TimeValueValidator(Validator):
             "cols": cols_names,
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.ROW
 
 
@@ -688,7 +688,7 @@ class FloatValueValidator(Validator):
             "cols": cols_names,
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.ROW
 
 
@@ -732,7 +732,7 @@ class GreaterThanValueValidator(Validator):
             "cols": [first_value_header, last_value_header],
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.ROW
 
 
@@ -765,7 +765,7 @@ class StoreColValue(Validator):
             "cols": "",
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.STORAGE
 
 
@@ -806,7 +806,7 @@ class CheckColStorageValueValidator(Validator):
             "cols": col_name,
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.STORAGE
 
 
@@ -849,7 +849,7 @@ class BoundingBoxValueValidator(Validator):
             ],
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.ROW
 
 
@@ -889,7 +889,7 @@ class StoreColDictValues(Validator):
             "cols": "",
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.STORAGE
 
 
@@ -968,7 +968,7 @@ class CheckStoreColDictValuesValidator(Validator):
             "cols": cols_names,
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.STORAGE
 
 
@@ -1019,7 +1019,7 @@ class CheckColStorageMultiValueValidator(Validator):
             "cols": col_name,
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.STORAGE
 
 
@@ -1073,7 +1073,7 @@ class MultiRowColValueValidator(Validator):
             "cols": cols_names,
         }
 
-    def get_fun_type(self):
+    def get_fun_type(self) -> FunType:
         return FunType.MULTIROW
 
 
