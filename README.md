@@ -115,8 +115,21 @@ Information about validations
 * **formatRules**: list of format rules (list(dict))
 * **semanticRules**: list of semantic rules (list(dict))
 
-#### Children
+##### Rule
+A rule dict has the next structure:
 
+    {
+        "function": "bounding_box",
+        "args": {
+            "x_coordinate_index": 2,
+            "y_coordinate_index": 3,
+        }
+    }
+* **function**: function name (string)
+* **args**: function args (dict(string | list))
+
+
+#### Children
 List of path dicts
 
     
@@ -124,7 +137,10 @@ List of path dicts
 ## Add New Validators
 
 To add new validators you can use existing validators or create new validators
-### Using existing validators
 To create a new validator for a configuration file you must modify the `configuration.json` file.
 
-If a configuration dictionary exists for the file, you must add a new validator dict to **formatRules** or **semanticRules**  
+If a configuration dictionary exists for the file, you must add a new validator dict to **formatRules** or **semanticRules**.  
+Else you must add the file dict as the [configuration example](#configuration-file).
+
+### Using existing validators
+

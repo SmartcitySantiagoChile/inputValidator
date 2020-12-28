@@ -1075,3 +1075,32 @@ class MultiRowColValueValidator(Validator):
 
     def get_fun_type(self):
         return FunType.MULTIROW
+
+
+check_name_functions = {
+    "name": NameValidator,
+    "regex": RegexNameValidator,
+    "root": RootValidator,
+    "multi-regex": RegexMultiNameValidator,
+}
+
+file_functions = {
+    "min_rows": MinRowsValidator,
+    "ascii": ASCIIColValidator,
+    "duplicate": DuplicateValueValidator,
+    "not_empty_row": NotEmptyRowValidator,
+    "string_domain": StringDomainValueValidator,
+    "regex_value": RegexValueValidator,
+    "numeric_range": NumericRangeValueValidator,
+    "greater_than": GreaterThanValueValidator,
+    "float": FloatValueValidator,
+    "time": TimeValueValidator,
+    "not_empty_col": NotEmptyValueValidator,
+    "store_col_value": StoreColValue,
+    "check_col_storage_value": CheckColStorageValueValidator,
+    "bounding_box": BoundingBoxValueValidator,
+    "store_col_dict_values": StoreColDictValues,
+    "check_store_col_dict_values": CheckStoreColDictValuesValidator,
+    "check_col_storage_multi_value": CheckColStorageMultiValueValidator,
+    "multi_row_col_value": MultiRowColValueValidator,
+}
