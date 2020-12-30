@@ -685,7 +685,7 @@ class TimeValueValidator(Validator):
 
     def apply(self, args=None) -> bool:
         """
-        Check if col has time value (HH:MM:SS)
+        Check if col is time value (HH:MM:SS)
 
         Validator args:
 
@@ -738,7 +738,7 @@ class FloatValueValidator(Validator):
 
     def apply(self, args=None) -> bool:
         """
-        Check if col has float value
+        Check if col is float value
 
         Validator args:
 
