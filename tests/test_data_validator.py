@@ -1,6 +1,6 @@
 import json
-import os
 import logging
+import os
 from unittest import TestCase
 
 import mock
@@ -34,6 +34,8 @@ class DataValidatorTest(TestCase):
             ),
         )
         data.start_iteration_over_configuration_tree()
+        logger = logging.getLogger(__name__)
+        logger.error(data.report_errors)
         self.assertEqual({}, data.report_errors)
 
     @mock.patch("data_validator.DataValidator.validate_node_rules")
@@ -60,6 +62,8 @@ class DataValidatorTest(TestCase):
             ),
         )
         data.start_iteration_over_configuration_tree()
+        logger = logging.getLogger(__name__)
+        logger.error(data.report_errors)
         self.assertEqual(expected_errors, data.report_errors)
 
     @mock.patch("data_validator.DataValidator.validate_node_rules")
@@ -115,6 +119,8 @@ class DataValidatorTest(TestCase):
             ),
         )
         data.start_iteration_over_configuration_tree()
+        logger = logging.getLogger(__name__)
+        logger.error(data.report_errors)
         self.assertEqual(expected_errors, data.report_errors)
 
     def test_validate_nodes_rules_empty_case(self):

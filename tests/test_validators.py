@@ -133,7 +133,7 @@ class DataValidatorTest(TestCase):
         expected_error = {
             "name": "No existen archivos con expresiones regulares",
             "type": "formato",
-            "message": "No existen directorios o archivos con la expresión regular '['Capacidades_PO*.csv', 'Distancias_PO*.csv', 'Frecuencias_PO*.csv', 'Velocidades_PO*.csv']' en el directorio '/home/bastianleaf/PycharmProjects/inputValidator/tests/input/check_name_data/Frecuencias' .",
+            "message": f"No existen directorios o archivos con la expresión regular '['Capacidades_PO*.csv', 'Distancias_PO*.csv', 'Frecuencias_PO*.csv', 'Velocidades_PO*.csv']' en el directorio '{path}' .",
             "row": "",
             "cols": "",
         }

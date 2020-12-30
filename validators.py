@@ -621,7 +621,6 @@ class RegexValueValidator(Validator):
 
 class NumericRangeValueValidator(Validator):
     def __init__(self, args):
-
         self.cols_error = []
         super().__init__(args)
 

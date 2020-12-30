@@ -314,3 +314,5 @@ There are 5 types of validators:
 | DuplicateValueValidator| duplicate| col_index (string)|  Check if value in col_index is duplicated |
 | NotEmptyRowValidator| not_empty_row| none| Check if regex filename exists.|
 | StringDomainValueValidator| string_domain-regex| none| Check if multiple regex filename exists.|
+| RegexValueValidator| regex_value | col_index(string) regex(string) | Check col value with unix regex pattern |
+| NumericRangeValueValidator | numeric_range | lower_bound (string), upper_bound(string), col_indexes(list(string)) |         Check if col is in numeric range |
