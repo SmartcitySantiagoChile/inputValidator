@@ -1,0 +1,13 @@
+language: python
+os:
+  - linux
+python:
+  - "3.7"
+  - "3.6.3"
+install:
+  - pip install -r requirements.txt
+  - pip install coveralls
+script:
+  - coverage run --source=. -m unittest
+after_success:
+  - coveralls
