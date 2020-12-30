@@ -454,10 +454,13 @@ class HeaderValidator(Validator):
 
             header: header to check
         """
-        for header, expected_header in zip(args, self.args["header"]):
-            if header != expected_header:
-                return False
-        return True
+        if len(args) == len(self.args["header"]):
+            for header, expected_header in zip(args, self.args["header"]):
+                if header != expected_header:
+                    return False
+            return True
+        else:
+            return False
 
     def get_error(self) -> dict:
         return {

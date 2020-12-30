@@ -47,7 +47,7 @@ class DataValidatorTest(TestCase):
                     "se encuentra en el directorio "
                     "'/home/bastianleaf/PycharmProjects/inputValidator/tests/input/data/'.",
                     "row": "",
-                    "title": "Nombre incorrecto",
+                    "name": "Nombre incorrecto",
                     "type": "formato",
                 }
             ]
