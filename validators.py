@@ -25,11 +25,18 @@ def utm_to_wsg84(
 ) -> tuple:
     """
     Convert utm to wsg84 coordinates
-    :param east_coordinate: easting
-    :param north_coordinate: northing
-    :param zone: zone
-    :param north_hemisphere: true | false
-    :return: (lat, long)
+
+    Args:
+
+        east_coordinate: easting
+        north_coordinate: northing
+        zone:  zone
+        north_hemisphere: true | false
+
+    Returns:
+
+        tuple: (lat, long)
+
     """
     if not north_hemisphere:
         north_coordinate = 10000000 - north_coordinate
@@ -105,20 +112,51 @@ def utm_to_wsg84(
 
 class Validator(object, metaclass=ABCMeta):
     def __init__(self, args):
+        """
+        Init method, it storage args and initialite a row counter
+
+        Args:
+
+            args: validator args
+
+        """
         self.args = args
         self.row_counter = 0
         super().__init__()
 
     @abstractmethod
     def apply(self, args=None):
+        """
+        Apply the validator method
+
+        Args:
+            args: validator args
+        """
         pass
 
     @abstractmethod
     def get_error(self):
+        """
+        Method that return a error dict
+
+        The error dict has 4 parameters:
+
+        name: error name
+        type: error type
+        message: error message
+        row: row number
+        cols: column number
+
+        """
         pass
 
     @abstractmethod
     def get_fun_type(self):
+        """
+        Return the fun type
+
+        The funtype is
+        """
         pass
 
 
@@ -126,11 +164,17 @@ class RootValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Return always true
-        :return: bool
         """
         return True
 
     def get_error(self) -> dict:
+        """
+        Return error dict with info about the validation.
+
+        Returns:
+            dict: A dict with all the parameteres
+
+        """
         return {
             "name": "Raiz incorrecta",
             "type": "formato",
@@ -147,7 +191,11 @@ class NameValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if file exists in path
-        :return: bool
+
+        Validator args:
+
+            path: name path to search
+            name: filename
         """
         path = self.args["path"]
         name = self.args["name"]
@@ -173,7 +221,11 @@ class RegexNameValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if regex file exist in path
-        :return: bool
+
+        Validator args:
+
+            path: path name to search
+            name: filename in unix regex format
         """
         path = self.args["path"]
         regex = self.args["name"]
@@ -203,7 +255,12 @@ class RegexMultiNameValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if regex file list exist in path
-        :return: bool
+
+        Validator args:
+
+            path: path name to search
+            name: filename list with unix regex format
+
         """
         path = self.args["path"]
         regex_list = self.args["name"]
@@ -236,7 +293,11 @@ class MinRowsValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Apply row counter and check if it has the minimal
-        :return: bool
+
+        Validator args:
+
+            min: min rows
+
         """
         self.counter += 1
         min_rows = self.args["min"]
@@ -269,7 +330,10 @@ class ASCIIColValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if col is in ASCII
-        :return: bool
+
+        Validator args:
+
+            col_indexes: column index list to check
         """
         self.cols_error = []
         self.row_counter += 1
@@ -320,7 +384,10 @@ class DuplicateValueValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if col has not duplicated value
-        :return: bool
+
+        Validator args:
+            col_index: column index to check
+
         """
         self.row_counter += 1
         self.args["row"] = args
@@ -353,12 +420,9 @@ class DuplicateValueValidator(Validator):
 
 
 class NotEmptyRowValidator(Validator):
-    row_counter = 0
-
     def apply(self, args=None) -> bool:
         """
         Check if is not empty row
-        :return: bool
         """
         self.row_counter += 1
         if not args:
@@ -385,7 +449,10 @@ class HeaderValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check header
-        :return: bool
+
+        Validator args:
+
+            header: header to check
         """
         for header, expected_header in zip(args, self.args["header"]):
             if header != expected_header:
@@ -416,7 +483,10 @@ class NotEmptyValueValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if col has not empty value
-        :return: bool
+
+        Validator args:
+
+            col_indexes: column index list
         """
         self.cols_error = []
         self.row_counter += 1
@@ -456,18 +526,17 @@ class NotEmptyValueValidator(Validator):
 
 class StringDomainValueValidator(Validator):
     def __init__(self, args):
-
         self.cols_error = []
         super().__init__(args)
 
     def apply(self, args=None) -> bool:
         """
-        Check if col has domain values
-        args:{
-            domain -> list
-            col_indexes -> list
-        }
-        :return: bool
+        Check if columns are in domain list
+
+        Validator args:
+
+            domain: string list
+            col_indexes: column index list
         """
         self.cols_error = []
         self.row_counter += 1
@@ -514,7 +583,11 @@ class RegexValueValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check col value with regex
-        :return: bool
+
+        Validator args:
+
+            col_index: column index to check
+            regex: unix regex
         """
         self.row_counter += 1
         self.args["row"] = args
@@ -552,7 +625,12 @@ class NumericRangeValueValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if col is in numeric range
-        :return: bool
+
+        Validator args:
+
+            lower_bound: min value
+            upper_bound: max value
+            col_indexes: column index list to check
         """
         self.cols_error = []
         self.row_counter += 1
@@ -606,7 +684,10 @@ class TimeValueValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if col has time value (HH:MM:SS)
-        :return: bool
+
+        Validator args:
+
+            col_indexes: column index list to check
         """
         time_format = "%H:%M:%S"
         self.cols_error = []
@@ -656,7 +737,10 @@ class FloatValueValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if col has float value
-        :return: bool
+
+        Validator args:
+
+            col_indexes: column index list
         """
         self.cols_error = []
         self.row_counter += 1
@@ -702,7 +786,12 @@ class GreaterThanValueValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if upper_col is greater than lower_col
-        :return: bool
+
+        Validator args:
+
+            upper_col: max value
+            lower_col: min value
+            type: comparison type (time)
         """
         self.row_counter += 1
         self.args["row"] = args
@@ -745,7 +834,11 @@ class StoreColValue(Validator):
     def apply(self, args=None) -> bool:
         """
         Save col index in args
-        :return: bool
+
+        Validator args:
+
+            col_index: column index to check
+            storage_name: name to save values
         """
         index = self.args["col_index"]
         var = args[index]
@@ -777,11 +870,11 @@ class CheckColStorageValueValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if col value is in given storage
-        args:{
-            col_index -> int
-            storage_name -> string
-        }
-        :return: bool
+
+        Validator args:
+
+            col_index: column index to check
+            storage_name: storage name to check data
         """
         self.row_counter += 1
         self.args["row"] = args
@@ -818,7 +911,11 @@ class BoundingBoxValueValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if coordinate values are in given bounding box
-        :return: bool
+
+        Validator args:
+            x_coordinate_index: column index of x coordinate
+            y_coordinate_index: column index of y coordinate
+            coordinate_system: coordinate system (utm, wgs84)
         """
         self.row_counter += 1
         self.args["row"] = args
@@ -858,7 +955,13 @@ class StoreColDictValues(Validator):
     def apply(self, args=None) -> bool:
         """
         Save cols index in args
-        :return: bool
+
+        Validator args:
+
+            storage_name: storage name to save data
+            key_index: key index to save data
+            value_indexes: column index list to check
+
         """
         key_index = self.args["key_index"]
         value_indexes = self.args["value_indexes"]
@@ -900,13 +1003,13 @@ class CheckStoreColDictValuesValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if col value dict is in given storage
-        :param args: {
-            key_name -> string
-            value_indexes -> list
-            storage_name -> string
-            transform_data -> string
-        }
-        :return: bool
+
+        Validator args:
+
+            storage_name: storage name to check
+            key_name: key name to check in storage
+            value_indexes: column index list to check
+            transform_data: transform data value if needed (wsg84_to_utm)
         """
         self.row_counter += 1
         self.args["row"] = args
@@ -979,11 +1082,12 @@ class CheckColStorageMultiValueValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if col value is in given storage when col value is a list
-        args:{
-            col_index -> int
-            storage_name -> string
-        }
-        :return: bool
+
+        Validator args:
+
+            col_index: col index to check
+            storage_name: storage name to check data
+            separator: separator of stored data
         """
         self.row_counter += 1
         self.args["row"] = args
@@ -1032,7 +1136,10 @@ class MultiRowColValueValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if multiples rows have the same cols value
-        :return: bool
+
+        Validator args:
+
+            col_indexes: column index list to check
         """
         self.cols_error = []
         self.row_counter += 1

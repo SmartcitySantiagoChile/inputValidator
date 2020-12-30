@@ -48,7 +48,7 @@ class DataValidatorTest(TestCase):
             "message": "La raíz del directorio debe tener un nombre vacío en la "
             "configuración.",
             "row": "",
-            "title": "Raiz incorrecta",
+            "name": "Raiz incorrecta",
             "type": "formato",
         }
         self.assertTrue(validator.apply())
@@ -65,7 +65,7 @@ class DataValidatorTest(TestCase):
             "en el directorio "
             "'/home/bastianleaf/PycharmProjects/inputValidator/tests/input/check_name_data'.",
             "row": "",
-            "title": "Nombre incorrecto",
+            "name": "Nombre incorrecto",
             "type": "formato",
         }
         self.assertTrue(validator.apply())
@@ -96,7 +96,7 @@ class DataValidatorTest(TestCase):
             "'/home/bastianleaf/PycharmProjects/inputValidator/tests/input/check_name_data/Diccionario' "
             ".",
             "row": "",
-            "title": "No existe archivo con expresión regular",
+            "name": "No existe archivo con expresión regular",
             "type": "formato",
         }
         self.assertTrue(validator.apply(dummy_validator))
@@ -131,7 +131,7 @@ class DataValidatorTest(TestCase):
         ]
 
         expected_error = {
-            "title": "No existen archivos con expresiones regulares",
+            "name": "No existen archivos con expresiones regulares",
             "type": "formato",
             "message": "No existen directorios o archivos con la expresión regular '['Capacidades_PO*.csv', 'Distancias_PO*.csv', 'Frecuencias_PO*.csv', 'Velocidades_PO*.csv']' en el directorio '/home/bastianleaf/PycharmProjects/inputValidator/tests/input/check_name_data/Frecuencias' .",
             "row": "",
