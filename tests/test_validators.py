@@ -63,7 +63,7 @@ class DataValidatorTest(TestCase):
             "cols": "",
             "message": "El nombre del directorio o archivo 'Diccionario' no se encuentra "
             "en el directorio "
-            "'/home/bastianleaf/PycharmProjects/inputValidator/tests/input/check_name_data'.",
+            f"'{self.check_name_data_path}'.",
             "row": "",
             "name": "Nombre incorrecto",
             "type": "formato",
@@ -93,8 +93,7 @@ class DataValidatorTest(TestCase):
             "cols": "",
             "message": "No existe directorio o archivo con la expresión regular "
             "'Diccionario-DetalleServicioZP_*_*.csv' en el directorio "
-            "'/home/bastianleaf/PycharmProjects/inputValidator/tests/input/check_name_data/Diccionario' "
-            ".",
+            f"'{path}' .",
             "row": "",
             "name": "No existe archivo con expresión regular",
             "type": "formato",
