@@ -47,7 +47,7 @@ class DataValidatorTest(TestCase):
                     "cols": "",
                     "message": "El nombre del directorio o archivo 'asd' no "
                     "se encuentra en el directorio "
-                    "'/home/bastianleaf/PycharmProjects/inputValidator/tests/input/data/'.",
+                    f"'{self.data_path + '/'}'.",
                     "row": "",
                     "name": "Nombre incorrecto",
                     "type": "formato",
