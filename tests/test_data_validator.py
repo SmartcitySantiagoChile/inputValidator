@@ -17,7 +17,7 @@ class DataValidatorTest(TestCase):
         path = os.path.dirname(os.path.realpath(__file__))
         self.input_path = os.path.join(path, "input")
         self.configuration_path = os.path.join(self.input_path, "configuration_files")
-        self.data_path = os.path.join(self.input_path, "data")
+        self.data_path = os.path.join(self.input_path, "testData")
         self.check_name_data_path = os.path.join(self.input_path, "check_name_data")
         with open(
             os.path.join(self.configuration_path, "configuration.json")
