@@ -292,7 +292,7 @@ class MinRowsValidator(Validator):
 
     def apply(self, args=None) -> bool:
         """
-        Apply row counter and check if it has the minimal
+        Apply row counter and check if it has the minimal rows
 
         Validator args:
 
@@ -782,7 +782,6 @@ class FloatValueValidator(Validator):
 
 class GreaterThanValueValidator(Validator):
     def __init__(self, args):
-
         super().__init__(args)
 
     def apply(self, args=None) -> bool:
@@ -835,7 +834,7 @@ class StoreColValue(Validator):
 
     def apply(self, args=None) -> bool:
         """
-        Save col index in args
+        Save col index in named storage
 
         Validator args:
 
@@ -918,6 +917,7 @@ class BoundingBoxValueValidator(Validator):
             x_coordinate_index: column index of x coordinate
             y_coordinate_index: column index of y coordinate
             coordinate_system: coordinate system (utm, wgs84)
+            bounding_box: coordinates list that represent a bounding box
         """
         self.row_counter += 1
         self.args["row"] = args

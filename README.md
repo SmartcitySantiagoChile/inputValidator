@@ -318,3 +318,28 @@ There are 5 types of validators:
 | NumericRangeValueValidator | numeric_range | lower_bound (string), upper_bound(string), col_indexes(list(string)). |         Check if col is in numeric range |
 | TimeValueValidator | time | col_indexes(list(string)) | Check if col is time value (HH:MM:SS).|
 | FloatValueValidator | float | col_indexes(list(string)) | Check if col is float value. |
+| GreaterThanValueValidator | greater_than | upper_col(string), lower_col(string), type(string) | Check if upper_col is greater than lower_col.|
+| BoundingBoxValueValidator | bounding_box | x_coordinate_index(string), y_coordinate_index(string), coordinate_system(string), bounding_box(list(string)) | Check if coordinate values are in given bounding box. |
+
+#### File Functions
+| Validator Class  | Validator Name |Arguments (type) | Explanation |
+| ------------- | ------------- | ------------- | --------|
+|MinRowsValidator|  min_rows | min (string) |        Apply row counter and check if it has the minimal rows.|
+ 
+#### Storage Functions
+| Validator Class  | Validator Name |Arguments (type) | Explanation |
+| ------------- | ------------- | ------------- | --------|
+|StoreColValue | store_col_value| col_index(string), storage_name(string)|         Save col index in named storage. 
+|CheckColStorageValueValidator  | check_col_storage_value| col_index(string), storage_name(string) |         Check if col value is in given storage.|
+|StoreColDictValues| store_col_dict_values | storage_name(string), key_index(string),value_indexes(list(string))|         Save cols index in args.
+|CheckStoreColDictValuesValidator| check_store_col_dict_values | storage_name(string), key_name(string), value_indexes(list(string)), transform_data(string)|         Check if col value dict is in given storage
+|MultiRowColValueValidator| check_store_col_dict_values | storage_name(string), key_name(string), value_indexes(list(string)), transform_data(string)|         Check if col value dict is in given storage.|
+|CheckColStorageMultiValueValidator|  check_col_storage_multi_value| storage_name(string), col_index(string), separator(string) |Check if col value is in given storage when col value is a list.|
+
+#### Multirow Functions
+| Validator Class  | Validator Name |Arguments (type) | Explanation |
+| ------------- | ------------- | ------------- | --------|
+|MultiRowColValueValidator| multi_row_col_value| col_indexes(list(string)) |         Check if multiples rows have the same cols value.|
+
+
+
