@@ -9,7 +9,7 @@ import zipfile
 
 from pyfiglet import Figlet
 
-from data_validator import DataValidator
+from input_validator.data_validator import DataValidator
 
 logger = logging.getLogger(__name__)
 

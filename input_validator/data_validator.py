@@ -2,11 +2,10 @@ import csv
 import fnmatch
 import json
 import os
-import re
 import sys
 from collections import defaultdict
 
-from validators import (
+from input_validator.validators import (
     HeaderValidator,
     NotEmptyRowValidator,
     check_name_functions,

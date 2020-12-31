@@ -1,7 +1,7 @@
 import os
 from unittest import TestCase
 
-from validators import (
+from input_validator.validators import (
     RootValidator,
     NameValidator,
     RegexNameValidator,

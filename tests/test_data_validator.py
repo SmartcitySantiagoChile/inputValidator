@@ -5,7 +5,7 @@ from unittest import TestCase
 
 import mock
 
-from data_validator import (
+from input_validator.data_validator import (
     DataValidator,
 )
 
@@ -24,7 +24,7 @@ class DataValidatorTest(TestCase):
         ) as json_config:
             self.configuration_file = json.loads(json_config.read())
 
-    @mock.patch("data_validator.DataValidator.validate_node_rules")
+    @mock.patch("input_validator.data_validator.DataValidator.validate_node_rules")
     def test_file_iterator_name(self, validate_node_rules):
         validate_node_rules.return_value = []
         data = DataValidator(
@@ -34,11 +34,9 @@ class DataValidatorTest(TestCase):
             ),
         )
         data.start_iteration_over_configuration_tree()
-        logger = logging.getLogger(__name__)
-        logger.error(data.report_errors)
         self.assertEqual({}, data.report_errors)
 
-    @mock.patch("data_validator.DataValidator.validate_node_rules")
+    @mock.patch("input_validator.data_validator.DataValidator.validate_node_rules")
     def test_file_iterator_name_error(self, validate_node_rules):
         validate_node_rules.return_value = []
         expected_errors = {
@@ -62,11 +60,9 @@ class DataValidatorTest(TestCase):
             ),
         )
         data.start_iteration_over_configuration_tree()
-        logger = logging.getLogger(__name__)
-        logger.error(data.report_errors)
         self.assertEqual(expected_errors, data.report_errors)
 
-    @mock.patch("data_validator.DataValidator.validate_node_rules")
+    @mock.patch("input_validator.data_validator.DataValidator.validate_node_rules")
     def test_file_wrong_configuration(self, validate_node_rules):
         validate_node_rules.return_value = []
         data = DataValidator(
@@ -106,7 +102,7 @@ class DataValidatorTest(TestCase):
             data.start_iteration_over_configuration_tree()
             self.assertEqual(cm.exception, 1)
 
-    @mock.patch("data_validator.DataValidator.validate_node_rules")
+    @mock.patch("input_validator.data_validator.DataValidator.validate_node_rules")
     def test_file_iterator_rules_error(self, validate_node_rules):
         validate_node_rules.return_value = [{"error1", "error2"}]
         expected_errors = {
@@ -132,8 +128,8 @@ class DataValidatorTest(TestCase):
         rules = self.configuration_file["rules"]
         self.assertEqual([], data_validator.validate_node_rules(path, name, rules, ""))
 
-    @mock.patch("data_validator.DataValidator.dispatch_rules")
-    @mock.patch("data_validator.DataValidator.check_rules")
+    @mock.patch("input_validator.data_validator.DataValidator.dispatch_rules")
+    @mock.patch("input_validator.data_validator.DataValidator.check_rules")
     def test_validate_nodes_rules_format_rule(self, check_rules, dispatch_rules):
         check_rules.return_value = []
         dispatch_rules.return_value = []
