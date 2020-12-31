@@ -1,0 +1,91 @@
+OrigenDestino;tiempo;distancia
+Estacion Alameda-Estacion Lo Valledor;00:03:34;0
+Estacion Lo Valledor-Estacion Alameda;00:03:34;0
+Estacion Alameda-Estacion Pedro Aguirre Cerda;00:05:34;0
+Estacion Pedro Aguirre Cerda-Estacion Alameda;00:05:34;0
+Estacion Alameda-Estacion Lo Espejo;00:08:10;0
+Estacion Lo Espejo-Estacion Alameda;00:08:10;0
+Estacion Alameda-Estacion Lo Blanco;00:13:19;0
+Estacion Lo Blanco-Estacion Alameda;00:13:19;0
+Estacion Alameda-Estacion Freire;00:15:15;0
+Estacion Freire-Estacion Alameda;00:15:15;0
+Estacion Alameda-Estacion San Bernardo;00:16:37;0
+Estacion San Bernardo-Estacion Alameda;00:16:37;0
+Estacion Alameda-Estacion Maestranza;00:18:19;0
+Estacion Maestranza-Estacion Alameda;00:18:19;0
+Estacion Alameda-Estacion Cinco Pinos;00:20:27;0
+Estacion Cinco Pinos-Estacion Alameda;00:20:27;0
+Estacion Alameda-Estacion Nos;00:21:56;0
+Estacion Nos-Estacion Alameda;00:21:56;0
+Estacion Lo Valledor-Estacion Pedro Aguirre Cerda;00:02:00;0
+Estacion Pedro Aguirre Cerda-Estacion Lo Valledor;00:02:00;0
+Estacion Lo Valledor-Estacion Lo Espejo;00:04:36;0
+Estacion Lo Espejo-Estacion Lo Valledor;00:04:36;0
+Estacion Lo Valledor-Estacion Lo Blanco;00:09:45;0
+Estacion Lo Blanco-Estacion Lo Valledor;00:09:45;0
+Estacion Lo Valledor-Estacion Freire;00:11:41;0
+Estacion Freire-Estacion Lo Valledor;00:11:41;0
+Estacion Lo Valledor-Estacion San Bernardo;00:13:03;0
+Estacion San Bernardo-Estacion Lo Valledor;00:13:03;0
+Estacion Lo Valledor-Estacion Maestranza;00:14:45;0
+Estacion Maestranza-Estacion Lo Valledor;00:14:45;0
+Estacion Lo Valledor-Estacion Cinco Pinos;00:16:53;0
+Estacion Cinco Pinos-Estacion Lo Valledor;00:16:53;0
+Estacion Lo Valledor-Estacion Nos;00:18:22;0
+Estacion Nos-Estacion Lo Valledor;00:18:22;0
+Estacion Pedro Aguirre Cerda-Estacion Lo Espejo;00:02:36;0
+Estacion Lo Espejo-Estacion Pedro Aguirre Cerda;00:02:36;0
+Estacion Pedro Aguirre Cerda-Estacion Lo Blanco;00:07:45;0
+Estacion Lo Blanco-Estacion Pedro Aguirre Cerda;00:07:45;0
+Estacion Pedro Aguirre Cerda-Estacion Freire;00:09:41;0
+Estacion Freire-Estacion Pedro Aguirre Cerda;00:09:41;0
+Estacion Pedro Aguirre Cerda-Estacion San Bernardo;00:11:03;0
+Estacion San Bernardo-Estacion Pedro Aguirre Cerda;00:11:03;0
+Estacion Pedro Aguirre Cerda-Estacion Maestranza;00:12:45;0
+Estacion Maestranza-Estacion Pedro Aguirre Cerda;00:12:45;0
+Estacion Pedro Aguirre Cerda-Estacion Cinco Pinos;00:14:53;0
+Estacion Cinco Pinos-Estacion Pedro Aguirre Cerda;00:14:53;0
+Estacion Pedro Aguirre Cerda-Estacion Nos;00:16:22;0
+Estacion Nos-Estacion Pedro Aguirre Cerda;00:16:22;0
+Estacion Lo Espejo-Estacion Lo Blanco;00:05:09;0
+Estacion Lo Blanco-Estacion Lo Espejo;00:05:09;0
+Estacion Lo Espejo-Estacion Freire;00:07:05;0
+Estacion Freire-Estacion Lo Espejo;00:07:05;0
+Estacion Lo Espejo-Estacion San Bernardo;00:08:27;0
+Estacion San Bernardo-Estacion Lo Espejo;00:08:27;0
+Estacion Lo Espejo-Estacion Maestranza;00:10:09;0
+Estacion Maestranza-Estacion Lo Espejo;00:10:09;0
+Estacion Lo Espejo-Estacion Cinco Pinos;00:12:17;0
+Estacion Cinco Pinos-Estacion Lo Espejo;00:12:17;0
+Estacion Lo Espejo-Estacion Nos;00:13:46;0
+Estacion Nos-Estacion Lo Espejo;00:13:46;0
+Estacion Lo Blanco-Estacion Freire;00:01:56;0
+Estacion Freire-Estacion Lo Blanco;00:01:56;0
+Estacion Lo Blanco-Estacion San Bernardo;00:03:18;0
+Estacion San Bernardo-Estacion Lo Blanco;00:03:18;0
+Estacion Lo Blanco-Estacion Maestranza;00:05:00;0
+Estacion Maestranza-Estacion Lo Blanco;00:05:00;0
+Estacion Lo Blanco-Estacion Cinco Pinos;00:07:08;0
+Estacion Cinco Pinos-Estacion Lo Blanco;00:07:08;0
+Estacion Lo Blanco-Estacion Nos;00:08:37;0
+Estacion Nos-Estacion Lo Blanco;00:08:37;0
+Estacion Freire-Estacion San Bernardo;00:01:22;0
+Estacion San Bernardo-Estacion Freire;00:01:22;0
+Estacion Freire-Estacion Maestranza;00:03:04;0
+Estacion Maestranza-Estacion Freire;00:03:04;0
+Estacion Freire-Estacion Cinco Pinos;00:05:12;0
+Estacion Cinco Pinos-Estacion Freire;00:05:12;0
+Estacion Freire-Estacion Nos;00:06:41;0
+Estacion Nos-Estacion Freire;00:06:41;0
+Estacion San Bernardo-Estacion Maestranza;00:01:42;0
+Estacion Maestranza-Estacion San Bernardo;00:01:42;0
+Estacion San Bernardo-Estacion Cinco Pinos;00:03:50;0
+Estacion Cinco Pinos-Estacion San Bernardo;00:03:50;0
+Estacion San Bernardo-Estacion Nos;00:05:19;0
+Estacion Nos-Estacion San Bernardo;00:05:19;0
+Estacion Maestranza-Estacion Cinco Pinos;00:02:08;0
+Estacion Cinco Pinos-Estacion Maestranza;00:02:08;0
+Estacion Maestranza-Estacion Nos;00:03:37;0
+Estacion Nos-Estacion Maestranza;00:03:37;0
+Estacion Cinco Pinos-Estacion Nos;00:01:29;0
+Estacion Nos-Estacion Cinco Pinos;00:01:29;0

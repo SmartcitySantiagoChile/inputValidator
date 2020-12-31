@@ -1,0 +1,1390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>validator.data_validator API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>validator.data_validator</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import csv
+import fnmatch
+import json
+import os
+import re
+import sys
+from collections import defaultdict
+
+from validator.validators import (
+    HeaderValidator,
+    NotEmptyRowValidator,
+    check_name_functions,
+    file_functions,
+)
+
+
+class DataValidator:
+    &#34;&#34;&#34;A class to iterate over a tree configuration json file and validate data&#34;&#34;&#34;
+
+    def __init__(self, config_path, data_path, path_list=False, logger=None):
+        with open(config_path) as json_config:
+            self.config = json.loads(json_config.read())
+        self.report_errors = defaultdict(list)
+        self.report = []
+        self.path_list = path_list
+        self.data_path = data_path
+        self.path_list_dict = []
+        self.storage = {}
+        self.log = logger
+        self.temp_name = None
+        self.files_checked = set()
+
+    def configuration_file_error(self, exception):
+        if self.log:
+            self.log.error(&#34;Archivo de configuración mal formado&#34;)
+            # self.log.error(exception)
+        sys.exit(&#34;Procesamiento cancelado.&#34;)
+
+    def configuration_fun_error(self, exception, fun_name):
+        if self.log:
+            self.log.error(&#34;Nombre de función &#39;{0}&#39; no válida.&#34;.format(fun_name))
+        self.configuration_file_error(exception)
+
+    def configuration_args_error(self, exception, fun_name):
+        if self.log:
+            self.log.error(
+                &#34;Error en la función {0}, problema con el argumento {1}&#34;.format(
+                    fun_name.__class__.__name__, exception
+                )
+            )
+        self.configuration_file_error(exception)
+
+    def start_iteration_over_configuration_tree(self):
+        &#34;&#34;&#34;
+        Start iteration over a configuration file
+        &#34;&#34;&#34;
+        self.iterate_over_configuration_tree(self.config, &#34;&#34;)
+
+    def iterate_over_configuration_tree(self, node, path):
+        &#34;&#34;&#34;
+        Iterate recursively a configuration file checking name format, path format and rules
+        :param node: configuration node
+        :param path: node path
+        &#34;&#34;&#34;
+        # get variables
+        try:
+            name = node[&#34;path&#34;][&#34;name&#34;]
+            type_name = node[&#34;path&#34;][&#34;type&#34;]
+            header = node[&#34;path&#34;].get(&#34;header&#34;, &#34;&#34;)
+            absolute_path = os.path.join(self.data_path, path)
+            dependencies = node[&#34;path&#34;].get(&#34;dependencies&#34;, [])
+            if type_name != &#34;multi-regex&#34;:
+                new_path = os.path.join(path, name)
+            else:
+                new_path = path
+            rules = node[&#34;rules&#34;]
+        except KeyError as e:
+            self.configuration_file_error(e)
+        # check name and path format
+        validator = check_name_functions[type_name](
+            {&#34;path&#34;: absolute_path, &#34;name&#34;: name}
+        )
+
+        # check dependencies
+        missing_dependencies = []
+        for dependency in dependencies:
+            dependency_found = False
+            for file in self.files_checked:
+                if fnmatch.fnmatch(file, dependency):
+                    dependency_found = True
+            if not dependency_found:
+                missing_dependencies.append(dependency)
+
+        if validator.apply(self):
+            # if name correct check rules and report errors
+            if type_name == &#34;regex&#34; or type_name == &#34;multi-regex&#34;:
+                name = self.temp_name
+                self.temp_name = None
+
+            if missing_dependencies:
+                for dependency in missing_dependencies:
+                    error = {
+                        &#34;name&#34;: &#34;Error de dependencias&#34;,
+                        &#34;type&#34;: &#34;formato&#34;,
+                        &#34;message&#34;: f&#34;El archivo {name} requiere el procesamiento del archivo con patrón {dependency}.&#34;,
+                        &#34;row&#34;: &#34;&#34;,
+                        &#34;cols&#34;: &#34;&#34;,
+                    }
+                    self.report_errors[name].append(error)
+                return
+            if rules:
+                if type_name == &#34;multi-regex&#34;:
+                    status = self.validate_multi_node_rules(
+                        absolute_path, name, rules, header
+                    )
+                else:
+                    status = self.validate_node_rules(
+                        absolute_path, name, rules, header
+                    )
+                for error in status:
+                    if isinstance(name, list):
+                        for name_file in name:
+                            self.report_errors[name_file].append(error)
+                    else:
+                        self.report_errors[name].append(error)
+                # if not root case
+            if name and new_path:
+                self.report.append([name, new_path])
+
+            # iterate over childs
+            for child in node.get(&#34;children&#34;, []):
+                self.iterate_over_configuration_tree(child, new_path)
+        else:
+            # report name and path errors
+            self.report_errors[name].append(validator.get_error())
+
+    def dispatch_rules(self, rules: dict, header: list) -&gt; dict:
+        &#34;&#34;&#34;
+        Split kind of rules
+        :param rules:
+        :param header:
+        :return: dict of rules
+        &#34;&#34;&#34;
+        format_rules = rules.get(&#34;formatRules&#34;, [])
+        semantic_rules = rules.get(&#34;semanticRules&#34;, [])
+        rules_list = format_rules + semantic_rules
+        rules_dict = defaultdict(list)
+
+        for rule in rules_list:
+            rule_name = rule[&#34;function&#34;]
+            rule_args = rule[&#34;args&#34;]
+            rule_args[&#34;header&#34;] = header
+            try:
+                fun_object = file_functions[rule_name](rule_args)
+            except KeyError as e:
+                self.configuration_fun_error(e, rule_name)
+            fun_type = fun_object.get_fun_type().name
+            rules_dict[fun_type].append(fun_object)
+        return rules_dict
+
+    def check_rules(self, rules_dict, path, name, header) -&gt; list:
+        &#34;&#34;&#34;
+        Check all rules over a csv file
+        :param rules_dict: rules to check
+        :param path: file path
+        :param name: file name
+        :param header: file header
+        :return: list
+        &#34;&#34;&#34;
+        report = []
+        files_rules_list = rules_dict.get(&#34;FILE&#34;, [])
+        row_rules_list = rules_dict.get(&#34;ROW&#34;, [])
+        storage_rule_list = rules_dict.get(&#34;STORAGE&#34;, [])
+        for storage_fun in storage_rule_list:
+            storage_fun.args[&#34;data_validator&#34;] = self
+
+        header_validator = HeaderValidator({&#34;header&#34;: header})
+        not_empty_row_validator = NotEmptyRowValidator({})
+
+        # open file
+        file = open(os.path.join(path, name), encoding=&#34;UTF-8-SIG&#34;, errors=&#34;strict&#34;)
+        csv_reader = csv.reader(file, delimiter=&#34;;&#34;)
+        if self.log:
+            self.log.info(&#34;Procesando {0} ...&#34;.format(name))
+        try:
+            # check header
+            if not header_validator.apply(next(csv_reader)):
+                report.append(header_validator.get_error())
+                file.close()
+                return report
+
+            # check rules
+            for row in csv_reader:
+                if not not_empty_row_validator.apply(row):
+                    report.append(not_empty_row_validator.get_error())
+                    continue
+
+                # check row fun
+                try:
+                    for named_fun in row_rules_list:
+                        if not named_fun.apply(row):
+                            report.append(named_fun.get_error())
+                    # apply file fun
+                    for named_fun in files_rules_list:
+                        named_fun.apply(row)
+                    # apply storage fun
+                    for named_fun in storage_rule_list:
+                        if not named_fun.apply(row):
+                            report.append(named_fun.get_error())
+                except Exception as e:
+                    file.close()
+                    self.configuration_args_error(e, named_fun)
+        except UnicodeDecodeError:
+            error = {
+                &#34;name&#34;: &#34;Error de encoding&#34;,
+                &#34;type&#34;: &#34;formato&#34;,
+                &#34;message&#34;: &#34;El archivo {0} no se encuentra en UTF-8.&#34;.format(name),
+                &#34;row&#34;: &#34;&#34;,
+                &#34;cols&#34;: &#34;&#34;,
+            }
+            report.append(error)
+        file.close()
+
+        # check all file rules errors
+        for file_fun in files_rules_list:
+            if not file_fun.status:
+                report.append(file_fun.get_error())
+
+        # save file
+        self.files_checked.add(name)
+        return report
+
+    def validate_node_rules(self, path, name, rules, header) -&gt; list:
+        &#34;&#34;&#34;
+        Validate node rules for a file
+        :param path: file path
+        :param name: file name
+        :param rules: format and semantic rules
+        :param header: file header
+        :return:
+        &#34;&#34;&#34;
+        report = []
+        if rules:
+            rules_dict = self.dispatch_rules(rules, header)
+            report = self.check_rules(rules_dict, path, name, header)
+        return report
+
+    def start_iteration_over_path_list(self):
+        &#34;&#34;&#34;
+        Start iteration over a path list
+        &#34;&#34;&#34;
+        path_list_names = []
+        path_list_dict_name = {}
+        for path in self.data_path:
+            name = os.path.basename(path)
+            path_list_names.append(name)
+            path_list_dict_name[name] = os.path.dirname(path)
+        self.create_path_dict(self.config, path_list_names)
+        for node in self.path_list_dict:
+            # get variable
+            name = node[&#34;path&#34;][&#34;name&#34;]
+            absolute_path = path_list_dict_name[name]
+            type_name = node[&#34;path&#34;][&#34;type&#34;]
+            header = node[&#34;path&#34;].get(&#34;header&#34;, &#34;&#34;)
+            rules = node[&#34;rules&#34;]
+            # check name and path format
+            validator = check_name_functions[type_name](
+                {&#34;path&#34;: absolute_path, &#34;name&#34;: name}
+            )
+            if validator.apply():
+                # if name correct check rules and report errors
+                if rules:
+                    status = self.validate_node_rules(
+                        absolute_path, name, rules, header
+                    )
+                    for error in status:
+                        self.report_errors[name].append(error)
+                    # if not root case
+                if name:
+                    self.report.append([name, absolute_path])
+
+            else:
+                # report name and path errors
+                self.report_errors[name].append(validator.get_error())
+
+    def create_path_dict(self, node, name_list):
+        &#34;&#34;&#34;
+        Iterate over path_dict and create
+        :param node:
+        :param name_list:
+        &#34;&#34;&#34;
+        name = node[&#34;path&#34;][&#34;name&#34;]
+        if name in name_list:
+            self.path_list_dict.append(node)
+        for child in node[&#34;children&#34;]:
+            self.create_path_dict(child, name_list)
+
+    def validate_multi_node_rules(self, path, name_list, rules, header):
+        report = []
+        if rules:
+            rules_dict = self.dispatch_rules(rules, header)
+            report = self.check_multiple_rules(rules_dict, path, name_list, header)
+
+        return report
+
+    def check_multiple_rules(self, rules_dict, path, name_list, header) -&gt; list:
+        # set variables
+        offset = 4
+        report = []
+        files_rules_list = rules_dict.get(&#34;FILE&#34;, [])
+        row_rules_list = rules_dict.get(&#34;ROW&#34;, [])
+        storage_rule_list = rules_dict.get(&#34;STORAGE&#34;, [])
+        multi_row_rules_list = rules_dict.get(&#34;MULTIROW&#34;, [])
+        opened_files = []
+        opened_csv_files = []
+
+        # add self to storage fun
+        for storage_fun in storage_rule_list:
+            storage_fun.args[&#34;data_validator&#34;] = self
+
+        # set always validators
+        header_validator = HeaderValidator({&#34;header&#34;: header})
+        not_empty_row_validator = NotEmptyRowValidator({})
+
+        # open all files
+        try:
+
+            for name in name_list:
+                # open file
+                file = open(
+                    os.path.join(path, name), encoding=&#34;UTF-8-SIG&#34;, errors=&#34;strict&#34;
+                )
+                opened_files.append(file)
+                csv_reader = csv.reader(file, delimiter=&#34;;&#34;)
+                opened_csv_files.append(csv_reader)
+                if self.log:
+                    self.log.info(&#34;Procesando {0} ...&#34;.format(name))
+                # skip offset
+                for i in range(offset):
+                    next(csv_reader)
+            # check header
+            for file_num in range(len(opened_files)):
+                if not header_validator.apply(next(opened_csv_files[file_num])):
+                    opened_files[file_num].close()
+                    report.append(header_validator.get_error())
+                    return report
+        except UnicodeDecodeError:
+            error = {
+                &#34;name&#34;: &#34;Error de encoding&#34;,
+                &#34;type&#34;: &#34;formato&#34;,
+                &#34;message&#34;: &#34;El archivo {0} no se encuentra en UTF-8.&#34;.format(name),
+                &#34;row&#34;: &#34;&#34;,
+                &#34;cols&#34;: &#34;&#34;,
+            }
+            report.append(error)
+            for file in opened_files:
+                file.close()
+            return report
+
+        # check rules
+        for csv_files in zip(*opened_csv_files):
+            try:
+                # apply multirow fun
+                for named_fun in multi_row_rules_list:
+                    named_fun.apply(csv_files)
+
+                for row in csv_files:
+                    if not not_empty_row_validator.apply(row):
+                        report.append(not_empty_row_validator.get_error())
+                        continue
+
+                    # check row fun
+                    try:
+                        # apply file fun
+                        for named_fun in files_rules_list:
+                            named_fun.apply(row)
+
+                        for named_fun in row_rules_list + storage_rule_list:
+                            if not named_fun.apply(row):
+                                report.append(named_fun.get_error())
+
+                        # apply storage fun
+                        for named_fun in storage_rule_list:
+                            if not named_fun.apply(row):
+                                report.append(named_fun.get_error())
+                    except Exception as e:
+                        opened_files[file_num].close()
+                        self.configuration_args_error(e, named_fun)
+            except UnicodeDecodeError:
+                error = {
+                    &#34;name&#34;: &#34;Error de encoding&#34;,
+                    &#34;type&#34;: &#34;formato&#34;,
+                    &#34;message&#34;: &#34;El archivo {0} no se encuentra en UTF-8.&#34;.format(name),
+                    &#34;row&#34;: &#34;&#34;,
+                    &#34;cols&#34;: &#34;&#34;,
+                }
+                report.append(error)
+        for file in opened_files:
+            file.close()
+
+        return report</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="validator.data_validator.DataValidator"><code class="flex name class">
+<span>class <span class="ident">DataValidator</span></span>
+<span>(</span><span>config_path, data_path, path_list=False, logger=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A class to iterate over a tree configuration json file and validate data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DataValidator:
+    &#34;&#34;&#34;A class to iterate over a tree configuration json file and validate data&#34;&#34;&#34;
+
+    def __init__(self, config_path, data_path, path_list=False, logger=None):
+        with open(config_path) as json_config:
+            self.config = json.loads(json_config.read())
+        self.report_errors = defaultdict(list)
+        self.report = []
+        self.path_list = path_list
+        self.data_path = data_path
+        self.path_list_dict = []
+        self.storage = {}
+        self.log = logger
+        self.temp_name = None
+        self.files_checked = set()
+
+    def configuration_file_error(self, exception):
+        if self.log:
+            self.log.error(&#34;Archivo de configuración mal formado&#34;)
+            # self.log.error(exception)
+        sys.exit(&#34;Procesamiento cancelado.&#34;)
+
+    def configuration_fun_error(self, exception, fun_name):
+        if self.log:
+            self.log.error(&#34;Nombre de función &#39;{0}&#39; no válida.&#34;.format(fun_name))
+        self.configuration_file_error(exception)
+
+    def configuration_args_error(self, exception, fun_name):
+        if self.log:
+            self.log.error(
+                &#34;Error en la función {0}, problema con el argumento {1}&#34;.format(
+                    fun_name.__class__.__name__, exception
+                )
+            )
+        self.configuration_file_error(exception)
+
+    def start_iteration_over_configuration_tree(self):
+        &#34;&#34;&#34;
+        Start iteration over a configuration file
+        &#34;&#34;&#34;
+        self.iterate_over_configuration_tree(self.config, &#34;&#34;)
+
+    def iterate_over_configuration_tree(self, node, path):
+        &#34;&#34;&#34;
+        Iterate recursively a configuration file checking name format, path format and rules
+        :param node: configuration node
+        :param path: node path
+        &#34;&#34;&#34;
+        # get variables
+        try:
+            name = node[&#34;path&#34;][&#34;name&#34;]
+            type_name = node[&#34;path&#34;][&#34;type&#34;]
+            header = node[&#34;path&#34;].get(&#34;header&#34;, &#34;&#34;)
+            absolute_path = os.path.join(self.data_path, path)
+            dependencies = node[&#34;path&#34;].get(&#34;dependencies&#34;, [])
+            if type_name != &#34;multi-regex&#34;:
+                new_path = os.path.join(path, name)
+            else:
+                new_path = path
+            rules = node[&#34;rules&#34;]
+        except KeyError as e:
+            self.configuration_file_error(e)
+        # check name and path format
+        validator = check_name_functions[type_name](
+            {&#34;path&#34;: absolute_path, &#34;name&#34;: name}
+        )
+
+        # check dependencies
+        missing_dependencies = []
+        for dependency in dependencies:
+            dependency_found = False
+            for file in self.files_checked:
+                if fnmatch.fnmatch(file, dependency):
+                    dependency_found = True
+            if not dependency_found:
+                missing_dependencies.append(dependency)
+
+        if validator.apply(self):
+            # if name correct check rules and report errors
+            if type_name == &#34;regex&#34; or type_name == &#34;multi-regex&#34;:
+                name = self.temp_name
+                self.temp_name = None
+
+            if missing_dependencies:
+                for dependency in missing_dependencies:
+                    error = {
+                        &#34;name&#34;: &#34;Error de dependencias&#34;,
+                        &#34;type&#34;: &#34;formato&#34;,
+                        &#34;message&#34;: f&#34;El archivo {name} requiere el procesamiento del archivo con patrón {dependency}.&#34;,
+                        &#34;row&#34;: &#34;&#34;,
+                        &#34;cols&#34;: &#34;&#34;,
+                    }
+                    self.report_errors[name].append(error)
+                return
+            if rules:
+                if type_name == &#34;multi-regex&#34;:
+                    status = self.validate_multi_node_rules(
+                        absolute_path, name, rules, header
+                    )
+                else:
+                    status = self.validate_node_rules(
+                        absolute_path, name, rules, header
+                    )
+                for error in status:
+                    if isinstance(name, list):
+                        for name_file in name:
+                            self.report_errors[name_file].append(error)
+                    else:
+                        self.report_errors[name].append(error)
+                # if not root case
+            if name and new_path:
+                self.report.append([name, new_path])
+
+            # iterate over childs
+            for child in node.get(&#34;children&#34;, []):
+                self.iterate_over_configuration_tree(child, new_path)
+        else:
+            # report name and path errors
+            self.report_errors[name].append(validator.get_error())
+
+    def dispatch_rules(self, rules: dict, header: list) -&gt; dict:
+        &#34;&#34;&#34;
+        Split kind of rules
+        :param rules:
+        :param header:
+        :return: dict of rules
+        &#34;&#34;&#34;
+        format_rules = rules.get(&#34;formatRules&#34;, [])
+        semantic_rules = rules.get(&#34;semanticRules&#34;, [])
+        rules_list = format_rules + semantic_rules
+        rules_dict = defaultdict(list)
+
+        for rule in rules_list:
+            rule_name = rule[&#34;function&#34;]
+            rule_args = rule[&#34;args&#34;]
+            rule_args[&#34;header&#34;] = header
+            try:
+                fun_object = file_functions[rule_name](rule_args)
+            except KeyError as e:
+                self.configuration_fun_error(e, rule_name)
+            fun_type = fun_object.get_fun_type().name
+            rules_dict[fun_type].append(fun_object)
+        return rules_dict
+
+    def check_rules(self, rules_dict, path, name, header) -&gt; list:
+        &#34;&#34;&#34;
+        Check all rules over a csv file
+        :param rules_dict: rules to check
+        :param path: file path
+        :param name: file name
+        :param header: file header
+        :return: list
+        &#34;&#34;&#34;
+        report = []
+        files_rules_list = rules_dict.get(&#34;FILE&#34;, [])
+        row_rules_list = rules_dict.get(&#34;ROW&#34;, [])
+        storage_rule_list = rules_dict.get(&#34;STORAGE&#34;, [])
+        for storage_fun in storage_rule_list:
+            storage_fun.args[&#34;data_validator&#34;] = self
+
+        header_validator = HeaderValidator({&#34;header&#34;: header})
+        not_empty_row_validator = NotEmptyRowValidator({})
+
+        # open file
+        file = open(os.path.join(path, name), encoding=&#34;UTF-8-SIG&#34;, errors=&#34;strict&#34;)
+        csv_reader = csv.reader(file, delimiter=&#34;;&#34;)
+        if self.log:
+            self.log.info(&#34;Procesando {0} ...&#34;.format(name))
+        try:
+            # check header
+            if not header_validator.apply(next(csv_reader)):
+                report.append(header_validator.get_error())
+                file.close()
+                return report
+
+            # check rules
+            for row in csv_reader:
+                if not not_empty_row_validator.apply(row):
+                    report.append(not_empty_row_validator.get_error())
+                    continue
+
+                # check row fun
+                try:
+                    for named_fun in row_rules_list:
+                        if not named_fun.apply(row):
+                            report.append(named_fun.get_error())
+                    # apply file fun
+                    for named_fun in files_rules_list:
+                        named_fun.apply(row)
+                    # apply storage fun
+                    for named_fun in storage_rule_list:
+                        if not named_fun.apply(row):
+                            report.append(named_fun.get_error())
+                except Exception as e:
+                    file.close()
+                    self.configuration_args_error(e, named_fun)
+        except UnicodeDecodeError:
+            error = {
+                &#34;name&#34;: &#34;Error de encoding&#34;,
+                &#34;type&#34;: &#34;formato&#34;,
+                &#34;message&#34;: &#34;El archivo {0} no se encuentra en UTF-8.&#34;.format(name),
+                &#34;row&#34;: &#34;&#34;,
+                &#34;cols&#34;: &#34;&#34;,
+            }
+            report.append(error)
+        file.close()
+
+        # check all file rules errors
+        for file_fun in files_rules_list:
+            if not file_fun.status:
+                report.append(file_fun.get_error())
+
+        # save file
+        self.files_checked.add(name)
+        return report
+
+    def validate_node_rules(self, path, name, rules, header) -&gt; list:
+        &#34;&#34;&#34;
+        Validate node rules for a file
+        :param path: file path
+        :param name: file name
+        :param rules: format and semantic rules
+        :param header: file header
+        :return:
+        &#34;&#34;&#34;
+        report = []
+        if rules:
+            rules_dict = self.dispatch_rules(rules, header)
+            report = self.check_rules(rules_dict, path, name, header)
+        return report
+
+    def start_iteration_over_path_list(self):
+        &#34;&#34;&#34;
+        Start iteration over a path list
+        &#34;&#34;&#34;
+        path_list_names = []
+        path_list_dict_name = {}
+        for path in self.data_path:
+            name = os.path.basename(path)
+            path_list_names.append(name)
+            path_list_dict_name[name] = os.path.dirname(path)
+        self.create_path_dict(self.config, path_list_names)
+        for node in self.path_list_dict:
+            # get variable
+            name = node[&#34;path&#34;][&#34;name&#34;]
+            absolute_path = path_list_dict_name[name]
+            type_name = node[&#34;path&#34;][&#34;type&#34;]
+            header = node[&#34;path&#34;].get(&#34;header&#34;, &#34;&#34;)
+            rules = node[&#34;rules&#34;]
+            # check name and path format
+            validator = check_name_functions[type_name](
+                {&#34;path&#34;: absolute_path, &#34;name&#34;: name}
+            )
+            if validator.apply():
+                # if name correct check rules and report errors
+                if rules:
+                    status = self.validate_node_rules(
+                        absolute_path, name, rules, header
+                    )
+                    for error in status:
+                        self.report_errors[name].append(error)
+                    # if not root case
+                if name:
+                    self.report.append([name, absolute_path])
+
+            else:
+                # report name and path errors
+                self.report_errors[name].append(validator.get_error())
+
+    def create_path_dict(self, node, name_list):
+        &#34;&#34;&#34;
+        Iterate over path_dict and create
+        :param node:
+        :param name_list:
+        &#34;&#34;&#34;
+        name = node[&#34;path&#34;][&#34;name&#34;]
+        if name in name_list:
+            self.path_list_dict.append(node)
+        for child in node[&#34;children&#34;]:
+            self.create_path_dict(child, name_list)
+
+    def validate_multi_node_rules(self, path, name_list, rules, header):
+        report = []
+        if rules:
+            rules_dict = self.dispatch_rules(rules, header)
+            report = self.check_multiple_rules(rules_dict, path, name_list, header)
+
+        return report
+
+    def check_multiple_rules(self, rules_dict, path, name_list, header) -&gt; list:
+        # set variables
+        offset = 4
+        report = []
+        files_rules_list = rules_dict.get(&#34;FILE&#34;, [])
+        row_rules_list = rules_dict.get(&#34;ROW&#34;, [])
+        storage_rule_list = rules_dict.get(&#34;STORAGE&#34;, [])
+        multi_row_rules_list = rules_dict.get(&#34;MULTIROW&#34;, [])
+        opened_files = []
+        opened_csv_files = []
+
+        # add self to storage fun
+        for storage_fun in storage_rule_list:
+            storage_fun.args[&#34;data_validator&#34;] = self
+
+        # set always validators
+        header_validator = HeaderValidator({&#34;header&#34;: header})
+        not_empty_row_validator = NotEmptyRowValidator({})
+
+        # open all files
+        try:
+
+            for name in name_list:
+                # open file
+                file = open(
+                    os.path.join(path, name), encoding=&#34;UTF-8-SIG&#34;, errors=&#34;strict&#34;
+                )
+                opened_files.append(file)
+                csv_reader = csv.reader(file, delimiter=&#34;;&#34;)
+                opened_csv_files.append(csv_reader)
+                if self.log:
+                    self.log.info(&#34;Procesando {0} ...&#34;.format(name))
+                # skip offset
+                for i in range(offset):
+                    next(csv_reader)
+            # check header
+            for file_num in range(len(opened_files)):
+                if not header_validator.apply(next(opened_csv_files[file_num])):
+                    opened_files[file_num].close()
+                    report.append(header_validator.get_error())
+                    return report
+        except UnicodeDecodeError:
+            error = {
+                &#34;name&#34;: &#34;Error de encoding&#34;,
+                &#34;type&#34;: &#34;formato&#34;,
+                &#34;message&#34;: &#34;El archivo {0} no se encuentra en UTF-8.&#34;.format(name),
+                &#34;row&#34;: &#34;&#34;,
+                &#34;cols&#34;: &#34;&#34;,
+            }
+            report.append(error)
+            for file in opened_files:
+                file.close()
+            return report
+
+        # check rules
+        for csv_files in zip(*opened_csv_files):
+            try:
+                # apply multirow fun
+                for named_fun in multi_row_rules_list:
+                    named_fun.apply(csv_files)
+
+                for row in csv_files:
+                    if not not_empty_row_validator.apply(row):
+                        report.append(not_empty_row_validator.get_error())
+                        continue
+
+                    # check row fun
+                    try:
+                        # apply file fun
+                        for named_fun in files_rules_list:
+                            named_fun.apply(row)
+
+                        for named_fun in row_rules_list + storage_rule_list:
+                            if not named_fun.apply(row):
+                                report.append(named_fun.get_error())
+
+                        # apply storage fun
+                        for named_fun in storage_rule_list:
+                            if not named_fun.apply(row):
+                                report.append(named_fun.get_error())
+                    except Exception as e:
+                        opened_files[file_num].close()
+                        self.configuration_args_error(e, named_fun)
+            except UnicodeDecodeError:
+                error = {
+                    &#34;name&#34;: &#34;Error de encoding&#34;,
+                    &#34;type&#34;: &#34;formato&#34;,
+                    &#34;message&#34;: &#34;El archivo {0} no se encuentra en UTF-8.&#34;.format(name),
+                    &#34;row&#34;: &#34;&#34;,
+                    &#34;cols&#34;: &#34;&#34;,
+                }
+                report.append(error)
+        for file in opened_files:
+            file.close()
+
+        return report</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="validator.data_validator.DataValidator.check_multiple_rules"><code class="name flex">
+<span>def <span class="ident">check_multiple_rules</span></span>(<span>self, rules_dict, path, name_list, header) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_multiple_rules(self, rules_dict, path, name_list, header) -&gt; list:
+    # set variables
+    offset = 4
+    report = []
+    files_rules_list = rules_dict.get(&#34;FILE&#34;, [])
+    row_rules_list = rules_dict.get(&#34;ROW&#34;, [])
+    storage_rule_list = rules_dict.get(&#34;STORAGE&#34;, [])
+    multi_row_rules_list = rules_dict.get(&#34;MULTIROW&#34;, [])
+    opened_files = []
+    opened_csv_files = []
+
+    # add self to storage fun
+    for storage_fun in storage_rule_list:
+        storage_fun.args[&#34;data_validator&#34;] = self
+
+    # set always validators
+    header_validator = HeaderValidator({&#34;header&#34;: header})
+    not_empty_row_validator = NotEmptyRowValidator({})
+
+    # open all files
+    try:
+
+        for name in name_list:
+            # open file
+            file = open(
+                os.path.join(path, name), encoding=&#34;UTF-8-SIG&#34;, errors=&#34;strict&#34;
+            )
+            opened_files.append(file)
+            csv_reader = csv.reader(file, delimiter=&#34;;&#34;)
+            opened_csv_files.append(csv_reader)
+            if self.log:
+                self.log.info(&#34;Procesando {0} ...&#34;.format(name))
+            # skip offset
+            for i in range(offset):
+                next(csv_reader)
+        # check header
+        for file_num in range(len(opened_files)):
+            if not header_validator.apply(next(opened_csv_files[file_num])):
+                opened_files[file_num].close()
+                report.append(header_validator.get_error())
+                return report
+    except UnicodeDecodeError:
+        error = {
+            &#34;name&#34;: &#34;Error de encoding&#34;,
+            &#34;type&#34;: &#34;formato&#34;,
+            &#34;message&#34;: &#34;El archivo {0} no se encuentra en UTF-8.&#34;.format(name),
+            &#34;row&#34;: &#34;&#34;,
+            &#34;cols&#34;: &#34;&#34;,
+        }
+        report.append(error)
+        for file in opened_files:
+            file.close()
+        return report
+
+    # check rules
+    for csv_files in zip(*opened_csv_files):
+        try:
+            # apply multirow fun
+            for named_fun in multi_row_rules_list:
+                named_fun.apply(csv_files)
+
+            for row in csv_files:
+                if not not_empty_row_validator.apply(row):
+                    report.append(not_empty_row_validator.get_error())
+                    continue
+
+                # check row fun
+                try:
+                    # apply file fun
+                    for named_fun in files_rules_list:
+                        named_fun.apply(row)
+
+                    for named_fun in row_rules_list + storage_rule_list:
+                        if not named_fun.apply(row):
+                            report.append(named_fun.get_error())
+
+                    # apply storage fun
+                    for named_fun in storage_rule_list:
+                        if not named_fun.apply(row):
+                            report.append(named_fun.get_error())
+                except Exception as e:
+                    opened_files[file_num].close()
+                    self.configuration_args_error(e, named_fun)
+        except UnicodeDecodeError:
+            error = {
+                &#34;name&#34;: &#34;Error de encoding&#34;,
+                &#34;type&#34;: &#34;formato&#34;,
+                &#34;message&#34;: &#34;El archivo {0} no se encuentra en UTF-8.&#34;.format(name),
+                &#34;row&#34;: &#34;&#34;,
+                &#34;cols&#34;: &#34;&#34;,
+            }
+            report.append(error)
+    for file in opened_files:
+        file.close()
+
+    return report</code></pre>
+</details>
+</dd>
+<dt id="validator.data_validator.DataValidator.check_rules"><code class="name flex">
+<span>def <span class="ident">check_rules</span></span>(<span>self, rules_dict, path, name, header) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check all rules over a csv file
+:param rules_dict: rules to check
+:param path: file path
+:param name: file name
+:param header: file header
+:return: list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_rules(self, rules_dict, path, name, header) -&gt; list:
+    &#34;&#34;&#34;
+    Check all rules over a csv file
+    :param rules_dict: rules to check
+    :param path: file path
+    :param name: file name
+    :param header: file header
+    :return: list
+    &#34;&#34;&#34;
+    report = []
+    files_rules_list = rules_dict.get(&#34;FILE&#34;, [])
+    row_rules_list = rules_dict.get(&#34;ROW&#34;, [])
+    storage_rule_list = rules_dict.get(&#34;STORAGE&#34;, [])
+    for storage_fun in storage_rule_list:
+        storage_fun.args[&#34;data_validator&#34;] = self
+
+    header_validator = HeaderValidator({&#34;header&#34;: header})
+    not_empty_row_validator = NotEmptyRowValidator({})
+
+    # open file
+    file = open(os.path.join(path, name), encoding=&#34;UTF-8-SIG&#34;, errors=&#34;strict&#34;)
+    csv_reader = csv.reader(file, delimiter=&#34;;&#34;)
+    if self.log:
+        self.log.info(&#34;Procesando {0} ...&#34;.format(name))
+    try:
+        # check header
+        if not header_validator.apply(next(csv_reader)):
+            report.append(header_validator.get_error())
+            file.close()
+            return report
+
+        # check rules
+        for row in csv_reader:
+            if not not_empty_row_validator.apply(row):
+                report.append(not_empty_row_validator.get_error())
+                continue
+
+            # check row fun
+            try:
+                for named_fun in row_rules_list:
+                    if not named_fun.apply(row):
+                        report.append(named_fun.get_error())
+                # apply file fun
+                for named_fun in files_rules_list:
+                    named_fun.apply(row)
+                # apply storage fun
+                for named_fun in storage_rule_list:
+                    if not named_fun.apply(row):
+                        report.append(named_fun.get_error())
+            except Exception as e:
+                file.close()
+                self.configuration_args_error(e, named_fun)
+    except UnicodeDecodeError:
+        error = {
+            &#34;name&#34;: &#34;Error de encoding&#34;,
+            &#34;type&#34;: &#34;formato&#34;,
+            &#34;message&#34;: &#34;El archivo {0} no se encuentra en UTF-8.&#34;.format(name),
+            &#34;row&#34;: &#34;&#34;,
+            &#34;cols&#34;: &#34;&#34;,
+        }
+        report.append(error)
+    file.close()
+
+    # check all file rules errors
+    for file_fun in files_rules_list:
+        if not file_fun.status:
+            report.append(file_fun.get_error())
+
+    # save file
+    self.files_checked.add(name)
+    return report</code></pre>
+</details>
+</dd>
+<dt id="validator.data_validator.DataValidator.configuration_args_error"><code class="name flex">
+<span>def <span class="ident">configuration_args_error</span></span>(<span>self, exception, fun_name)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def configuration_args_error(self, exception, fun_name):
+    if self.log:
+        self.log.error(
+            &#34;Error en la función {0}, problema con el argumento {1}&#34;.format(
+                fun_name.__class__.__name__, exception
+            )
+        )
+    self.configuration_file_error(exception)</code></pre>
+</details>
+</dd>
+<dt id="validator.data_validator.DataValidator.configuration_file_error"><code class="name flex">
+<span>def <span class="ident">configuration_file_error</span></span>(<span>self, exception)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def configuration_file_error(self, exception):
+    if self.log:
+        self.log.error(&#34;Archivo de configuración mal formado&#34;)
+        # self.log.error(exception)
+    sys.exit(&#34;Procesamiento cancelado.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="validator.data_validator.DataValidator.configuration_fun_error"><code class="name flex">
+<span>def <span class="ident">configuration_fun_error</span></span>(<span>self, exception, fun_name)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def configuration_fun_error(self, exception, fun_name):
+    if self.log:
+        self.log.error(&#34;Nombre de función &#39;{0}&#39; no válida.&#34;.format(fun_name))
+    self.configuration_file_error(exception)</code></pre>
+</details>
+</dd>
+<dt id="validator.data_validator.DataValidator.create_path_dict"><code class="name flex">
+<span>def <span class="ident">create_path_dict</span></span>(<span>self, node, name_list)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Iterate over path_dict and create
+:param node:
+:param name_list:</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_path_dict(self, node, name_list):
+    &#34;&#34;&#34;
+    Iterate over path_dict and create
+    :param node:
+    :param name_list:
+    &#34;&#34;&#34;
+    name = node[&#34;path&#34;][&#34;name&#34;]
+    if name in name_list:
+        self.path_list_dict.append(node)
+    for child in node[&#34;children&#34;]:
+        self.create_path_dict(child, name_list)</code></pre>
+</details>
+</dd>
+<dt id="validator.data_validator.DataValidator.dispatch_rules"><code class="name flex">
+<span>def <span class="ident">dispatch_rules</span></span>(<span>self, rules: dict, header: list) ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Split kind of rules
+:param rules:
+:param header:
+:return: dict of rules</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dispatch_rules(self, rules: dict, header: list) -&gt; dict:
+    &#34;&#34;&#34;
+    Split kind of rules
+    :param rules:
+    :param header:
+    :return: dict of rules
+    &#34;&#34;&#34;
+    format_rules = rules.get(&#34;formatRules&#34;, [])
+    semantic_rules = rules.get(&#34;semanticRules&#34;, [])
+    rules_list = format_rules + semantic_rules
+    rules_dict = defaultdict(list)
+
+    for rule in rules_list:
+        rule_name = rule[&#34;function&#34;]
+        rule_args = rule[&#34;args&#34;]
+        rule_args[&#34;header&#34;] = header
+        try:
+            fun_object = file_functions[rule_name](rule_args)
+        except KeyError as e:
+            self.configuration_fun_error(e, rule_name)
+        fun_type = fun_object.get_fun_type().name
+        rules_dict[fun_type].append(fun_object)
+    return rules_dict</code></pre>
+</details>
+</dd>
+<dt id="validator.data_validator.DataValidator.iterate_over_configuration_tree"><code class="name flex">
+<span>def <span class="ident">iterate_over_configuration_tree</span></span>(<span>self, node, path)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Iterate recursively a configuration file checking name format, path format and rules
+:param node: configuration node
+:param path: node path</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def iterate_over_configuration_tree(self, node, path):
+    &#34;&#34;&#34;
+    Iterate recursively a configuration file checking name format, path format and rules
+    :param node: configuration node
+    :param path: node path
+    &#34;&#34;&#34;
+    # get variables
+    try:
+        name = node[&#34;path&#34;][&#34;name&#34;]
+        type_name = node[&#34;path&#34;][&#34;type&#34;]
+        header = node[&#34;path&#34;].get(&#34;header&#34;, &#34;&#34;)
+        absolute_path = os.path.join(self.data_path, path)
+        dependencies = node[&#34;path&#34;].get(&#34;dependencies&#34;, [])
+        if type_name != &#34;multi-regex&#34;:
+            new_path = os.path.join(path, name)
+        else:
+            new_path = path
+        rules = node[&#34;rules&#34;]
+    except KeyError as e:
+        self.configuration_file_error(e)
+    # check name and path format
+    validator = check_name_functions[type_name](
+        {&#34;path&#34;: absolute_path, &#34;name&#34;: name}
+    )
+
+    # check dependencies
+    missing_dependencies = []
+    for dependency in dependencies:
+        dependency_found = False
+        for file in self.files_checked:
+            if fnmatch.fnmatch(file, dependency):
+                dependency_found = True
+        if not dependency_found:
+            missing_dependencies.append(dependency)
+
+    if validator.apply(self):
+        # if name correct check rules and report errors
+        if type_name == &#34;regex&#34; or type_name == &#34;multi-regex&#34;:
+            name = self.temp_name
+            self.temp_name = None
+
+        if missing_dependencies:
+            for dependency in missing_dependencies:
+                error = {
+                    &#34;name&#34;: &#34;Error de dependencias&#34;,
+                    &#34;type&#34;: &#34;formato&#34;,
+                    &#34;message&#34;: f&#34;El archivo {name} requiere el procesamiento del archivo con patrón {dependency}.&#34;,
+                    &#34;row&#34;: &#34;&#34;,
+                    &#34;cols&#34;: &#34;&#34;,
+                }
+                self.report_errors[name].append(error)
+            return
+        if rules:
+            if type_name == &#34;multi-regex&#34;:
+                status = self.validate_multi_node_rules(
+                    absolute_path, name, rules, header
+                )
+            else:
+                status = self.validate_node_rules(
+                    absolute_path, name, rules, header
+                )
+            for error in status:
+                if isinstance(name, list):
+                    for name_file in name:
+                        self.report_errors[name_file].append(error)
+                else:
+                    self.report_errors[name].append(error)
+            # if not root case
+        if name and new_path:
+            self.report.append([name, new_path])
+
+        # iterate over childs
+        for child in node.get(&#34;children&#34;, []):
+            self.iterate_over_configuration_tree(child, new_path)
+    else:
+        # report name and path errors
+        self.report_errors[name].append(validator.get_error())</code></pre>
+</details>
+</dd>
+<dt id="validator.data_validator.DataValidator.start_iteration_over_configuration_tree"><code class="name flex">
+<span>def <span class="ident">start_iteration_over_configuration_tree</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Start iteration over a configuration file</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def start_iteration_over_configuration_tree(self):
+    &#34;&#34;&#34;
+    Start iteration over a configuration file
+    &#34;&#34;&#34;
+    self.iterate_over_configuration_tree(self.config, &#34;&#34;)</code></pre>
+</details>
+</dd>
+<dt id="validator.data_validator.DataValidator.start_iteration_over_path_list"><code class="name flex">
+<span>def <span class="ident">start_iteration_over_path_list</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Start iteration over a path list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def start_iteration_over_path_list(self):
+    &#34;&#34;&#34;
+    Start iteration over a path list
+    &#34;&#34;&#34;
+    path_list_names = []
+    path_list_dict_name = {}
+    for path in self.data_path:
+        name = os.path.basename(path)
+        path_list_names.append(name)
+        path_list_dict_name[name] = os.path.dirname(path)
+    self.create_path_dict(self.config, path_list_names)
+    for node in self.path_list_dict:
+        # get variable
+        name = node[&#34;path&#34;][&#34;name&#34;]
+        absolute_path = path_list_dict_name[name]
+        type_name = node[&#34;path&#34;][&#34;type&#34;]
+        header = node[&#34;path&#34;].get(&#34;header&#34;, &#34;&#34;)
+        rules = node[&#34;rules&#34;]
+        # check name and path format
+        validator = check_name_functions[type_name](
+            {&#34;path&#34;: absolute_path, &#34;name&#34;: name}
+        )
+        if validator.apply():
+            # if name correct check rules and report errors
+            if rules:
+                status = self.validate_node_rules(
+                    absolute_path, name, rules, header
+                )
+                for error in status:
+                    self.report_errors[name].append(error)
+                # if not root case
+            if name:
+                self.report.append([name, absolute_path])
+
+        else:
+            # report name and path errors
+            self.report_errors[name].append(validator.get_error())</code></pre>
+</details>
+</dd>
+<dt id="validator.data_validator.DataValidator.validate_multi_node_rules"><code class="name flex">
+<span>def <span class="ident">validate_multi_node_rules</span></span>(<span>self, path, name_list, rules, header)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def validate_multi_node_rules(self, path, name_list, rules, header):
+    report = []
+    if rules:
+        rules_dict = self.dispatch_rules(rules, header)
+        report = self.check_multiple_rules(rules_dict, path, name_list, header)
+
+    return report</code></pre>
+</details>
+</dd>
+<dt id="validator.data_validator.DataValidator.validate_node_rules"><code class="name flex">
+<span>def <span class="ident">validate_node_rules</span></span>(<span>self, path, name, rules, header) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Validate node rules for a file
+:param path: file path
+:param name: file name
+:param rules: format and semantic rules
+:param header: file header
+:return:</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def validate_node_rules(self, path, name, rules, header) -&gt; list:
+    &#34;&#34;&#34;
+    Validate node rules for a file
+    :param path: file path
+    :param name: file name
+    :param rules: format and semantic rules
+    :param header: file header
+    :return:
+    &#34;&#34;&#34;
+    report = []
+    if rules:
+        rules_dict = self.dispatch_rules(rules, header)
+        report = self.check_rules(rules_dict, path, name, header)
+    return report</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="validator" href="index.html">validator</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="validator.data_validator.DataValidator" href="#validator.data_validator.DataValidator">DataValidator</a></code></h4>
+<ul class="">
+<li><code><a title="validator.data_validator.DataValidator.check_multiple_rules" href="#validator.data_validator.DataValidator.check_multiple_rules">check_multiple_rules</a></code></li>
+<li><code><a title="validator.data_validator.DataValidator.check_rules" href="#validator.data_validator.DataValidator.check_rules">check_rules</a></code></li>
+<li><code><a title="validator.data_validator.DataValidator.configuration_args_error" href="#validator.data_validator.DataValidator.configuration_args_error">configuration_args_error</a></code></li>
+<li><code><a title="validator.data_validator.DataValidator.configuration_file_error" href="#validator.data_validator.DataValidator.configuration_file_error">configuration_file_error</a></code></li>
+<li><code><a title="validator.data_validator.DataValidator.configuration_fun_error" href="#validator.data_validator.DataValidator.configuration_fun_error">configuration_fun_error</a></code></li>
+<li><code><a title="validator.data_validator.DataValidator.create_path_dict" href="#validator.data_validator.DataValidator.create_path_dict">create_path_dict</a></code></li>
+<li><code><a title="validator.data_validator.DataValidator.dispatch_rules" href="#validator.data_validator.DataValidator.dispatch_rules">dispatch_rules</a></code></li>
+<li><code><a title="validator.data_validator.DataValidator.iterate_over_configuration_tree" href="#validator.data_validator.DataValidator.iterate_over_configuration_tree">iterate_over_configuration_tree</a></code></li>
+<li><code><a title="validator.data_validator.DataValidator.start_iteration_over_configuration_tree" href="#validator.data_validator.DataValidator.start_iteration_over_configuration_tree">start_iteration_over_configuration_tree</a></code></li>
+<li><code><a title="validator.data_validator.DataValidator.start_iteration_over_path_list" href="#validator.data_validator.DataValidator.start_iteration_over_path_list">start_iteration_over_path_list</a></code></li>
+<li><code><a title="validator.data_validator.DataValidator.validate_multi_node_rules" href="#validator.data_validator.DataValidator.validate_multi_node_rules">validate_multi_node_rules</a></code></li>
+<li><code><a title="validator.data_validator.DataValidator.validate_node_rules" href="#validator.data_validator.DataValidator.validate_node_rules">validate_node_rules</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

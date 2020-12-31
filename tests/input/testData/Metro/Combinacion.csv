@@ -1,0 +1,18 @@
+linea_origen;estacion_origen;linea_destino;estacion_destino;entrada_unica;nombre_estacion
+L1;LH;L2;HE;NO;Los Heroes
+L1;TB;L4;TOB;NO;Tobalaba
+L1;SP;L5;SO;NO;San Pablo
+L1;BA;L5;BQ;NO;Baquedano
+L1;LE;L6;LEO;NO;Los Leones
+L2;LC;L4A;LCI;NO;La Cisterna
+L2;AN;L5;NA;NO;Santa Ana
+L2;FR;L6;FRA;SI;Franklin
+L3;CA3;L2;CA;NO;Puente Cal y Canto
+L3;PZA;L5;PZ;NO;Plaza de Armas
+L3;CH3;L1;CH;NO;Universidad de Chile
+L3;IRA3;L5;IRA;NO;Irarrazaval
+L3;NNO3;L6;NNO;NO;Nunoa
+L3;PZE3;L4;PZE;NO;Plaza Egana
+L4;VMA;L4A;VIM;SI;Vicuna Mackena
+L4;VVA;L5;VV;SI;Vicente Valdes
+L5;NU;L6;NUB;SI;Nuble

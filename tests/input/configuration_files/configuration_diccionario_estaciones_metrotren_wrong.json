@@ -1,0 +1,192 @@
+{
+  "path": {
+    "type": "root",
+    "name": ""
+  },
+  "rules": [],
+  "children": [
+    {
+      "path": {
+        "type": "name",
+        "name": "Diccionario"
+      },
+      "rules": [],
+      "children": [
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-Comunas.csv",
+            "header": [
+              "ID",
+              "NOMBRE"
+            ]
+          },
+          "rules": {
+            "formatRules": [
+              {
+                "function": "min_rows",
+                "args": {
+                  "min": 42
+                }
+              },
+              {
+                "function": "ascii",
+                "args": {
+                  "col_indexes": [
+                    1
+                  ]
+                }
+              },
+              {
+                "function": "duplicate",
+                "args": {
+                  "col_index": 0
+                }
+              },
+              {
+                "function": "duplicate",
+                "args": {
+                  "col_index": 1
+                }
+              }
+            ],
+            "semanticRules": [
+              {
+                "function": "store_col_value",
+                "args": {
+                  "col_index": 1,
+                  "storage_name": "communes"
+                }
+              }
+            ]
+          },
+          "children": []
+        },
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-Zonificaciones.csv",
+            "header": [
+              "ID_POLIGONO",
+              "X",
+              "Y",
+              "NOMBRE_ZONA",
+              "ID_ZONIFICACION"
+            ]
+          },
+          "rules": {
+            "formatRules": [
+              {
+                "function": "not_empty_col",
+                "args": {
+                  "col_indexes": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4
+                  ]
+                }
+              }
+            ],
+            "semanticRules": [
+              {
+                "function": "store_col_dict_values",
+                "args": {
+                  "key_index": 4,
+                  "storage_name": "zone",
+                  "value_indexes": [
+                    1,
+                    2
+                  ]
+                }
+              },
+              {
+                "function": "bounding_box",
+                "args": {
+                  "x_coordinate_index": 1,
+                  "y_coordinate_index": 2,
+                  "bounding_box": [
+                    [
+                      -33.157966831331976,
+                      -70.931424000069
+                    ],
+                    [
+                      -33.157966831331976,
+                      -70.40197466739595
+                    ],
+                    [
+                      -34.190746,
+                      -70.40197466739595
+                    ],
+                    [
+                      -34.190746,
+                      -70.931424000069
+                    ]
+                  ],
+                  "coordinate_system": "utm"
+                }
+              }
+            ]
+          },
+          "children": []
+        },
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-EstacionesMetroTren.csv",
+            "header": [
+              "CODIGOTRX",
+              "COMUNA",
+              "LATITUD",
+              "LONGITUD"
+            ]
+          },
+          "rules": {
+            "formatRules": [
+              {
+                "function": "not_empty_col",
+                "args": {
+                  "col_indexes": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ]
+                }
+              },
+              {
+                "function": "duplicate",
+                "args": {
+                  "col_index": 0
+                }
+              }
+            ],
+            "semanticRules": [
+              {
+                "function": "check_col_storage_value",
+                "args": {
+                  "col_index": 0,
+                  "storage_name": "communes"
+                }
+              },
+              {
+                "function": "check_store_col_dict_values",
+                "args": {
+                  "storage_name": "zone",
+                  "key_name": "comunas",
+                  "value_indexes": [
+                    2,
+                    3
+                  ],
+                  "transform_data": "wsg84_to_utm"
+                }
+              }
+            ]
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
+}
