@@ -9,7 +9,7 @@ from input_validator.data_validator import (
     DataValidator,
 )
 
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.CRITICAL)
 
 
 class DataValidatorTest(TestCase):
