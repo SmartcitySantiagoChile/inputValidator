@@ -1056,3 +1056,21 @@ class DataValidatorTest(TestCase):
 
         self.assertEqual(expected_report, data.report)
         self.assertEqual({}, data.report_errors)
+
+    def test_evasion_777(self):
+        # base case
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_evasion"),
+            config_path=os.path.join(
+                self.configuration_path,
+                "configuration_evasion_zona777.json",
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+
+        expected_report = [
+            ["Evasion", "Evasion"],
+            ["Zonas777Fevasion.csv", "Evasion/Zonas777Fevasion.csv"],
+        ]
+        self.assertEqual(expected_report, data.report)
+        print(data.report_errors)
