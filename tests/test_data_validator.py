@@ -1088,7 +1088,7 @@ class DataValidatorTest(TestCase):
             data_path=os.path.join(self.input_path, "check_evasion"),
             config_path=os.path.join(
                 self.configuration_path,
-                "configuration_evasion_zona777.json",
+                "configuration_evasion_servicio.json",
             ),
         )
         data.start_iteration_over_configuration_tree()
@@ -1099,8 +1099,14 @@ class DataValidatorTest(TestCase):
                 "Diccionario-Zonificaciones.csv",
                 "Diccionario/Diccionario-Zonificaciones.csv",
             ],
+            ["Diccionario-Servicios.csv", "Diccionario/Diccionario-Servicios.csv"],
+            ["Paraderos", "Paraderos"],
+            ["ConsolidadoParadas.csv", "Paraderos/ConsolidadoParadas.csv"],
             ["Evasion", "Evasion"],
-            ["Zonas777Fevasion.csv", "Evasion/Zonas777Fevasion.csv"],
+            [
+                "EvasionServicioSentidoParadaMH.csv",
+                "Evasion/EvasionServicioSentidoParadaMH.csv",
+            ],
         ]
         self.assertEqual(expected_report, data.report)
 

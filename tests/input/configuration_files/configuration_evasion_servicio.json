@@ -54,6 +54,99 @@
             ]
           },
           "children": []
+        },
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-Servicios.csv",
+            "header": [
+              "ROUTE_ID",
+              "ROUTE_NAME",
+              "SERVICE_NA",
+              "UN",
+              "OP_NOC",
+              "DIST",
+              "PO_MOD",
+              "SENTIDO",
+              "COD_USUARI",
+              "COD_TS",
+              "COD_SINSER",
+              "COD_SINRUT",
+              "COD_USUSEN",
+              "TIPO_SERV",
+              "FREC_PM",
+              "FREC_PT",
+              "PLAZAS_PM",
+              "PLAZAS_PT",
+              "SEL_PM",
+              "SEL_PT",
+              "SEN1",
+              "VALIDA"
+            ]
+          },
+          "rules": {
+            "formatRules": [
+            ],
+            "semanticRules": [
+              {
+              "function": "store_col_value",
+              "args":
+              {
+                "col_index": 8,
+                "storage_name": "servicio_usuario"
+              }
+              }
+            ]
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "path": {
+        "type": "name",
+        "name": "Paraderos"
+      },
+      "rules": [],
+      "children": [
+        {
+          "path": {
+            "type": "name",
+            "name": "ConsolidadoParadas.csv",
+            "header": [
+              "OrdenCirc",
+              "Código TS",
+              "Código Usuario",
+              "Sentido Servicio",
+              "Varian-te",
+              "UN",
+              "Código paradero TS",
+              "Código  paradero Usuario",
+              "Comuna",
+              "Eje",
+              "Desde ( Cruce 1)",
+              "Hacia ( Cruce 2)",
+              "x",
+              "y",
+              "Nombre Paradero",
+              "Operación con Zona Paga",
+              "Paradas con Excepciones"
+            ]
+          },
+          "rules": {
+            "formatRules": [],
+            "semanticRules": [
+              {
+                "function": "store_col_value",
+                "args":
+                {
+                  "col_index": 6,
+                  "storage_name": "codigo_parada_ts"
+                }
+              }
+            ]
+          },
+          "children": []
         }
       ]
     },
@@ -67,10 +160,12 @@
         {
           "path": {
             "type": "name",
-            "name": "Zonas777Fevasion.csv",
+            "name": "EvasionServicioSentidoParadaMH.csv",
             "header": [
               "tipodia",
-              "ZONA777",
+              "Código paradero TS",
+              "Servicio Usuario",
+              "Sentido Servicio",
               "0:00",
               "0:30",
               "1:00",
@@ -174,7 +269,10 @@
                     45,
                     46,
                     47,
-                    48
+                    48,
+                    49,
+                    50,
+                    51
                   ]
                 }
               },
@@ -196,9 +294,7 @@
                 "args": {
                   "lower_bound": "0",
                   "upper_bound": "1",
-                  "col_indexes": [2,
-                    3,
-                    4,
+                  "col_indexes": [
                     5,
                     6,
                     7,
@@ -242,19 +338,41 @@
                     45,
                     46,
                     47,
-                    48
+                    48,
+                    49,
+                    50,
+                    51
+                  ]
+                }
+              },
+              {
+                "function": "string_domain",
+                "args": {
+                  "col_indexes": [
+                    3
+                  ],
+                  "domain": [
+                    "Ida",
+                    "Ret"
                   ]
                 }
               }
             ],
             "semanticRules": [
               {
-                "function": "check_store_col_dict_values",
-                "args": {
-                  "storage_name": "zone777",
-                  "key_name": "diseno_777",
-                  "value_indexes": [1],
-                  "transform_data": "None"
+                "function":
+                        "check_col_storage_value",
+                "args":{
+                  "col_index": 1,
+                  "storage_name": "codigo_parada_ts"
+                }
+              },
+              {
+                "function":
+                "check_col_storage_value",
+                "args":{
+                  "col_index": 2,
+                  "storage_name": "servicio_usuario"
                 }
               }
             ]
