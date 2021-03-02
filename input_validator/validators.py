@@ -637,11 +637,11 @@ class NumericRangeValueValidator(Validator):
         self.cols_error = []
         self.row_counter += 1
         self.args["row"] = args
-        lower_bound = int(self.args["lower_bound"])
-        upper_bound = int(self.args["upper_bound"])
+        lower_bound = float(self.args["lower_bound"])
+        upper_bound = float(self.args["upper_bound"])
         cols_to_check = self.args["col_indexes"]
         for col in cols_to_check:
-            value = int(self.args["row"][col])
+            value = float(self.args["row"][col])
             if value < lower_bound or value > upper_bound:
                 self.cols_error.append(col)
 
