@@ -970,6 +970,7 @@ class StoreColDictValues(Validator):
         key_value = args[key_index]
         data_validator = self.args["data_validator"]
         storage_name = self.args["storage_name"]
+        unique = True if self.args.get("unique") == "True" else False
         if data_validator.storage.get(storage_name, 0) == 0:
             value_dict = {key_value: []}
         else:
@@ -981,6 +982,8 @@ class StoreColDictValues(Validator):
         var = []
         for value in value_indexes:
             var.append(args[value])
+        if unique:
+            var = var[0]
         value_dict[key_value].append(var)
         data_validator.storage[storage_name] = value_dict
         return True
@@ -1021,7 +1024,7 @@ class CheckStoreColDictValuesValidator(Validator):
         data_validator = self.args["data_validator"]
         storage = data_validator.storage.get(self.args["storage_name"], [])
         storage_key = storage.get(key_name, []) if storage != [] else []
-        transform_data = self.args["transform_data"]
+        transform_data = self.args.get("transform_data", [])
         res = False
         if transform_data == "wsg84_to_utm":
             for storage_values in storage_key:
@@ -1043,6 +1046,8 @@ class CheckStoreColDictValuesValidator(Validator):
                 bounding_box.append(storage_values)
             bounding_box = Polygon(bounding_box)
             res = bounding_box.contains(point)
+        elif transform_data == "None":
+            res = True if args[value_indexes[0]] in storage_key else False
         else:
             for storage_values in storage_key:
                 storage_values = [float(storage_values[0]), float(storage_values[1])]

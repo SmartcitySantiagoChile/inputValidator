@@ -193,7 +193,7 @@
                 "function": "string_domain",
                 "args": {
                   "col_indexes": [
-                    1
+                    0
                   ],
                   "domain": [
                     "LABORAL",

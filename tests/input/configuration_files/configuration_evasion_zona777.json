@@ -8,6 +8,58 @@
     {
       "path": {
         "type": "name",
+        "name": "Diccionario"
+      },
+      "rules": [],
+      "children": [
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-Zonificaciones.csv",
+            "header": [
+              "ID_POLIGONO",
+              "X",
+              "Y",
+              "NOMBRE_ZONA",
+              "ID_ZONIFICACION"
+            ]
+          },
+          "rules": {
+            "formatRules": [
+              {
+                "function": "not_empty_col",
+                "args": {
+                  "col_indexes": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4
+                  ]
+                }
+              }
+            ],
+            "semanticRules": [
+              {
+                "function": "store_col_dict_values",
+                "args": {
+                  "key_index": 4,
+                  "storage_name": "zone777",
+                  "value_indexes": [
+                    0
+                  ],
+                  "unique": "True"
+                }
+              }
+            ]
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "path": {
+        "type": "name",
         "name": "Evasion"
       },
       "rules": {},
@@ -196,6 +248,15 @@
               }
             ],
             "semanticRules": [
+              {
+                "function": "check_store_col_dict_values",
+                "args": {
+                  "storage_name": "zone777",
+                  "key_name": "diseno_777",
+                  "value_indexes": [1],
+                  "transform_data": "None"
+                }
+              }
             ]
           },
           "children": []
