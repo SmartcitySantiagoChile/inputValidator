@@ -89,12 +89,11 @@
             ],
             "semanticRules": [
               {
-              "function": "store_col_value",
-              "args":
-              {
-                "col_index": 8,
-                "storage_name": "servicio_usuario"
-              }
+                "function": "store_col_value",
+                "args": {
+                  "col_index": 8,
+                  "storage_name": "servicio_usuario"
+                }
               }
             ]
           },
@@ -138,8 +137,7 @@
             "semanticRules": [
               {
                 "function": "store_col_value",
-                "args":
-                {
+                "args": {
                   "col_index": 6,
                   "storage_name": "codigo_parada_ts"
                 }
@@ -214,6 +212,11 @@
               "22:30",
               "23:00",
               "23:30"
+            ],
+            "dependencies": [
+              "Diccionario-Servicios*.csv",
+              "ConsolidadoParadas*.csv",
+              "Diccionario-Zonificaciones*.csv"
             ]
           },
           "rules": {
@@ -360,17 +363,15 @@
             ],
             "semanticRules": [
               {
-                "function":
-                        "check_col_storage_value",
-                "args":{
+                "function": "check_col_storage_value",
+                "args": {
                   "col_index": 1,
                   "storage_name": "codigo_parada_ts"
                 }
               },
               {
-                "function":
-                "check_col_storage_value",
-                "args":{
+                "function": "check_col_storage_value",
+                "args": {
                   "col_index": 2,
                   "storage_name": "servicio_usuario"
                 }
