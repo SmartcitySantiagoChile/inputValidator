@@ -915,8 +915,8 @@
       "children": [
         {
           "path": {
-            "type": "name",
-            "name": "EvasionServicioSentidoParadaMH.csv",
+            "type": "regex",
+            "name": "EvasionServicioSentidoParadaMH*.csv",
             "header": [
               "tipodia",
               "Código paradero TS",
@@ -1140,8 +1140,8 @@
         },
         {
           "path": {
-            "type": "name",
-            "name": "Zonas777Fevasion.csv",
+            "type": "regex",
+            "name": "Zonas777Fevasion*.csv",
             "header": [
               "tipodia",
               "ZONA777",

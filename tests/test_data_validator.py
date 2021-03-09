@@ -1075,7 +1075,7 @@ class DataValidatorTest(TestCase):
                 "Diccionario/Diccionario-Zonificaciones.csv",
             ],
             ["Evasion", "Evasion"],
-            ["Zonas777Fevasion.csv", "Evasion/Zonas777Fevasion.csv"],
+            ["Zonas777Fevasion.csv", "Evasion/Zonas777Fevasion*.csv"],
         ]
         self.assertEqual(expected_report, data.report)
 
@@ -1105,7 +1105,7 @@ class DataValidatorTest(TestCase):
             ["Evasion", "Evasion"],
             [
                 "EvasionServicioSentidoParadaMH.csv",
-                "Evasion/EvasionServicioSentidoParadaMH.csv",
+                "Evasion/EvasionServicioSentidoParadaMH*.csv",
             ],
         ]
         self.assertEqual(expected_report, data.report)

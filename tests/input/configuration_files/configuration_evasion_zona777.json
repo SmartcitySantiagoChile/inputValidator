@@ -66,8 +66,8 @@
       "children": [
         {
           "path": {
-            "type": "name",
-            "name": "Zonas777Fevasion.csv",
+            "type": "regex",
+            "name": "Zonas777Fevasion*.csv",
             "header": [
               "tipodia",
               "ZONA777",
