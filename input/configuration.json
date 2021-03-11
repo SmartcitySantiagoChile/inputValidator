@@ -1273,7 +1273,8 @@
                 "args": {
                   "lower_bound": "0",
                   "upper_bound": "1",
-                  "col_indexes": [2,
+                  "col_indexes": [
+                    2,
                     3,
                     4,
                     5,
