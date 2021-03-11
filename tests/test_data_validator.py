@@ -1056,3 +1056,59 @@ class DataValidatorTest(TestCase):
 
         self.assertEqual(expected_report, data.report)
         self.assertEqual({}, data.report_errors)
+
+    def test_evasion_777(self):
+        # base case
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_evasion"),
+            config_path=os.path.join(
+                self.configuration_path,
+                "configuration_evasion_zona777.json",
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+
+        expected_report = [
+            ["Diccionario", "Diccionario"],
+            [
+                "Diccionario-Zonificaciones.csv",
+                "Diccionario/Diccionario-Zonificaciones.csv",
+            ],
+            ["Evasion", "Evasion"],
+            ["Zonas777Fevasion.csv", "Evasion/Zonas777Fevasion*.csv"],
+        ]
+        self.assertEqual(expected_report, data.report)
+
+        expected_errors = {}
+        self.assertEqual(expected_errors, data.report_errors)
+
+    def test_evasion_servicio_sentido_parada(self):
+        # base case
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_evasion"),
+            config_path=os.path.join(
+                self.configuration_path,
+                "configuration_evasion_servicio.json",
+            ),
+        )
+        data.start_iteration_over_configuration_tree()
+
+        expected_report = [
+            ["Diccionario", "Diccionario"],
+            [
+                "Diccionario-Zonificaciones.csv",
+                "Diccionario/Diccionario-Zonificaciones.csv",
+            ],
+            ["Diccionario-Servicios.csv", "Diccionario/Diccionario-Servicios.csv"],
+            ["Paraderos", "Paraderos"],
+            ["ConsolidadoParadas.csv", "Paraderos/ConsolidadoParadas.csv"],
+            ["Evasion", "Evasion"],
+            [
+                "EvasionServicioSentidoParadaMH.csv",
+                "Evasion/EvasionServicioSentidoParadaMH*.csv",
+            ],
+        ]
+        self.assertEqual(expected_report, data.report)
+
+        expected_errors = {}
+        self.assertEqual(expected_errors, data.report_errors)

@@ -1,0 +1,267 @@
+{
+  "path": {
+    "type": "root",
+    "name": ""
+  },
+  "rules": {},
+  "children": [
+    {
+      "path": {
+        "type": "name",
+        "name": "Diccionario"
+      },
+      "rules": [],
+      "children": [
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-Zonificaciones.csv",
+            "header": [
+              "ID_POLIGONO",
+              "X",
+              "Y",
+              "NOMBRE_ZONA",
+              "ID_ZONIFICACION"
+            ]
+          },
+          "rules": {
+            "formatRules": [
+              {
+                "function": "not_empty_col",
+                "args": {
+                  "col_indexes": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4
+                  ]
+                }
+              }
+            ],
+            "semanticRules": [
+              {
+                "function": "store_col_dict_values",
+                "args": {
+                  "key_index": 4,
+                  "storage_name": "zone777",
+                  "value_indexes": [
+                    0
+                  ],
+                  "unique": "True"
+                }
+              }
+            ]
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "path": {
+        "type": "name",
+        "name": "Evasion"
+      },
+      "rules": {},
+      "children": [
+        {
+          "path": {
+            "type": "regex",
+            "name": "Zonas777Fevasion*.csv",
+            "header": [
+              "tipodia",
+              "ZONA777",
+              "00:00",
+              "00:30",
+              "01:00",
+              "01:30",
+              "02:00",
+              "02:30",
+              "03:00",
+              "03:30",
+              "04:00",
+              "04:30",
+              "05:00",
+              "05:30",
+              "06:00",
+              "06:30",
+              "07:00",
+              "07:30",
+              "08:00",
+              "08:30",
+              "09:00",
+              "09:30",
+              "10:00",
+              "10:30",
+              "11:00",
+              "11:30",
+              "12:00",
+              "12:30",
+              "13:00",
+              "13:30",
+              "14:00",
+              "14:30",
+              "15:00",
+              "15:30",
+              "16:00",
+              "16:30",
+              "17:00",
+              "17:30",
+              "18:00",
+              "18:30",
+              "19:00",
+              "19:30",
+              "20:00",
+              "20:30",
+              "21:00",
+              "21:30",
+              "22:00",
+              "22:30",
+              "23:00",
+              "23:30"
+            ]
+          },
+          "rules": {
+            "formatRules": [
+              {
+                "function": "not_empty_col",
+                "args": {
+                  "col_indexes": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19,
+                    20,
+                    21,
+                    22,
+                    23,
+                    24,
+                    25,
+                    26,
+                    27,
+                    28,
+                    29,
+                    30,
+                    31,
+                    32,
+                    33,
+                    34,
+                    35,
+                    36,
+                    37,
+                    38,
+                    39,
+                    40,
+                    41,
+                    42,
+                    43,
+                    44,
+                    45,
+                    46,
+                    47,
+                    48
+                  ]
+                }
+              },
+              {
+                "function": "string_domain",
+                "args": {
+                  "col_indexes": [
+                    0
+                  ],
+                  "domain": [
+                    "LABORAL",
+                    "SABADO",
+                    "DOMINGO"
+                  ]
+                }
+              },
+              {
+                "function": "numeric_range",
+                "args": {
+                  "lower_bound": "0",
+                  "upper_bound": "1",
+                  "col_indexes": [2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19,
+                    20,
+                    21,
+                    22,
+                    23,
+                    24,
+                    25,
+                    26,
+                    27,
+                    28,
+                    29,
+                    30,
+                    31,
+                    32,
+                    33,
+                    34,
+                    35,
+                    36,
+                    37,
+                    38,
+                    39,
+                    40,
+                    41,
+                    42,
+                    43,
+                    44,
+                    45,
+                    46,
+                    47,
+                    48
+                  ]
+                }
+              }
+            ],
+            "semanticRules": [
+              {
+                "function": "check_store_col_dict_values",
+                "args": {
+                  "storage_name": "zone777",
+                  "key_name": "diseno_777",
+                  "value_indexes": [1],
+                  "transform_data": "None"
+                }
+              }
+            ]
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
+}
