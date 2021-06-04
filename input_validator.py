@@ -71,7 +71,7 @@ def main(argv):
             logger.error("{0} contiene los siguientes errores:".format(key))
             for error in value:
                 logger.error(error)
-    with open(os.path.join(OUTPUT_PATH, OUTPUT_NAME), "w", newline="") as f:
+    with open(os.path.join(OUTPUT_PATH, OUTPUT_NAME), "w", newline="", encoding='utf-8-SIG') as f:
         writer = csv.writer(f)
         writer.writerow(["Archivo", "Error", "Tipo", "Fila", "Columna(s)", "Detalle"])
         for key, value in validator.report_errors.items():
