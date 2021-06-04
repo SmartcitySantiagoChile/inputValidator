@@ -980,13 +980,8 @@ class DataValidatorTest(TestCase):
 
     def test_paraderos(self):
         # base case
-        data = DataValidator(
-            data_path=os.path.join(self.input_path, "check_paraderos"),
-            config_path=os.path.join(
-                self.configuration_path,
-                "configuration_paraderos.json",
-            ),
-        )
+        data = DataValidator(data_path=os.path.join(self.input_path, "check_paraderos"),
+                             config_path=os.path.join(self.configuration_path, "configuration_paraderos.json"))
         data.start_iteration_over_configuration_tree()
         expected_report = [
             ["Diccionario", "Diccionario"],
