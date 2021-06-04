@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/SmartcitySantiagoChile/inputValidator.svg?branch=master)](https://travis-ci.com/SmartcitySantiagoChile/fondefVizServer) [![Coverage Status](https://coveralls.io/repos/github/SmartcitySantiagoChile/inputValidator/badge.svg?branch=main)](https://coveralls.io/github/SmartcitySantiagoChile/inputValidator?branch=main) [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)  
+[![Build Status](https://travis-ci.com/SmartcitySantiagoChile/inputValidator.svg?branch=main)](https://travis-ci.com/SmartcitySantiagoChile/fondefVizServer) [![Coverage Status](https://coveralls.io/repos/github/SmartcitySantiagoChile/inputValidator/badge.svg?branch=main)](https://coveralls.io/github/SmartcitySantiagoChile/inputValidator?branch=main) [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)  
 
 # inputValidator
 
