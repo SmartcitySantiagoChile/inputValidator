@@ -17,7 +17,7 @@ class DataValidator:
     """A class to iterate over a tree configuration json file and validate data"""
 
     def __init__(self, config_path, data_path, path_list=False, logger=None):
-        with open(config_path) as json_config:
+        with open(config_path, encoding='utf-8-SIG') as json_config:
             self.config = json.loads(json_config.read())
         self.report_errors = defaultdict(list)
         self.report = []
