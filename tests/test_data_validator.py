@@ -45,7 +45,7 @@ class DataValidatorTest(TestCase):
                     "cols": "",
                     "message": "El nombre del directorio o archivo 'asd' no "
                                "se encuentra en el directorio "
-                               f"'{self.data_path + '/'}'.",
+                               f"'{self.data_path + os.path.sep}'.",
                     "row": "",
                     "name": "Nombre incorrecto",
                     "type": "formato",
