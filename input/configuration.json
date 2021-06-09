@@ -67,8 +67,8 @@
             "type": "regex",
             "name": "Diccionario-Servicios*.csv",
             "header": [
-              "ROUTE_ID",
-              "ROUTE_NAME",
+              "Route_ID",
+              "Route_Name",
               "SERVICE_NA",
               "UN",
               "OP_NOC",
