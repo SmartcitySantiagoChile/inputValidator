@@ -3,6 +3,7 @@ venv*/
 .idea/
 data/
 outputs/
+input/
 
 __pycache__/*
 test/__pycache__/*
