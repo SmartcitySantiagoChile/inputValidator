@@ -97,14 +97,20 @@
                     31,
                     32,
                     33
-                  ]
+                  ],
+                  "conditions_to_ignore_row": []
                 }
               },
               {
                 "function": "string_domain",
                 "args": {
-                  "col_indexes": [3],
-                  "domain": ["Ida", "Ret"]
+                  "col_indexes": [
+                    3
+                  ],
+                  "domain": [
+                    "Ida",
+                    "Ret"
+                  ]
                 }
               },
               {
@@ -149,7 +155,9 @@
                 "function": "multi_row_col_value",
                 "args": {
                   "col_indexes": [
-                    1,2,3
+                    1,
+                    2,
+                    3
                   ]
                 }
               }

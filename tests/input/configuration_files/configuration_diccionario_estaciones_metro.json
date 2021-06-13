@@ -12,56 +12,56 @@
       },
       "rules": [],
       "children": [
-          {
-            "path": {
-              "type": "name",
-              "name": "Diccionario-Comunas.csv",
-              "header": [
-                "ID",
-                "NOMBRE"
-              ]
-            },
-            "rules": {
-              "formatRules": [
-                {
-                  "function": "min_rows",
-                  "args": {
-                    "min": 42
-                  }
-                },
-                {
-                  "function": "ascii",
-                  "args": {
-                    "col_indexes": [
-                      1
-                    ]
-                  }
-                },
-                {
-                  "function": "duplicate",
-                  "args": {
-                    "col_index": 0
-                  }
-                },
-                {
-                  "function": "duplicate",
-                  "args": {
-                    "col_index": 1
-                  }
-                }
-              ],
-              "semanticRules": [
-                {
-                  "function": "store_col_value",
-                  "args": {
-                    "col_index": 1,
-                    "storage_name": "comunas"
-                  }
-                }
-              ]
-            },
-            "children": []
+        {
+          "path": {
+            "type": "name",
+            "name": "Diccionario-Comunas.csv",
+            "header": [
+              "ID",
+              "NOMBRE"
+            ]
           },
+          "rules": {
+            "formatRules": [
+              {
+                "function": "min_rows",
+                "args": {
+                  "min": 42
+                }
+              },
+              {
+                "function": "ascii",
+                "args": {
+                  "col_indexes": [
+                    1
+                  ]
+                }
+              },
+              {
+                "function": "duplicate",
+                "args": {
+                  "col_index": 0
+                }
+              },
+              {
+                "function": "duplicate",
+                "args": {
+                  "col_index": 1
+                }
+              }
+            ],
+            "semanticRules": [
+              {
+                "function": "store_col_value",
+                "args": {
+                  "col_index": 1,
+                  "storage_name": "comunas"
+                }
+              }
+            ]
+          },
+          "children": []
+        },
         {
           "path": {
             "type": "name",
@@ -85,7 +85,8 @@
                     2,
                     3,
                     4
-                  ]
+                  ],
+                  "conditions_to_ignore_row": []
                 }
               }
             ],
@@ -164,7 +165,8 @@
                     7,
                     8,
                     9
-                  ]
+                  ],
+                  "conditions_to_ignore_row": []
                 }
               },
               {

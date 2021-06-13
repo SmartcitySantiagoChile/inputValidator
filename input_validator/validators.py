@@ -509,7 +509,7 @@ class NotEmptyValueValidator(Validator):
         Validator args:
 
             col_indexes: column index list
-            condition_to_ignore: list of conditions: [[col_index, operator, string], ...]. for instance: "[[1, '==', 'POR DEFINIR']]"
+            conditions_to_ignore_row: list of conditions: [[col_index, operator, string], ...]. for instance: "[[1, '==', 'POR DEFINIR']]"
         """
         self.cols_error = []
         self.row_counter += 1
@@ -517,7 +517,7 @@ class NotEmptyValueValidator(Validator):
         cols_to_check = self.args["col_indexes"]
 
         conditions = self.args["conditions_to_ignore_row"]
-        if self.has_to_ignore(conditions):
+        if len(conditions) > 0 and self.has_to_ignore(conditions):
             return True
 
         for col in cols_to_check:

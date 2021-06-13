@@ -67,7 +67,8 @@
                     10,
                     11,
                     12
-                  ]
+                  ],
+                  "conditions_to_ignore_row": []
                 }
               },
               {

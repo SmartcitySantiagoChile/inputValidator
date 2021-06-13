@@ -85,7 +85,8 @@
                     2,
                     3,
                     4
-                  ]
+                  ],
+                  "conditions_to_ignore_row": []
                 }
               }
             ],
@@ -177,14 +178,29 @@
               {
                 "function": "not_empty_col",
                 "args": {
-                  "col_indexes": [1, 3, 7, 8, 9, 10, 11, 12]
-                }
+                  "col_indexes": [
+                    1,
+                    3,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12
+                  ]
+                },
+                "conditions_to_ignore_row": []
               },
               {
                 "function": "string_domain",
                 "args": {
-                  "col_indexes": [7],
-                  "domain": ["I", "R"]
+                  "col_indexes": [
+                    7
+                  ],
+                  "domain": [
+                    "I",
+                    "R"
+                  ]
                 }
               }
             ],
@@ -251,7 +267,8 @@
                 "args": {
                   "col_indexes": [
                     10
-                  ]
+                  ],
+                  "conditions_to_ignore_row": []
                 }
               },
               {

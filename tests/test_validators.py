@@ -46,7 +46,7 @@ class DataValidatorTest(TestCase):
         error_message = {
             "cols": "",
             "message": "La raíz del directorio debe tener un nombre vacío en la "
-            "configuración.",
+                       "configuración.",
             "row": "",
             "name": "Raiz incorrecta",
             "type": "formato",
@@ -62,8 +62,8 @@ class DataValidatorTest(TestCase):
         error_message = {
             "cols": "",
             "message": "El nombre del directorio o archivo 'Diccionario' no se encuentra "
-            "en el directorio "
-            f"'{self.check_name_data_path}'.",
+                       "en el directorio "
+                       f"'{self.check_name_data_path}'.",
             "row": "",
             "name": "Nombre incorrecto",
             "type": "formato",
@@ -92,8 +92,8 @@ class DataValidatorTest(TestCase):
         error_message = {
             "cols": "",
             "message": "No existe directorio o archivo con la expresión regular "
-            "'Diccionario-DetalleServicioZP_*_*.csv' en el directorio "
-            f"'{path}' .",
+                       "'Diccionario-DetalleServicioZP_*_*.csv' en el directorio "
+                       f"'{path}' .",
             "row": "",
             "name": "No existe archivo con expresión regular",
             "type": "formato",
@@ -148,7 +148,7 @@ class DataValidatorTest(TestCase):
         error_message = {
             "cols": "",
             "message": "El archivo posee 1 filas, cuando debería tener 3 filas como "
-            "mínimo.",
+                       "mínimo.",
             "name": "Número de filas menor al correcto",
             "row": "",
             "type": "formato",
@@ -174,7 +174,7 @@ class DataValidatorTest(TestCase):
         error_message = {
             "cols": ["COMUNA"],
             "message": "La variable '['ÑUÑOA']' posee ñ o acentos en la fila 2 columna "
-            "COMUNA.",
+                       "COMUNA.",
             "name": "Valores contienen ñ o acentos",
             "row": 2,
             "type": "formato",
@@ -187,7 +187,7 @@ class DataValidatorTest(TestCase):
         error_message = {
             "cols": ["COMUNA"],
             "message": "La variable '['Pucón']' posee ñ o acentos en la fila 3 columna "
-            "COMUNA.",
+                       "COMUNA.",
             "name": "Valores contienen ñ o acentos",
             "row": 3,
             "type": "formato",
@@ -201,7 +201,7 @@ class DataValidatorTest(TestCase):
         error_message = {
             "cols": ["ID", "COMUNA"],
             "message": "Las variables '['Ñuñoa', 'Pucón']' poseen ñ o acentos en la fila "
-            "1 columnas ID, COMUNA.",
+                       "1 columnas ID, COMUNA.",
             "name": "Valores contienen ñ o acentos",
             "row": 1,
             "type": "formato",
@@ -264,7 +264,7 @@ class DataValidatorTest(TestCase):
         error_message = {
             "cols": "",
             "message": "El header no corresponde al archivo. Este debe ser: ['ID', "
-            "'COMUNA']",
+                       "'COMUNA']",
             "name": "Header incorrecto",
             "row": "",
             "type": "formato",
@@ -299,7 +299,7 @@ class DataValidatorTest(TestCase):
             "SEN1",
             "VALIDA",
         ]
-        validator = NotEmptyValueValidator({"header": header, "col_indexes": [1, 2]})
+        validator = NotEmptyValueValidator({"header": header, "col_indexes": [1, 2], "conditions_to_ignore_row": []})
         self.assertTrue(validator.apply(header))
 
         # wrong case
@@ -368,7 +368,7 @@ class DataValidatorTest(TestCase):
         error_message = {
             "cols": ["ROUTE_NAME", "SERVICE_NA"],
             "message": "Existen valores vacíos en la fila 3, columnas ROUTE_NAME, "
-            "SERVICE_NA.",
+                       "SERVICE_NA.",
             "name": "Valor vacío",
             "row": 3,
             "type": "formato",
@@ -465,7 +465,7 @@ class DataValidatorTest(TestCase):
         error_message = {
             "cols": ["SENTIDO"],
             "message": "Existe un valor incorrecto en la fila 2, columna SENTIDO. Los "
-            "valores solo pueden ser '['I', 'R']'",
+                       "valores solo pueden ser '['I', 'R']'",
             "name": "Valores incorrectos",
             "row": 2,
             "type": "formato",
@@ -505,7 +505,7 @@ class DataValidatorTest(TestCase):
         error_message = {
             "cols": ["SENTIDO", "COD_USUARI"],
             "message": "Existen valores incorrectos en la fila 1, columnas SENTIDO, "
-            "COD_USUARI. Los valores solo pueden ser '['I', 'R']'",
+                       "COD_USUARI. Los valores solo pueden ser '['I', 'R']'",
             "name": "Valores incorrectos",
             "row": 1,
             "type": "formato",
@@ -559,7 +559,7 @@ class DataValidatorTest(TestCase):
         expected_message = {
             "cols": "PLACA",
             "message": "La variable 'BXBXBX' no cumple con el formato AAAA11 o AA1111 en "
-            "la fila 3, columna PLACA.",
+                       "la fila 3, columna PLACA.",
             "name": "El valor no cumple con la expresión regular",
             "row": 3,
             "type": "formato",
@@ -609,7 +609,7 @@ class DataValidatorTest(TestCase):
         expected_message = {
             "cols": ["PLAZAS"],
             "message": "Valor fuera de rango [11] en la fila 2, columna PLAZAS. Los "
-            "valores solo pueden ser parte del rango [20, 200]",
+                       "valores solo pueden ser parte del rango [20, 200]",
             "name": "Valores fuera de rango",
             "row": 2,
             "type": "formato",
@@ -640,7 +640,7 @@ class DataValidatorTest(TestCase):
         expected_error = {
             "cols": ["HORAINI", "HORAFIN"],
             "message": "Existen valores en formato de hora incorrecto en la fila 2, "
-            "columnas HORAINI, HORAFIN.",
+                       "columnas HORAINI, HORAFIN.",
             "name": "Formato de hora incorrecto",
             "row": 2,
             "type": "formato",
@@ -664,7 +664,7 @@ class DataValidatorTest(TestCase):
         expected_error = {
             "cols": ["HORAFIN", "HORAINI"],
             "message": "En la fila 2 el valor de la columna HORAFIN es menor al valor de "
-            "la columna HORAINI.",
+                       "la columna HORAINI.",
             "name": "Inconsistencia entre valores",
             "row": 2,
             "type": "formato",
@@ -729,7 +729,7 @@ class DataValidatorTest(TestCase):
         expected_error = {
             "cols": "ROUTE_NAME",
             "message": "La variable '201R' no se encuentra en los valores válidos para "
-            "'route_name' en la fila 2, columna ROUTE_NAME.",
+                       "'route_name' en la fila 2, columna ROUTE_NAME.",
             "name": "El valor no es válido",
             "row": 2,
             "type": "valor",
@@ -763,7 +763,7 @@ class DataValidatorTest(TestCase):
         expected_error = {
             "cols": ["X-Coordinate", "Y-Coordinate"],
             "message": "Las coordenadas '28029.0', '1006246.0' en la fila 2 no se "
-            "encuentran en el rango geográfico correcto.",
+                       "encuentran en el rango geográfico correcto.",
             "name": "Coordenadas inválidas",
             "row": 2,
             "type": "valor",
@@ -954,8 +954,8 @@ class DataValidatorTest(TestCase):
         expected_error = {
             "cols": ["LATITUD", "LONGITUD"],
             "message": "'['-33.491584', '-75.617529']' no se encuentran en los valores "
-            "válidos para zonas_6 en la fila 1, columnas ['LATITUD', "
-            "'LONGITUD'].",
+                       "válidos para zonas_6 en la fila 1, columnas ['LATITUD', "
+                       "'LONGITUD'].",
             "name": "El valor no es válido",
             "row": 1,
             "type": "valor",
@@ -1035,7 +1035,7 @@ class DataValidatorTest(TestCase):
         expected_error = {
             "cols": "Servicios",
             "message": "La variable '['B01 00I']' no se encuentra en los valores válidos "
-            "para servicios en la fila 2, columna Servicios.",
+                       "para servicios en la fila 2, columna Servicios.",
             "name": "El valor no es válido",
             "row": 2,
             "type": "valor",

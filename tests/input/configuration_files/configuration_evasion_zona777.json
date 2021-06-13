@@ -35,7 +35,8 @@
                     2,
                     3,
                     4
-                  ]
+                  ],
+                  "conditions_to_ignore_row": []
                 }
               }
             ],
@@ -175,7 +176,8 @@
                     46,
                     47,
                     48
-                  ]
+                  ],
+                  "conditions_to_ignore_row": []
                 }
               },
               {
@@ -196,7 +198,8 @@
                 "args": {
                   "lower_bound": "0",
                   "upper_bound": "1",
-                  "col_indexes": [2,
+                  "col_indexes": [
+                    2,
                     3,
                     4,
                     5,
@@ -253,7 +256,9 @@
                 "args": {
                   "storage_name": "zone777",
                   "key_name": "diseno_777",
-                  "value_indexes": [1],
+                  "value_indexes": [
+                    1
+                  ],
                   "transform_data": "None"
                 }
               }
