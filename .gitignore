@@ -2,7 +2,7 @@
 venv*/
 .idea/
 data/
-outputs/
+output/
 input/
 
 __pycache__/*
