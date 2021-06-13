@@ -1,6 +1,7 @@
 import datetime
 import glob
 import math
+import operator
 import os
 import re
 from abc import ABCMeta, abstractmethod
@@ -18,10 +19,10 @@ class FunType(Enum):
 
 
 def utm_to_wsg84(
-    east_coordinate: float,
-    north_coordinate: float,
-    zone: int = 19,
-    north_hemisphere: bool = False,
+        east_coordinate: float,
+        north_coordinate: float,
+        zone: int = 19,
+        north_hemisphere: bool = False,
 ) -> tuple:
     """
     Convert utm to wsg84 coordinates
@@ -48,13 +49,13 @@ def utm_to_wsg84(
 
     arc = north_coordinate / k0
     mu = arc / (
-        a
-        * (
-            1
-            - math.pow(e, 2) / 4.0
-            - 3 * math.pow(e, 4) / 64.0
-            - 5 * math.pow(e, 6) / 256.0
-        )
+            a
+            * (
+                    1
+                    - math.pow(e, 2) / 4.0
+                    - 3 * math.pow(e, 4) / 64.0
+                    - 5 * math.pow(e, 6) / 256.0
+            )
     )
 
     ei = (1 - math.pow((1 - e * e), (1 / 2.0))) / (1 + math.pow((1 - e * e), (1 / 2.0)))
@@ -65,11 +66,11 @@ def utm_to_wsg84(
     cc = 151 * math.pow(ei, 3) / 96
     cd = 1097 * math.pow(ei, 4) / 512
     phi1 = (
-        mu
-        + ca * math.sin(2 * mu)
-        + cb * math.sin(4 * mu)
-        + cc * math.sin(6 * mu)
-        + cd * math.sin(8 * mu)
+            mu
+            + ca * math.sin(2 * mu)
+            + cb * math.sin(4 * mu)
+            + cc * math.sin(6 * mu)
+            + cd * math.sin(8 * mu)
     )
 
     n0 = a / math.pow((1 - math.pow((e * math.sin(phi1)), 2)), (1 / 2.0))
@@ -86,17 +87,17 @@ def utm_to_wsg84(
     fact3 = (5 + 3 * t0 + 10 * q0 - 4 * q0 * q0 - 9 * e1sq) * math.pow(dd0, 4) / 24
 
     fact4 = (
-        (61 + 90 * t0 + 298 * q0 + 45 * t0 * t0 - 252 * e1sq - 3 * q0 * q0)
-        * math.pow(dd0, 6)
-        / 720
+            (61 + 90 * t0 + 298 * q0 + 45 * t0 * t0 - 252 * e1sq - 3 * q0 * q0)
+            * math.pow(dd0, 6)
+            / 720
     )
 
     lof1 = _a1 / (n0 * k0)
     lof2 = (1 + 2 * t0 + q0) * math.pow(dd0, 3) / 6.0
     lof3 = (
-        (5 - 2 * q0 + 28 * t0 - 3 * math.pow(q0, 2) + 8 * e1sq + 24 * math.pow(t0, 2))
-        * math.pow(dd0, 5)
-        / 120
+            (5 - 2 * q0 + 28 * t0 - 3 * math.pow(q0, 2) + 8 * e1sq + 24 * math.pow(t0, 2))
+            * math.pow(dd0, 5)
+            / 120
     )
     _a2 = (lof1 - lof2 + lof3) / math.cos(phi1)
     _a3 = _a2 * 180 / math.pi
@@ -481,7 +482,25 @@ class NotEmptyValueValidator(Validator):
     def __init__(self, args):
 
         self.cols_error = []
+        self.valid_operators = {
+            '==': operator.eq,
+        }
         super().__init__(args)
+
+    def has_to_ignore(self, conditions):
+        result = True
+        operator_name = None
+
+        try:
+            for condition in conditions:
+                first_argument = self.args['row'][int(condition[0])]
+                second_argument = condition[2]
+                operator_name = condition[1]
+                result = result and self.valid_operators[operator_name](first_argument, second_argument)
+        except KeyError:
+            raise ValueError('Operator "{0}" is not valid'.format(operator_name))
+
+        return result
 
     def apply(self, args=None) -> bool:
         """
@@ -490,11 +509,17 @@ class NotEmptyValueValidator(Validator):
         Validator args:
 
             col_indexes: column index list
+            condition_to_ignore: list of conditions: [[col_index, operator, string], ...]. for instance: "[[1, '==', 'POR DEFINIR']]"
         """
         self.cols_error = []
         self.row_counter += 1
         self.args["row"] = args
         cols_to_check = self.args["col_indexes"]
+
+        conditions = self.args["conditions_to_ignore_row"]
+        if self.has_to_ignore(conditions):
+            return True
+
         for col in cols_to_check:
             value = self.args["row"][col]
             if not value:
@@ -1032,7 +1057,7 @@ class CheckStoreColDictValuesValidator(Validator):
                     float(storage_values[0]), float(storage_values[1])
                 )
                 if math.isclose(
-                    storage_values[0], values[0], abs_tol=0.1
+                        storage_values[0], values[0], abs_tol=0.1
                 ) and math.isclose(storage_values[1], values[1], abs_tol=0.1):
                     res = True
                     break
@@ -1052,7 +1077,7 @@ class CheckStoreColDictValuesValidator(Validator):
             for storage_values in storage_key:
                 storage_values = [float(storage_values[0]), float(storage_values[1])]
                 if math.isclose(
-                    storage_values[0], values[0], abs_tol=0.1
+                        storage_values[0], values[0], abs_tol=0.1
                 ) and math.isclose(storage_values[1], values[1], abs_tol=0.1):
                     res = True
                     break

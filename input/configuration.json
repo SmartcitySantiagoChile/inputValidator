@@ -120,7 +120,8 @@
                     10,
                     11,
                     12
-                  ]
+                  ],
+                  "conditions_to_ignore_row": []
                 }
               },
               {
@@ -187,7 +188,8 @@
                     3,
                     4,
                     5
-                  ]
+                  ],
+                  "conditions_to_ignore_row": []
                 }
               },
               {
@@ -305,7 +307,8 @@
                     2,
                     3,
                     4
-                  ]
+                  ],
+                  "conditions_to_ignore_row": []
                 }
               }
             ],
@@ -399,7 +402,8 @@
                     7,
                     8,
                     9
-                  ]
+                  ],
+                  "conditions_to_ignore_row": []
                 }
               },
               {
@@ -463,7 +467,8 @@
                     1,
                     2,
                     3
-                  ]
+                  ],
+                  "conditions_to_ignore_row": []
                 }
               },
               {
@@ -540,7 +545,8 @@
                 "args": {
                   "col_indexes": [
                     10
-                  ]
+                  ],
+                  "conditions_to_ignore_row": []
                 }
               },
               {
@@ -696,6 +702,13 @@
                     12,
                     13,
                     14
+                  ],
+                  "conditions_to_ignore_row": [
+                    [
+                      7,
+                      "==",
+                      "POR DEFINIR"
+                    ]
                   ]
                 }
               },
@@ -837,7 +850,8 @@
                     31,
                     32,
                     33
-                  ]
+                  ],
+                  "conditions_to_ignore_row": []
                 }
               },
               {
@@ -1034,7 +1048,8 @@
                     49,
                     50,
                     51
-                  ]
+                  ],
+                  "conditions_to_ignore_row": []
                 }
               },
               {
@@ -1252,7 +1267,8 @@
                     46,
                     47,
                     48
-                  ]
+                  ],
+                  "conditions_to_ignore_row": []
                 }
               },
               {
@@ -1331,7 +1347,9 @@
                 "args": {
                   "storage_name": "zone777",
                   "key_name": "diseno_777",
-                  "value_indexes": [1],
+                  "value_indexes": [
+                    1
+                  ],
                   "transform_data": "None"
                 }
               }
