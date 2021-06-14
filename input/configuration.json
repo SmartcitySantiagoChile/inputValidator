@@ -782,7 +782,7 @@
                   ],
                   "conditions_to_ignore_row": [
                     [
-                      7,
+                      6,
                       "==",
                       "POR DEFINIR"
                     ]
