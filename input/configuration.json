@@ -368,7 +368,84 @@
         {
           "path": {
             "type": "regex",
-            "name": "Diccionario-EstacionesMetro_*.csv",
+            "name": "Diccionario-EstacionesMetro_2*.csv",
+            "header": [
+              "CODIGOTRX",
+              "COMUNA",
+              "LATITUD",
+              "LONGITUD",
+              "LINEA",
+              "ESTANDAR",
+              "TIPO",
+              "ESTANDAR_ESTACION_UNICA",
+              "CODIGO",
+              "COLOR"
+            ],
+            "dependencies": [
+              "Diccionario-Comunas*.csv",
+              "Diccionario-Zonificaciones*.csv"
+            ]
+          },
+          "rules": {
+            "formatRules": [
+              {
+                "function": "not_empty_col",
+                "args": {
+                  "col_indexes": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                  ],
+                  "conditions_to_ignore_row": []
+                }
+              },
+              {
+                "function": "duplicate",
+                "args": {
+                  "col_index": 0
+                }
+              },
+              {
+                "function": "string_domain",
+                "args": {
+                  "col_indexes": [
+                    4
+                  ],
+                  "domain": [
+                    "L1",
+                    "L2",
+                    "L3",
+                    "L4",
+                    "L4A",
+                    "L5",
+                    "L6"
+                  ]
+                }
+              }
+            ],
+            "semanticRules": [
+              {
+                "function": "check_col_storage_value",
+                "args": {
+                  "col_index": 1,
+                  "storage_name": "comunas"
+                }
+              }
+            ]
+          },
+          "children": []
+        },
+        {
+          "path": {
+            "type": "regex",
+            "name": "Diccionario-EstacionesMetro_1dia_*.csv",
             "header": [
               "CODIGOTRX",
               "COMUNA",
