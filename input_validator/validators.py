@@ -279,23 +279,38 @@ class RegexMultiNameValidator(Validator):
         """
         path = self.args["path"]
         regex_list = self.args["name"]
+        date = self.args["date"]
         name_list = [glob.glob(os.path.join(path, regex)) for regex in regex_list]
         if name_list[0]:
             name_list = [os.path.split(name[0])[1] for name in name_list]
+            self.args["names_with_incorrect_date"] = [name for name in name_list if date not in name]
+        self.args["name_list"] = name_list
         validator = args
         validator.temp_name = name_list
-        return True if len(name_list) > 0 else False
+        return True if len(name_list) == len(regex_list) and not len(self.args["names_with_incorrect_date"]) else False
 
     def get_error(self) -> dict:
-        return {
-            "name": "No existen archivos con expresiones regulares",
-            "type": "formato",
-            "message": "No existen directorios o archivos con la expresión regular '{0}' en el directorio '{1}' .".format(
-                self.args["name"], self.args["path"]
-            ),
-            "row": "",
-            "cols": "",
-        }
+        if not len(self.args["names_with_incorrect_date"]):
+            return {
+                "name": "No existen archivos con expresiones regulares",
+                "type": "formato",
+                "message": f"No existen directorios o archivos con la expresión regular '{self.args['name']}' en el directorio '{self.args['path']}' .",
+                "row": "",
+                "cols": "",
+            }
+        else:
+            if len(self.args["names_with_incorrect_date"]) > 1:
+                names = ','.join(self.args["names_with_incorrect_date"])
+                message = f"La fecha de los archivos '{names}' no corresponde a la fecha del programa PO '{self.args['date']}' ."
+            else:
+                message = f"La fecha del archivo '{self.args['names_with_incorrect_date'][0]}' no corresponde a la fecha del programa PO '{self.args['date']}' ."
+            return {
+                "name": "Fecha de archivos no corresponde con PO",
+                "type": "formato",
+                "message": message,
+                "row": "",
+                "cols": "",
+            }
 
     def get_fun_type(self) -> FunType:
         return FunType.NAME

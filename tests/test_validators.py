@@ -130,6 +130,7 @@ class DataValidatorTest(TestCase):
                 "Frecuencias_PO*.csv",
                 "Velocidades_PO*.csv",
             ],
+            "date": "20200627"
         }
         validator = RegexMultiNameValidator(args)
 
@@ -151,6 +152,48 @@ class DataValidatorTest(TestCase):
         self.assertTrue(validator.apply(dummy_validator))
         self.assertEqual(expected_temporal_name, dummy_validator.temp_name)
         self.assertEqual(FunType.NAME, validator.get_fun_type())
+        self.assertEqual(expected_error, validator.get_error())
+
+        args = {
+            "path": path,
+            "name": [
+                "Capacidades_PO*.csv",
+                "Distancias_PO*.csv",
+                "Frecuencias_PO*.csv",
+                "Velocidades_PO*.csv",
+            ],
+            "date": "20200628"
+        }
+        expected_error = {'cols': '',
+                          'message': 'La fecha de los archivos '
+                                     "'Capacidades_PO20200627.csv,Distancias_PO20200627.csv,Frecuencias_PO20200627.csv,Velocidades_PO20200627.csv' "
+                                     "no corresponde a la fecha del programa PO '20200628' .",
+                          'name': 'Fecha de archivos no corresponde con PO',
+                          'row': '',
+                          'type': 'formato'}
+        validator = RegexMultiNameValidator(args)
+        self.assertFalse(validator.apply(dummy_validator))
+        self.assertEqual(expected_error, validator.get_error())
+
+        path = os.path.join(self.check_name_data_path, "Frecuencias2")
+        args = {
+            "path": path,
+            "name": [
+                "Capacidades_PO*.csv",
+                "Distancias_PO*.csv",
+                "Frecuencias_PO*.csv",
+                "Velocidades_PO*.csv",
+            ],
+            "date": "20200627"
+        }
+        expected_error = {'cols': '',
+                          'message': "La fecha del archivo 'Capacidades_PO20200628.csv' no corresponde "
+                                     "a la fecha del programa PO '20200627' .",
+                          'name': 'Fecha de archivos no corresponde con PO',
+                          'row': '',
+                          'type': 'formato'}
+        validator = RegexMultiNameValidator(args)
+        self.assertFalse(validator.apply(dummy_validator))
         self.assertEqual(expected_error, validator.get_error())
 
     def test_min_rows_validator(self):
