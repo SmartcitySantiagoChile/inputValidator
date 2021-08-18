@@ -4,6 +4,7 @@ import math
 import operator
 import os
 import re
+import sys
 from abc import ABCMeta, abstractmethod
 from enum import Enum
 
@@ -230,12 +231,14 @@ class RegexNameValidator(Validator):
         """
         path = self.args["path"]
         regex = self.args["name"]
+        date = self.args["date"]
         name = glob.glob(os.path.join(path, regex))
         if name:
             name = os.path.split(name[0])[1]
         validator = args
         validator.temp_name = name
-        return True if len(name) > 0 else False
+        date_is_in_name = date in name
+        return True if len(name) > 0 and date_is_in_name else False
 
     def get_error(self) -> dict:
         return {
@@ -666,7 +669,10 @@ class NumericRangeValueValidator(Validator):
         upper_bound = float(self.args["upper_bound"])
         cols_to_check = self.args["col_indexes"]
         for col in cols_to_check:
-            value = float(self.args["row"][col])
+            if self.args["row"][col]:
+                value = float(self.args["row"][col])
+            else:
+                value = sys.maxsize
             if value < lower_bound or value > upper_bound:
                 self.cols_error.append(col)
 

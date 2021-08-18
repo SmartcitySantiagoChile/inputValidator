@@ -616,7 +616,21 @@ class DataValidatorTest(TestCase):
         }
         self.assertEqual(expected_message, validator.get_error())
 
+
+        # empty case
+        row = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '']
+
         self.assertEqual(FunType.ROW, validator.get_fun_type())
+        expected_message = {
+            "cols": ["PLAZAS"],
+            "message": "Valor fuera de rango [11] en la fila 2, columna PLAZAS. Los "
+                       "valores solo pueden ser parte del rango [20, 200]",
+            "name": "Valores fuera de rango",
+            "row": 2,
+            "type": "formato",
+        }
+        self.assertEqual(expected_message, validator.get_error())
+        self.assertFalse(validator.apply(row))
 
     def test_time_value_validator(self):
         # base case
