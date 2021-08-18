@@ -32,6 +32,7 @@ class DataValidatorTest(TestCase):
             config_path=os.path.join(
                 self.configuration_path, "configuration_check_name.json"
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         self.assertEqual({}, data.report_errors)
@@ -58,6 +59,7 @@ class DataValidatorTest(TestCase):
             config_path=os.path.join(
                 self.configuration_path, "configuration_check_name_wrong_root.json"
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         self.assertEqual(expected_errors, data.report_errors)
@@ -70,6 +72,7 @@ class DataValidatorTest(TestCase):
             config_path=os.path.join(
                 self.configuration_path, "configuration_wrong_file.json"
             ),
+            date='20200627'
         )
         with self.assertRaises(SystemExit) as cm:
             data.start_iteration_over_configuration_tree()
@@ -84,6 +87,7 @@ class DataValidatorTest(TestCase):
                 self.configuration_path, "configuration_wrong_fun_name.json"
             ),
             logger=logger,
+            date='20200627'
         )
         with self.assertRaises(SystemExit) as cm:
             data.start_iteration_over_configuration_tree()
@@ -97,6 +101,7 @@ class DataValidatorTest(TestCase):
                 self.configuration_path, "configuration_wrong_fun_args.json"
             ),
             logger=logger,
+            date='20200627'
         )
         with self.assertRaises(SystemExit) as cm:
             data.start_iteration_over_configuration_tree()
@@ -113,6 +118,7 @@ class DataValidatorTest(TestCase):
             config_path=os.path.join(
                 self.configuration_path, "configuration_check_name.json"
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         logger = logging.getLogger(__name__)
@@ -121,7 +127,8 @@ class DataValidatorTest(TestCase):
 
     def test_validate_nodes_rules_empty_case(self):
         data_validator = DataValidator(
-            os.path.join(self.configuration_path, "configuration.json"), self.data_path
+            os.path.join(self.configuration_path, "configuration.json"), self.data_path,
+            date='20200627'
         )
         path = self.data_path
         name = self.configuration_file["path"]["name"]
@@ -134,7 +141,8 @@ class DataValidatorTest(TestCase):
         check_rules.return_value = []
         dispatch_rules.return_value = []
         data_validator = DataValidator(
-            os.path.join(self.configuration_path, "configuration.json"), self.data_path
+            os.path.join(self.configuration_path, "configuration.json"), self.data_path,
+            date='20200627'
         )
         path = os.path.join(self.data_path, "Diccionario")
         name = self.configuration_file["children"][0]["children"][0]["path"]["name"]
@@ -147,7 +155,8 @@ class DataValidatorTest(TestCase):
 
     def test_dispatch_rules(self):
         data_validator = DataValidator(
-            os.path.join(self.configuration_path, "configuration.json"), self.data_path
+            os.path.join(self.configuration_path, "configuration.json"), self.data_path,
+            date='20200627'
         )
         configuration_path = os.path.join(
             self.configuration_path, "configuration_dispatch.json"
@@ -192,6 +201,7 @@ class DataValidatorTest(TestCase):
             config_path=os.path.join(
                 self.configuration_path, "configuration_check_name.json"
             ),
+            date='20200627'
         )
         expected_error = [
             {
@@ -218,6 +228,7 @@ class DataValidatorTest(TestCase):
             config_path=os.path.join(
                 self.configuration_path, "configuration_check_name.json"
             ),
+            date='20200627'
         )
         expected_error = [
             {
@@ -244,6 +255,7 @@ class DataValidatorTest(TestCase):
             data_path=path_list,
             path_list=True,
             config_path=os.path.join(self.configuration_path, "configuration.json"),
+            date='20200627'
         )
         data.start_iteration_over_path_list()
         expected_report = [
@@ -265,6 +277,7 @@ class DataValidatorTest(TestCase):
             config_path=os.path.join(
                 self.configuration_path, "configuration_path_list.json"
             ),
+            date='20200627'
         )
         path_list_name = ["Diccionario-Comunas.csv", "Diccionario-EstacionesMetro.csv"]
         expected_dict = [
@@ -313,6 +326,7 @@ class DataValidatorTest(TestCase):
             config_path=os.path.join(
                 self.configuration_path, "configuration_diccionario_comunas.json"
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         expected_report = [
@@ -328,6 +342,7 @@ class DataValidatorTest(TestCase):
             config_path=os.path.join(
                 self.configuration_path, "configuration_diccionario_comunas_wrong.json"
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         expected_report = [
@@ -373,6 +388,7 @@ class DataValidatorTest(TestCase):
             config_path=os.path.join(
                 self.configuration_path, "configuration_diccionario_servicios.json"
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         expected_report = [
@@ -389,6 +405,7 @@ class DataValidatorTest(TestCase):
                 self.configuration_path,
                 "configuration_diccionario_servicios_wrong.json",
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
 
@@ -497,6 +514,7 @@ class DataValidatorTest(TestCase):
             config_path=os.path.join(
                 self.configuration_path, "configuration_diccionario_patentes.json"
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         expected_report = [
@@ -512,6 +530,7 @@ class DataValidatorTest(TestCase):
             config_path=os.path.join(
                 self.configuration_path, "configuration_diccionario_patentes_wrong.json"
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         expected_report = [
@@ -561,6 +580,7 @@ class DataValidatorTest(TestCase):
             config_path=os.path.join(
                 self.configuration_path, "configuration_diccionario_periodos_ts.json"
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         expected_report = [
@@ -577,6 +597,7 @@ class DataValidatorTest(TestCase):
                 self.configuration_path,
                 "configuration_diccionario_periodos_ts_wrong.json",
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         expected_report = [
@@ -613,6 +634,7 @@ class DataValidatorTest(TestCase):
             config_path=os.path.join(
                 self.configuration_path, "configuration_shape_rutas.json"
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         expected_data_report = [
@@ -631,6 +653,7 @@ class DataValidatorTest(TestCase):
                 self.configuration_path,
                 "configuration_shape_rutas_wrong.json",
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         expected_data_report = [
@@ -664,6 +687,7 @@ class DataValidatorTest(TestCase):
             config_path=os.path.join(
                 self.configuration_path, "configuration_diccionario_zonificaciones.json"
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         expected_data_report = [
@@ -683,6 +707,7 @@ class DataValidatorTest(TestCase):
                 self.configuration_path,
                 "configuration_diccionario_zonificaciones_wrong.json",
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         expected_data_report = [
@@ -724,6 +749,7 @@ class DataValidatorTest(TestCase):
                 self.configuration_path,
                 "configuration_diccionario_estaciones_metro.json",
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         expected_data_report = [
@@ -751,6 +777,7 @@ class DataValidatorTest(TestCase):
                 self.configuration_path,
                 "configuration_diccionario_estaciones_metro_wrong.json",
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         expected_data_report = [
@@ -873,6 +900,7 @@ class DataValidatorTest(TestCase):
                 self.configuration_path,
                 "configuration_diccionario_estaciones_metrotren.json",
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         expected_report = [
@@ -899,6 +927,7 @@ class DataValidatorTest(TestCase):
                 self.configuration_path,
                 "configuration_diccionario_estaciones_metrotren_wrong.json",
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         self.assertEqual(expected_report, data.report)
@@ -981,7 +1010,9 @@ class DataValidatorTest(TestCase):
     def test_paraderos(self):
         # base case
         data = DataValidator(data_path=os.path.join(self.input_path, "check_paraderos"),
-                             config_path=os.path.join(self.configuration_path, "configuration_paraderos.json"))
+                             config_path=os.path.join(self.configuration_path, "configuration_paraderos.json"),
+                             date='20200627'
+                             )
         data.start_iteration_over_configuration_tree()
         expected_report = [
             ["Diccionario", "Diccionario"],
@@ -1007,6 +1038,7 @@ class DataValidatorTest(TestCase):
                 self.configuration_path,
                 "configuration_diccionario_detalle_servicio.json",
             ),
+            date='20200627'
         )
 
         expected_report = [
@@ -1034,6 +1066,7 @@ class DataValidatorTest(TestCase):
                 self.configuration_path,
                 "configuration_frecuencias.json",
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
         expected_report = [
@@ -1060,6 +1093,7 @@ class DataValidatorTest(TestCase):
                 self.configuration_path,
                 "configuration_evasion_zona777.json",
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
 
@@ -1070,7 +1104,7 @@ class DataValidatorTest(TestCase):
                 os.path.join("Diccionario", "Diccionario-Zonificaciones.csv"),
             ],
             ["Evasion", "Evasion"],
-            ["Zonas777Fevasion.csv", os.path.join("Evasion", "Zonas777Fevasion*.csv")],
+            ['Zonas777Fevasion_20200627.csv', 'Evasion/Zonas777Fevasion*.csv'],
         ]
         self.assertEqual(expected_report, data.report)
 
@@ -1085,6 +1119,7 @@ class DataValidatorTest(TestCase):
                 self.configuration_path,
                 "configuration_evasion_servicio.json",
             ),
+            date='20200627'
         )
         data.start_iteration_over_configuration_tree()
 
@@ -1099,7 +1134,7 @@ class DataValidatorTest(TestCase):
             ["ConsolidadoParadas.csv", os.path.join("Paraderos", "ConsolidadoParadas.csv")],
             ["Evasion", "Evasion"],
             [
-                "EvasionServicioSentidoParadaMH.csv",
+                "EvasionServicioSentidoParadaMH_20200627.csv",
                 os.path.join("Evasion", "EvasionServicioSentidoParadaMH*.csv"),
             ],
         ]
