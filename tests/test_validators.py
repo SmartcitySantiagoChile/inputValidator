@@ -86,7 +86,7 @@ class DataValidatorTest(TestCase):
         path = os.path.join(self.check_name_data_path, "Diccionario")
         dummy_validator = Dummy()
         dummy_validator.temp_name = "test"
-        args = {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv"}
+        args = {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv", "date": '20200627'}
         validator = RegexNameValidator(args)
 
         error_message = {
@@ -102,9 +102,20 @@ class DataValidatorTest(TestCase):
         self.assertEqual(FunType.NAME, validator.get_fun_type())
         self.assertEqual(error_message, validator.get_error())
 
-        # wrong case
-        validator = RegexNameValidator({"path": path, "name": "wrong.csv"})
+        # wrong case regex
+        validator = RegexNameValidator({"path": path, "name": "wrong.csv", "date": '20200627'})
         self.assertFalse(validator.apply(dummy_validator))
+
+        # wrong case date
+        validator = RegexNameValidator(
+            {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv", "date": '20200127'})
+        error_message = {'name': 'Fecha del archivo no corresponde con PO', 'type': 'formato',
+                         'message': "La fecha del archivo Diccionario-DetalleServicioZP_20200627_20200731.csv no "
+                                    "corresponde a la fecha del programa PO '20200127'.",
+                         'row': '', 'cols': ''}
+
+        self.assertFalse(validator.apply(dummy_validator))
+        self.assertEqual(error_message, validator.get_error())
 
     def test_multi_regex_name_validator(self):
         # base case
@@ -615,7 +626,6 @@ class DataValidatorTest(TestCase):
             "type": "formato",
         }
         self.assertEqual(expected_message, validator.get_error())
-
 
         # empty case
         row = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '']

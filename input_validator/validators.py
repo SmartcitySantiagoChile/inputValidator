@@ -223,6 +223,7 @@ class RegexNameValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if regex file exist in path
+        and if date is correct
 
         Validator args:
 
@@ -233,23 +234,33 @@ class RegexNameValidator(Validator):
         regex = self.args["name"]
         date = self.args["date"]
         name = glob.glob(os.path.join(path, regex))
+        self.args["date_is_in_name"] = True
         if name:
             name = os.path.split(name[0])[1]
+            self.args["date_is_in_name"] = date in name
         validator = args
         validator.temp_name = name
-        date_is_in_name = date in name
-        return True if len(name) > 0 and date_is_in_name else False
+        self.args["temp_name"] = name
+        return True if len(name) > 0 and self.args["date_is_in_name"] else False
 
     def get_error(self) -> dict:
-        return {
-            "name": "No existe archivo con expresión regular",
-            "type": "formato",
-            "message": "No existe directorio o archivo con la expresión regular '{0}' en el directorio '{1}' .".format(
-                self.args["name"], self.args["path"]
-            ),
-            "row": "",
-            "cols": "",
-        }
+        if self.args['date_is_in_name']:
+            message = {
+                "name": "No existe archivo con expresión regular",
+                "type": "formato",
+                "message": f"No existe directorio o archivo con la expresión regular '{self.args['name']}' en el directorio '{self.args['path']}' .",
+                "row": "",
+                "cols": "",
+            }
+        else:
+            message = {
+                "name": "Fecha del archivo no corresponde con PO",
+                "type": "formato",
+                "message": f"La fecha del archivo {self.args['temp_name']} no corresponde a la fecha del programa PO '{self.args['date']}'.",
+                "row": "",
+                "cols": "",
+            }
+        return message
 
     def get_fun_type(self):
         return FunType.NAME
