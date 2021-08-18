@@ -16,7 +16,7 @@ from input_validator.validators import (
 class DataValidator:
     """A class to iterate over a tree configuration json file and validate data"""
 
-    def __init__(self, config_path, data_path, path_list=False, logger=None):
+    def __init__(self, config_path, data_path, date, path_list=False, logger=None):
         with open(config_path, encoding='utf-8-SIG') as json_config:
             self.config = json.loads(json_config.read())
         self.report_errors = defaultdict(list)
@@ -28,6 +28,7 @@ class DataValidator:
         self.log = logger
         self.temp_name = None
         self.files_checked = set()
+        self.date = date
 
     def configuration_file_error(self, exception):
         if self.log:
@@ -75,11 +76,11 @@ class DataValidator:
             rules = node["rules"]
         except KeyError as e:
             self.configuration_file_error(e)
+
         # check name and path format
         validator = check_name_functions[type_name](
-            {"path": absolute_path, "name": name}
+            {"path": absolute_path, "name": name, "date": self.date}
         )
-
         # check dependencies
         missing_dependencies = []
         for dependency in dependencies:
@@ -122,7 +123,7 @@ class DataValidator:
                             self.report_errors[name_file].append(error)
                     else:
                         self.report_errors[name].append(error)
-                # if not root case
+            # if not root case
             if name and new_path:
                 self.report.append([name, new_path])
 
@@ -131,7 +132,12 @@ class DataValidator:
                 self.iterate_over_configuration_tree(child, new_path)
         else:
             # report name and path errors
-            self.report_errors[name].append(validator.get_error())
+            if isinstance(name, list):
+                for n in name:
+                    self.report_errors[n].append(validator.get_error())
+            else:
+                self.report_errors[name].append(validator.get_error())
+
 
     def dispatch_rules(self, rules: dict, header: list) -> dict:
         """

@@ -3,6 +3,7 @@ import argparse
 import csv
 import logging
 import os
+import pathlib
 import shutil
 import sys
 import zipfile
@@ -53,8 +54,10 @@ def main(argv):
             zip_ref.extractall(temporal_path)
             input_path = os.path.join(temporal_path, zip_ref.namelist()[0])
 
+    # date with file format
+    date = pathlib.Path(args.path[0]).stem.replace('-', '')
     validator = DataValidator(
-        CONFIG_PATH, input_path, path_list=is_path_list, logger=logger
+        CONFIG_PATH, input_path, date, path_list=is_path_list, logger=logger
     )
 
     if is_path_list:
@@ -68,7 +71,7 @@ def main(argv):
     #    logger.info("{0} found in {1}".format(success[0], success[1]))
     if args.verbose:
         for key, value in validator.report_errors.items():
-            logger.error("{0} contiene los siguientes errores:".format(key))
+            logger.error(f"{key} contiene los siguientes errores:")
             for error in value:
                 logger.error(error)
     with open(os.path.join(OUTPUT_PATH, OUTPUT_NAME), "w", newline="", encoding='utf-8-SIG') as f:
@@ -90,10 +93,8 @@ def main(argv):
     if not is_path_list:
         shutil.rmtree(os.path.join(INPUTS_PATH, "tmp"))
     logger.info(
-        "Archivos procesados, los resultados se encuentran en {0}".format(
-            os.path.join(os.path.dirname(OUTPUT_PATH), output_name)
-        )
-    )
+        f"Archivos procesados, los resultados se encuentran en"
+        f" {os.path.join(os.path.dirname(OUTPUT_PATH), output_name)}")
 
 
 if __name__ == "__main__":
