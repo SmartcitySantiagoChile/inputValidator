@@ -316,6 +316,96 @@ class RegexMultiNameValidator(Validator):
         return FunType.NAME
 
 
+class RegexServiceDetailNameValidator(Validator):
+
+    def __init__(self, args):
+        super().__init__(args)
+        self.wrong_date_counter = 0
+
+    def apply(self, args=None) -> bool:
+        """
+        Check if regex file list exist in path and check service detail pattern
+
+        Validator args:
+
+            path: path name to search
+            name: filename list with unix regex format
+            date: date to validate
+
+        """
+        def string_date_to_date(string_date: str) -> datetime.date:
+            return datetime.datetime(int(string_date[:4]), int(string_date[4:6]), int(string_date[6:8]))
+
+        def get_date_from_service_detail(service_detail_date: str) -> (datetime.date, datetime.date):
+            lower_date, upper_date = service_detail_date.split('_')[1:3]
+            return string_date_to_date(lower_date), string_date_to_date(upper_date)
+
+        path = self.args["path"]
+        regex = self.args["name"]
+        date = self.args["date"]
+        name_list = glob.glob(os.path.join(path, regex))
+        valid_name_list = []
+        error_date_list = []
+        error_format = False
+        if name_list:
+            name_list = [os.path.split(name)[1] for name in name_list]
+            last_date = string_date_to_date(date)
+            for name in name_list:
+                lower_date, upper_date = get_date_from_service_detail(name)
+                if last_date:
+                    if last_date < lower_date and (lower_date - last_date).days == 1:
+                        if lower_date < upper_date:
+                            valid_name_list.append(name)
+                            last_date = upper_date
+                        else:
+                            error_date_list.append(name)
+                            last_date = ''
+                    else:
+                        error_date_list.append(name)
+                        last_date = ''
+                else:
+                    if lower_date < upper_date:
+                        valid_name_list.append(name)
+                        last_date = upper_date
+                    else:
+                        error_date_list.append(name)
+        else:
+            error_format = True
+
+        self.args["names_with_incorrect_date"] = error_date_list
+        self.args["names_with_incorrect_format"] = error_format
+        self.args["name_list"] = valid_name_list
+
+        validator = args
+        validator.temp_name = valid_name_list
+
+        return True if len(valid_name_list) else False
+
+    def get_error(self) -> dict:
+        if self.args["names_with_incorrect_format"]:
+            return {
+                "name": "No existen archivos con expresiones regulares",
+                "type": "formato",
+                "message": f"No existen directorios o archivos con la expresión regular '{self.args['name']}' en el directorio '{self.args['path']}",
+                "row": "",
+                "cols": "",
+            }
+        else:
+            message = {
+                "name": "Fecha de archivo no corresponde con PO",
+                "type": "formato",
+                "message": f"La fecha del archivo '{self.args['names_with_incorrect_date'][self.wrong_date_counter]}' no corresponde a la fecha del programa PO '{self.args['date']}' ",
+                "row": "",
+                "cols": "",
+            }
+            if len(self.args['names_with_incorrect_date']) - 1 < self.wrong_date_counter:
+                self.wrong_date_counter += 1
+            return message
+
+    def get_fun_type(self) -> FunType:
+        return FunType.NAME
+
+
 class MinRowsValidator(Validator):
     counter = 0
     status = False
