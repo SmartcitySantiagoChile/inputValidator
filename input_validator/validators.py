@@ -349,26 +349,24 @@ class RegexServiceDetailNameValidator(Validator):
         error_format = False
         if name_list:
             name_list = [os.path.split(name)[1] for name in name_list]
-            last_date = string_date_to_date(date)
-            for name in name_list:
-                lower_date, upper_date = get_date_from_service_detail(name)
-                if last_date:
-                    if last_date < lower_date and (lower_date - last_date).days == 1:
-                        if lower_date < upper_date:
+            name_list = [[name, *get_date_from_service_detail(name)] for name in name_list]
+            # order names by first date
+            name_list.sort(key=lambda x: x[1])
+            valid_date = string_date_to_date(date)
+            last_date = None
+            for name, lower_date, upper_date in name_list:
+                if valid_date <= lower_date < upper_date:
+                    if last_date:
+                        if (lower_date - last_date).days == 1 and lower_date > last_date:
                             valid_name_list.append(name)
                             last_date = upper_date
                         else:
                             error_date_list.append(name)
-                            last_date = ''
                     else:
-                        error_date_list.append(name)
-                        last_date = ''
-                else:
-                    if lower_date < upper_date:
                         valid_name_list.append(name)
                         last_date = upper_date
-                    else:
-                        error_date_list.append(name)
+                else:
+                    error_date_list.append(name)
         else:
             error_format = True
 
@@ -392,13 +390,13 @@ class RegexServiceDetailNameValidator(Validator):
             }
         else:
             message = {
-                "name": "Fecha de archivo no corresponde con PO",
+                "name": "Fecha de archivo incorrecta",
                 "type": "formato",
-                "message": f"La fecha del archivo '{self.args['names_with_incorrect_date'][self.wrong_date_counter]}' no corresponde a la fecha del programa PO '{self.args['date']}' ",
+                "message": f"La fecha del archivo '{self.args['names_with_incorrect_date'][self.wrong_date_counter]}' no corresponde al formato para la fecha del programa PO '{self.args['date']}' ",
                 "row": "",
                 "cols": "",
             }
-            if len(self.args['names_with_incorrect_date']) - 1 < self.wrong_date_counter:
+            if len(self.args['names_with_incorrect_date']) - 1 > self.wrong_date_counter:
                 self.wrong_date_counter += 1
             return message
 
