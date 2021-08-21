@@ -333,6 +333,7 @@ class RegexServiceDetailNameValidator(Validator):
             date: date to validate
 
         """
+
         def string_date_to_date(string_date: str) -> datetime.date:
             return datetime.datetime(int(string_date[:4]), int(string_date[4:6]), int(string_date[6:8]))
 
@@ -1341,6 +1342,7 @@ check_name_functions = {
     "regex": RegexNameValidator,
     "root": RootValidator,
     "multi-regex": RegexMultiNameValidator,
+    "service_detail_regex": RegexServiceDetailNameValidator
 }
 
 file_functions = {

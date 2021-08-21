@@ -93,9 +93,13 @@ class DataValidator:
 
         if validator.apply(self):
             # if name correct check rules and report errors
-            if type_name == "regex" or type_name == "multi-regex":
+            if type_name == "regex" or type_name == "multi-regex" or type_name == "service_detail_regex":
                 name = self.temp_name
                 self.temp_name = None
+            # check service detail error files
+            if type_name == "service_detail_regex":
+                print(validator.args['names_with_incorrect_date'])
+                self.report_error_by_validator(validator.args['names_with_incorrect_date'], validator)
 
             if missing_dependencies:
                 for dependency in missing_dependencies:
@@ -113,6 +117,10 @@ class DataValidator:
                     status = self.validate_multi_node_rules(
                         absolute_path, name, rules, header
                     )
+                elif type_name == "service_detail_regex":
+                    status = []
+                    for n in name:
+                        status += self.validate_node_rules(absolute_path, n, rules, header)
                 else:
                     status = self.validate_node_rules(
                         absolute_path, name, rules, header
@@ -132,12 +140,7 @@ class DataValidator:
                 self.iterate_over_configuration_tree(child, new_path)
         else:
             # report name and path errors
-            if isinstance(name, list):
-                for n in name:
-                    self.report_errors[n].append(validator.get_error())
-            else:
-                self.report_errors[name].append(validator.get_error())
-
+            self.report_error_by_validator(name, validator)
 
     def dispatch_rules(self, rules: dict, header: list) -> dict:
         """
@@ -404,3 +407,16 @@ class DataValidator:
             file.close()
 
         return report
+
+    def report_error_by_validator(self, name, validator):
+        """
+        report errors from validator
+        Args:
+            name:
+            validator:
+        """
+        if isinstance(name, list):
+            for n in name:
+                self.report_errors[n].append(validator.get_error())
+        else:
+            self.report_errors[name].append(validator.get_error())

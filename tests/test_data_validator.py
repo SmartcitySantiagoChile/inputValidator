@@ -1041,18 +1041,13 @@ class DataValidatorTest(TestCase):
             date='20200627'
         )
 
-        expected_report = [
-            ["Diccionario", "Diccionario"],
-            ["Diccionario-Comunas.csv", os.path.join("Diccionario", "Diccionario-Comunas.csv")],
-            [
-                "Diccionario-Zonificaciones.csv",
-                os.path.join("Diccionario", "Diccionario-Zonificaciones.csv"),
-            ],
-            [
-                "Diccionario-DetalleServicioZP_20200627_20200731.csv",
-                os.path.join("Diccionario", "Diccionario-DetalleServicioZP_*_*.csv"),
-            ],
-        ]
+        expected_report = [['Diccionario', 'Diccionario'],
+         ['Diccionario-Comunas.csv', 'Diccionario/Diccionario-Comunas.csv'],
+         ['Diccionario-Zonificaciones.csv',
+          'Diccionario/Diccionario-Zonificaciones.csv'],
+         [['Diccionario-DetalleServicioZP_20200627_20200731.csv',
+           'Diccionario-DetalleServicioZP_20200801_20200830.csv'],
+          'Diccionario/Diccionario-DetalleServicioZP_*_*.csv']]
 
         data.start_iteration_over_configuration_tree()
         self.assertEqual(expected_report, data.report)
