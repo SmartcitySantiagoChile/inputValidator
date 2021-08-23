@@ -98,7 +98,6 @@ class DataValidator:
                 self.temp_name = None
             # check service detail error files
             if type_name == "service_detail_regex":
-                print(validator.args['names_with_incorrect_date'])
                 self.report_error_by_validator(validator.args['names_with_incorrect_date'], validator)
 
             if missing_dependencies:
