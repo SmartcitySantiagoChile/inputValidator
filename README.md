@@ -304,9 +304,9 @@ There are 5 types of validators:
 | ------------- | ------------- | ------------- | --------|
 | RootValidator| root| none|  Always true, use it to check the file root.
 | NameValidator| name| none|  Check if filename exists. |
-| RegexNameValidator| regex| none| Check if regex filename exists.|
-| RegexMultiNameValidator| multi-regex| none| Check if multiple regex filename exists.|
-
+| RegexNameValidator| regex| date| Check if regex filename exists and its date is correct.|
+| RegexMultiNameValidator| multi-regex| date| Check if multiple regex filename exists its date is correct.|
+| RegexServiceDetailNameValidator| service_detail_regex | date | Check if service detail filename exists and its date is correct.|
 #### Row Functions
 | Validator Class  | Validator Name |Arguments (type) | Explanation |
 | ------------- | ------------- | ------------- | --------|
