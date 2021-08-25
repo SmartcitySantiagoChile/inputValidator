@@ -1156,7 +1156,7 @@
         {
           "path": {
             "type": "regex",
-            "name": "Zonas777Fevasion_202[0-9][0-1][0-9][0-3][0-9].csv",
+            "name": "Zonas777Evasion_202[0-9][0-1][0-9][0-3][0-9].csv",
             "header": [
               "tipodia",
               "ZONA777",
