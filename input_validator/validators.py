@@ -317,21 +317,18 @@ class RegexMultiNameValidator(Validator):
 
 
 class RegexServiceDetailNameValidator(Validator):
-
+    """This class validate the service detail file's name."""
     def __init__(self, args):
         super().__init__(args)
         self.wrong_date_counter = 0
 
     def apply(self, args=None) -> bool:
-        """
-        Check if regex file list exist in path and check service detail pattern
+        """Check if regex file list exist in path and check service detail pattern.
 
-        Validator args:
-
+        Args:
             path: path name to search
             name: filename list with unix regex format
             date: date to validate
-
         """
 
         def string_date_to_date(string_date: str) -> datetime.date:
@@ -356,18 +353,19 @@ class RegexServiceDetailNameValidator(Validator):
             valid_date = string_date_to_date(date)
             last_date = None
             for name, lower_date, upper_date in name_list:
-                if valid_date <= lower_date < upper_date:
-                    if last_date:
-                        if (lower_date - last_date).days == 1 and lower_date > last_date:
-                            valid_name_list.append(name)
-                            last_date = upper_date
-                        else:
-                            error_date_list.append(name)
-                    else:
+                if last_date:
+                    if (lower_date - last_date).days == 1 and lower_date > last_date:
                         valid_name_list.append(name)
                         last_date = upper_date
+                    else:
+                        error_date_list.append(name)
                 else:
-                    error_date_list.append(name)
+                    if lower_date <= valid_date <= upper_date:
+                        valid_name_list.append(name)
+                        last_date = upper_date
+                    else:
+                        error_date_list.append(name)
+
         else:
             error_format = True
 
@@ -385,7 +383,8 @@ class RegexServiceDetailNameValidator(Validator):
             return {
                 "name": "No existen archivos con expresiones regulares",
                 "type": "formato",
-                "message": f"No existen directorios o archivos con la expresión regular '{self.args['name']}' en el directorio '{self.args['path']}",
+                "message": f"No existen directorios o archivos con la expresión regular '{self.args['name']}' en el "
+                           f"directorio '{self.args['path']}",
                 "row": "",
                 "cols": "",
             }
@@ -393,7 +392,8 @@ class RegexServiceDetailNameValidator(Validator):
             message = {
                 "name": "Fecha de archivo incorrecta",
                 "type": "formato",
-                "message": f"La fecha del archivo '{self.args['names_with_incorrect_date'][self.wrong_date_counter]}' no corresponde al formato para la fecha del programa PO '{self.args['date']}' ",
+                "message": f"La fecha del archivo '{self.args['names_with_incorrect_date'][self.wrong_date_counter]}' "
+                           f"no corresponde al formato para la fecha del programa PO '{self.args['date']}' ",
                 "row": "",
                 "cols": "",
             }

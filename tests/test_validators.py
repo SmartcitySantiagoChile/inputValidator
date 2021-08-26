@@ -1571,19 +1571,17 @@ class DataValidatorTest(TestCase):
 
         error_message = {'cols': '',
                          'message': 'La fecha del archivo '
-                                    "'Diccionario-DetalleServicioZP_20210401_20210415.csv' no "
+                                    "'Diccionario-DetalleServicioZP_20210301_20210315.csv' no "
                                     "corresponde al formato para la fecha del programa PO '20210405' ",
                          'name': 'Fecha de archivo incorrecta',
                          'row': '',
                          'type': 'formato'}
-        self.assertTrue(validator.apply(dummy_validator))
+        self.assertFalse(validator.apply(dummy_validator))
         self.assertEqual(FunType.NAME, validator.get_fun_type())
-
-        # wrong case date lower
         self.assertEqual(error_message, validator.get_error())
         error_message = {'cols': '',
                          'message': 'La fecha del archivo '
-                                    "'Diccionario-DetalleServicioZP_20210401_20210430.csv' no "
+                                    "'Diccionario-DetalleServicioZP_20210415_20210430.csv' no "
                                     "corresponde al formato para la fecha del programa PO '20210405' ",
                          'name': 'Fecha de archivo incorrecta',
                          'row': '',
