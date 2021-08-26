@@ -30,18 +30,35 @@ class DataValidator:
         self.files_checked = set()
         self.date = date
 
-    def configuration_file_error(self, exception):
+    def configuration_file_error(self, exception: Exception):
+        """Send a file error message to the log and exit the program
+
+        Args:
+            exception: configuration file's exception
+        """
         if self.log:
             self.log.error("Archivo de configuración mal formado")
             # self.log.error(exception)
         sys.exit("Procesamiento cancelado.")
 
-    def configuration_fun_error(self, exception, fun_name):
+    def configuration_fun_error(self, exception: Exception, fun_name: str):
+        """Send a function's name error message to the log and exit the program.
+
+        Args:
+            exception: function's exception
+            fun_name: function's name that throws the exception
+        """
         if self.log:
             self.log.error("Nombre de función '{0}' no válida.".format(fun_name))
         self.configuration_file_error(exception)
 
-    def configuration_args_error(self, exception, fun_name):
+    def configuration_args_error(self, exception: Exception, fun_name: str):
+        """Send a function's args error message to the log and exit the program.
+
+        Args:
+            exception: function's exception
+            fun_name: function's name that throws the exception
+        """
         if self.log:
             self.log.error(
                 "Error en la función {0}, problema con el argumento {1}".format(
@@ -51,16 +68,20 @@ class DataValidator:
         self.configuration_file_error(exception)
 
     def start_iteration_over_configuration_tree(self):
-        """
-        Start iteration over a configuration file
-        """
+        """Start the iteration over a configuration file."""
         self.iterate_over_configuration_tree(self.config, "")
 
     def iterate_over_configuration_tree(self, node, path):
-        """
-        Iterate recursively a configuration file checking name format, path format and rules
-        :param node: configuration node
-        :param path: node path
+        """Iterate recursively a configuration file checking name format,
+        path format, dependencies and validation rules.
+
+        This method first check the node's dict keys. If there are valid,
+        validate the dependencies.
+
+        Args:
+            node: configuration file's node to validate
+            path: configuration file's path that contains the directory or
+            files to validate
         """
         # get variables
         try:
@@ -142,11 +163,14 @@ class DataValidator:
             self.report_error_by_validator(name, validator)
 
     def dispatch_rules(self, rules: dict, header: list) -> dict:
-        """
-        Split kind of rules
+        """ Take the rules dict and split them in
         :param rules:
         :param header:
         :return: dict of rules
+
+        Args:
+            rules:
+            header:
         """
         format_rules = rules.get("formatRules", [])
         semantic_rules = rules.get("semanticRules", [])
