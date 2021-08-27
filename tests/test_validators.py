@@ -26,7 +26,7 @@ from input_validator.validators import (
     FunType,
     RegexMultiNameValidator,
     FloatValueValidator,
-    MultiRowColValueValidator,
+    MultiRowColValueValidator, RegexServiceDetailNameValidator,
 )
 
 
@@ -86,7 +86,7 @@ class DataValidatorTest(TestCase):
         path = os.path.join(self.check_name_data_path, "Diccionario")
         dummy_validator = Dummy()
         dummy_validator.temp_name = "test"
-        args = {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv"}
+        args = {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv", "date": '20200627'}
         validator = RegexNameValidator(args)
 
         error_message = {
@@ -102,9 +102,20 @@ class DataValidatorTest(TestCase):
         self.assertEqual(FunType.NAME, validator.get_fun_type())
         self.assertEqual(error_message, validator.get_error())
 
-        # wrong case
-        validator = RegexNameValidator({"path": path, "name": "wrong.csv"})
+        # wrong case regex
+        validator = RegexNameValidator({"path": path, "name": "wrong.csv", "date": '20200627'})
         self.assertFalse(validator.apply(dummy_validator))
+
+        # wrong case date
+        validator = RegexNameValidator(
+            {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv", "date": '20200127'})
+        error_message = {'name': 'Fecha del archivo no corresponde con PO', 'type': 'formato',
+                         'message': "La fecha del archivo Diccionario-DetalleServicioZP_20200627_20200731.csv no "
+                                    "corresponde a la fecha del programa PO '20200127'.",
+                         'row': '', 'cols': ''}
+
+        self.assertFalse(validator.apply(dummy_validator))
+        self.assertEqual(error_message, validator.get_error())
 
     def test_multi_regex_name_validator(self):
         # base case
@@ -119,6 +130,7 @@ class DataValidatorTest(TestCase):
                 "Frecuencias_PO*.csv",
                 "Velocidades_PO*.csv",
             ],
+            "date": "20200627"
         }
         validator = RegexMultiNameValidator(args)
 
@@ -140,6 +152,48 @@ class DataValidatorTest(TestCase):
         self.assertTrue(validator.apply(dummy_validator))
         self.assertEqual(expected_temporal_name, dummy_validator.temp_name)
         self.assertEqual(FunType.NAME, validator.get_fun_type())
+        self.assertEqual(expected_error, validator.get_error())
+
+        args = {
+            "path": path,
+            "name": [
+                "Capacidades_PO*.csv",
+                "Distancias_PO*.csv",
+                "Frecuencias_PO*.csv",
+                "Velocidades_PO*.csv",
+            ],
+            "date": "20200628"
+        }
+        expected_error = {'cols': '',
+                          'message': 'La fecha de los archivos '
+                                     "'Capacidades_PO20200627.csv,Distancias_PO20200627.csv,Frecuencias_PO20200627.csv,Velocidades_PO20200627.csv' "
+                                     "no corresponde a la fecha del programa PO '20200628' .",
+                          'name': 'Fecha de archivos no corresponde con PO',
+                          'row': '',
+                          'type': 'formato'}
+        validator = RegexMultiNameValidator(args)
+        self.assertFalse(validator.apply(dummy_validator))
+        self.assertEqual(expected_error, validator.get_error())
+
+        path = os.path.join(self.check_name_data_path, "Frecuencias2")
+        args = {
+            "path": path,
+            "name": [
+                "Capacidades_PO*.csv",
+                "Distancias_PO*.csv",
+                "Frecuencias_PO*.csv",
+                "Velocidades_PO*.csv",
+            ],
+            "date": "20200627"
+        }
+        expected_error = {'cols': '',
+                          'message': "La fecha del archivo 'Capacidades_PO20200628.csv' no corresponde "
+                                     "a la fecha del programa PO '20200627' .",
+                          'name': 'Fecha de archivos no corresponde con PO',
+                          'row': '',
+                          'type': 'formato'}
+        validator = RegexMultiNameValidator(args)
+        self.assertFalse(validator.apply(dummy_validator))
         self.assertEqual(expected_error, validator.get_error())
 
     def test_min_rows_validator(self):
@@ -616,7 +670,20 @@ class DataValidatorTest(TestCase):
         }
         self.assertEqual(expected_message, validator.get_error())
 
+        # empty case
+        row = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '']
+
         self.assertEqual(FunType.ROW, validator.get_fun_type())
+        expected_message = {
+            "cols": ["PLAZAS"],
+            "message": "Valor fuera de rango [11] en la fila 2, columna PLAZAS. Los "
+                       "valores solo pueden ser parte del rango [20, 200]",
+            "name": "Valores fuera de rango",
+            "row": 2,
+            "type": "formato",
+        }
+        self.assertEqual(expected_message, validator.get_error())
+        self.assertFalse(validator.apply(row))
 
     def test_time_value_validator(self):
         # base case
@@ -1494,3 +1561,75 @@ class DataValidatorTest(TestCase):
         self.assertEqual(expected_error, validator.get_error())
 
         self.assertEqual(FunType.MULTIROW, validator.get_fun_type())
+
+    def test_regex_service_detail_name_validator(self):
+        path = os.path.join(self.check_name_data_path, "DiccionarioDosErrores")
+        dummy_validator = Dummy()
+        dummy_validator.temp_name = "test"
+        args = {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv", "date": '20210405'}
+        validator = RegexServiceDetailNameValidator(args)
+
+        error_message = {'cols': '',
+                         'message': 'La fecha del archivo '
+                                    "'Diccionario-DetalleServicioZP_20210301_20210315.csv' no "
+                                    "corresponde al formato para la fecha del programa PO '20210405' ",
+                         'name': 'Fecha de archivo incorrecta',
+                         'row': '',
+                         'type': 'formato'}
+        self.assertFalse(validator.apply(dummy_validator))
+        self.assertEqual(FunType.NAME, validator.get_fun_type())
+        self.assertEqual(error_message, validator.get_error())
+        error_message = {'cols': '',
+                         'message': 'La fecha del archivo '
+                                    "'Diccionario-DetalleServicioZP_20210415_20210430.csv' no "
+                                    "corresponde al formato para la fecha del programa PO '20210405' ",
+                         'name': 'Fecha de archivo incorrecta',
+                         'row': '',
+                         'type': 'formato'}
+        self.assertEqual(error_message, validator.get_error())
+
+        # wrong case no date
+        path = os.path.join(self.check_name_data_path, "DiccionarioVacío")
+        args = {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv", "date": '20210405'}
+        validator = RegexServiceDetailNameValidator(args)
+
+        error_message = {'cols': '',
+                         'message': 'No existen directorios o archivos con la expresión regular '
+                                    "'Diccionario-DetalleServicioZP_*_*.csv' en el directorio "
+                                    f"'{path}",
+                         'name': 'No existen archivos con expresiones regulares',
+                         'row': '',
+                         'type': 'formato'}
+        self.assertFalse(validator.apply(dummy_validator))
+        self.assertEqual(error_message, validator.get_error())
+
+        # wrong case lower_date > upper_date
+        path = os.path.join(self.check_name_data_path, "DiccionarioFechasInvertidas")
+        args = {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv", "date": '20210405'}
+        validator = RegexServiceDetailNameValidator(args)
+
+        error_message = {'cols': '',
+                         'message': 'La fecha del archivo '
+                                    "'Diccionario-DetalleServicioZP_20210430_20210416.csv' no "
+                                    "corresponde al formato para la fecha del programa PO '20210405' ",
+                         'name': 'Fecha de archivo incorrecta',
+                         'row': '',
+                         'type': 'formato'}
+        self.assertFalse(validator.apply(dummy_validator))
+        self.assertEqual(error_message, validator.get_error())
+
+        # wrong case lower_date > upper_date with correct dates first
+
+        path = os.path.join(self.check_name_data_path, "DiccionarioFechasInvertidas2")
+        args = {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv", "date": '20210405'}
+        validator = RegexServiceDetailNameValidator(args)
+
+        error_message = {'cols': '',
+                         'message': 'La fecha del archivo '
+                                    "'Diccionario-DetalleServicioZP_20210502_20210515.csv' no "
+                                    "corresponde al formato para la fecha del programa PO '20210405' ",
+                         'name': 'Fecha de archivo incorrecta',
+                         'row': '',
+                         'type': 'formato'}
+        self.assertTrue(validator.apply(dummy_validator))
+        self.assertEqual(error_message, validator.get_error())

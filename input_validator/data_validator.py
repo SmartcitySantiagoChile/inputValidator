@@ -16,7 +16,7 @@ from input_validator.validators import (
 class DataValidator:
     """A class to iterate over a tree configuration json file and validate data"""
 
-    def __init__(self, config_path, data_path, path_list=False, logger=None):
+    def __init__(self, config_path, data_path, date, path_list=False, logger=None):
         with open(config_path, encoding='utf-8-SIG') as json_config:
             self.config = json.loads(json_config.read())
         self.report_errors = defaultdict(list)
@@ -28,19 +28,37 @@ class DataValidator:
         self.log = logger
         self.temp_name = None
         self.files_checked = set()
+        self.date = date
 
-    def configuration_file_error(self, exception):
+    def configuration_file_error(self, exception: Exception):
+        """Send a file error message to the log and exit the program
+
+        Args:
+            exception: configuration file's exception
+        """
         if self.log:
             self.log.error("Archivo de configuración mal formado")
             # self.log.error(exception)
         sys.exit("Procesamiento cancelado.")
 
-    def configuration_fun_error(self, exception, fun_name):
+    def configuration_fun_error(self, exception: Exception, fun_name: str):
+        """Send a function's name error message to the log and exit the program.
+
+        Args:
+            exception: function's exception
+            fun_name: function's name that throws the exception
+        """
         if self.log:
             self.log.error("Nombre de función '{0}' no válida.".format(fun_name))
         self.configuration_file_error(exception)
 
-    def configuration_args_error(self, exception, fun_name):
+    def configuration_args_error(self, exception: Exception, fun_name: str):
+        """Send a function's args error message to the log and exit the program.
+
+        Args:
+            exception: function's exception
+            fun_name: function's name that throws the exception
+        """
         if self.log:
             self.log.error(
                 "Error en la función {0}, problema con el argumento {1}".format(
@@ -50,16 +68,20 @@ class DataValidator:
         self.configuration_file_error(exception)
 
     def start_iteration_over_configuration_tree(self):
-        """
-        Start iteration over a configuration file
-        """
+        """Start the iteration over a configuration file."""
         self.iterate_over_configuration_tree(self.config, "")
 
     def iterate_over_configuration_tree(self, node, path):
-        """
-        Iterate recursively a configuration file checking name format, path format and rules
-        :param node: configuration node
-        :param path: node path
+        """Iterate recursively a configuration file checking name format,
+        path format, dependencies and validation rules.
+
+        This method first check the node's dict keys. If there are valid,
+        validate the dependencies.
+
+        Args:
+            node: configuration file's node to validate
+            path: configuration file's path that contains the directory or
+            files to validate
         """
         # get variables
         try:
@@ -75,11 +97,11 @@ class DataValidator:
             rules = node["rules"]
         except KeyError as e:
             self.configuration_file_error(e)
+
         # check name and path format
         validator = check_name_functions[type_name](
-            {"path": absolute_path, "name": name}
+            {"path": absolute_path, "name": name, "date": self.date}
         )
-
         # check dependencies
         missing_dependencies = []
         for dependency in dependencies:
@@ -92,9 +114,12 @@ class DataValidator:
 
         if validator.apply(self):
             # if name correct check rules and report errors
-            if type_name == "regex" or type_name == "multi-regex":
+            if type_name == "regex" or type_name == "multi-regex" or type_name == "service_detail_regex":
                 name = self.temp_name
                 self.temp_name = None
+            # check service detail error files
+            if type_name == "service_detail_regex":
+                self.report_error_by_validator(validator.args['names_with_incorrect_date'], validator)
 
             if missing_dependencies:
                 for dependency in missing_dependencies:
@@ -112,6 +137,10 @@ class DataValidator:
                     status = self.validate_multi_node_rules(
                         absolute_path, name, rules, header
                     )
+                elif type_name == "service_detail_regex":
+                    status = []
+                    for n in name:
+                        status += self.validate_node_rules(absolute_path, n, rules, header)
                 else:
                     status = self.validate_node_rules(
                         absolute_path, name, rules, header
@@ -122,7 +151,7 @@ class DataValidator:
                             self.report_errors[name_file].append(error)
                     else:
                         self.report_errors[name].append(error)
-                # if not root case
+            # if not root case
             if name and new_path:
                 self.report.append([name, new_path])
 
@@ -131,14 +160,17 @@ class DataValidator:
                 self.iterate_over_configuration_tree(child, new_path)
         else:
             # report name and path errors
-            self.report_errors[name].append(validator.get_error())
+            self.report_error_by_validator(name, validator)
 
     def dispatch_rules(self, rules: dict, header: list) -> dict:
-        """
-        Split kind of rules
+        """ Take the rules dict and split them in
         :param rules:
         :param header:
         :return: dict of rules
+
+        Args:
+            rules:
+            header:
         """
         format_rules = rules.get("formatRules", [])
         semantic_rules = rules.get("semanticRules", [])
@@ -398,3 +430,16 @@ class DataValidator:
             file.close()
 
         return report
+
+    def report_error_by_validator(self, name, validator):
+        """
+        report errors from validator
+        Args:
+            name:
+            validator:
+        """
+        if isinstance(name, list):
+            for n in name:
+                self.report_errors[n].append(validator.get_error())
+        else:
+            self.report_errors[name].append(validator.get_error())

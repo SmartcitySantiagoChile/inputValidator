@@ -4,6 +4,7 @@ import math
 import operator
 import os
 import re
+import sys
 from abc import ABCMeta, abstractmethod
 from enum import Enum
 
@@ -222,6 +223,7 @@ class RegexNameValidator(Validator):
     def apply(self, args=None) -> bool:
         """
         Check if regex file exist in path
+        and if date is correct
 
         Validator args:
 
@@ -230,23 +232,35 @@ class RegexNameValidator(Validator):
         """
         path = self.args["path"]
         regex = self.args["name"]
+        date = self.args["date"]
         name = glob.glob(os.path.join(path, regex))
+        self.args["date_is_in_name"] = True
         if name:
             name = os.path.split(name[0])[1]
+            self.args["date_is_in_name"] = date in name
         validator = args
         validator.temp_name = name
-        return True if len(name) > 0 else False
+        self.args["temp_name"] = name
+        return True if len(name) > 0 and self.args["date_is_in_name"] else False
 
     def get_error(self) -> dict:
-        return {
-            "name": "No existe archivo con expresión regular",
-            "type": "formato",
-            "message": "No existe directorio o archivo con la expresión regular '{0}' en el directorio '{1}' .".format(
-                self.args["name"], self.args["path"]
-            ),
-            "row": "",
-            "cols": "",
-        }
+        if self.args['date_is_in_name']:
+            message = {
+                "name": "No existe archivo con expresión regular",
+                "type": "formato",
+                "message": f"No existe directorio o archivo con la expresión regular '{self.args['name']}' en el directorio '{self.args['path']}' .",
+                "row": "",
+                "cols": "",
+            }
+        else:
+            message = {
+                "name": "Fecha del archivo no corresponde con PO",
+                "type": "formato",
+                "message": f"La fecha del archivo {self.args['temp_name']} no corresponde a la fecha del programa PO '{self.args['date']}'.",
+                "row": "",
+                "cols": "",
+            }
+        return message
 
     def get_fun_type(self):
         return FunType.NAME
@@ -265,23 +279,127 @@ class RegexMultiNameValidator(Validator):
         """
         path = self.args["path"]
         regex_list = self.args["name"]
+        date = self.args["date"]
         name_list = [glob.glob(os.path.join(path, regex)) for regex in regex_list]
         if name_list[0]:
             name_list = [os.path.split(name[0])[1] for name in name_list]
+            self.args["names_with_incorrect_date"] = [name for name in name_list if date not in name]
+        self.args["name_list"] = name_list
         validator = args
         validator.temp_name = name_list
-        return True if len(name_list) > 0 else False
+        return True if len(name_list) == len(regex_list) and not len(self.args["names_with_incorrect_date"]) else False
 
     def get_error(self) -> dict:
-        return {
-            "name": "No existen archivos con expresiones regulares",
-            "type": "formato",
-            "message": "No existen directorios o archivos con la expresión regular '{0}' en el directorio '{1}' .".format(
-                self.args["name"], self.args["path"]
-            ),
-            "row": "",
-            "cols": "",
-        }
+        if not len(self.args["names_with_incorrect_date"]):
+            return {
+                "name": "No existen archivos con expresiones regulares",
+                "type": "formato",
+                "message": f"No existen directorios o archivos con la expresión regular '{self.args['name']}' en el directorio '{self.args['path']}' .",
+                "row": "",
+                "cols": "",
+            }
+        else:
+            if len(self.args["names_with_incorrect_date"]) > 1:
+                names = ','.join(self.args["names_with_incorrect_date"])
+                message = f"La fecha de los archivos '{names}' no corresponde a la fecha del programa PO '{self.args['date']}' ."
+            else:
+                message = f"La fecha del archivo '{self.args['names_with_incorrect_date'][0]}' no corresponde a la fecha del programa PO '{self.args['date']}' ."
+            return {
+                "name": "Fecha de archivos no corresponde con PO",
+                "type": "formato",
+                "message": message,
+                "row": "",
+                "cols": "",
+            }
+
+    def get_fun_type(self) -> FunType:
+        return FunType.NAME
+
+
+class RegexServiceDetailNameValidator(Validator):
+    """This class validate the service detail file's name."""
+    def __init__(self, args):
+        super().__init__(args)
+        self.wrong_date_counter = 0
+
+    def apply(self, args=None) -> bool:
+        """Check if regex file list exist in path and check service detail pattern.
+
+        Args:
+            path: path name to search
+            name: filename list with unix regex format
+            date: date to validate
+        """
+
+        def string_date_to_date(string_date: str) -> datetime.date:
+            return datetime.datetime(int(string_date[:4]), int(string_date[4:6]), int(string_date[6:8]))
+
+        def get_date_from_service_detail(service_detail_date: str) -> (datetime.date, datetime.date):
+            lower_date, upper_date = service_detail_date.split('_')[1:3]
+            return string_date_to_date(lower_date), string_date_to_date(upper_date)
+
+        path = self.args["path"]
+        regex = self.args["name"]
+        date = self.args["date"]
+        name_list = glob.glob(os.path.join(path, regex))
+        valid_name_list = []
+        error_date_list = []
+        error_format = False
+        if name_list:
+            name_list = [os.path.split(name)[1] for name in name_list]
+            name_list = [[name, *get_date_from_service_detail(name)] for name in name_list]
+            # order names by first date
+            name_list.sort(key=lambda x: x[1])
+            valid_date = string_date_to_date(date)
+            last_date = None
+            for name, lower_date, upper_date in name_list:
+                if last_date:
+                    if (lower_date - last_date).days == 1 and lower_date > last_date:
+                        valid_name_list.append(name)
+                        last_date = upper_date
+                    else:
+                        error_date_list.append(name)
+                else:
+                    if lower_date <= valid_date <= upper_date:
+                        valid_name_list.append(name)
+                        last_date = upper_date
+                    else:
+                        error_date_list.append(name)
+
+        else:
+            error_format = True
+
+        self.args["names_with_incorrect_date"] = error_date_list
+        self.args["names_with_incorrect_format"] = error_format
+        self.args["name_list"] = valid_name_list
+
+        validator = args
+        validator.temp_name = valid_name_list
+
+        return True if len(valid_name_list) else False
+
+    def get_error(self) -> dict:
+        if self.args["names_with_incorrect_format"]:
+            return {
+                "name": "No existen archivos con expresiones regulares",
+                "type": "formato",
+                "message": f"No existen directorios o archivos con la expresión regular '{self.args['name']}' en el "
+                           f"directorio '{self.args['path']}",
+                "row": "",
+                "cols": "",
+            }
+        else:
+            message = {
+                "name": "Fecha de archivo incorrecta",
+                "type": "formato",
+                "message": f"La fecha del archivo '{self.args['names_with_incorrect_date'][self.wrong_date_counter]}' "
+                           f"no corresponde al formato para la fecha del programa PO '{self.args['date']}' ",
+                "row": "",
+                "cols": "",
+            }
+            if len(self.args['names_with_incorrect_date']) - 1 > self.wrong_date_counter:
+                self.wrong_date_counter += 1
+            return message
 
     def get_fun_type(self) -> FunType:
         return FunType.NAME
@@ -666,7 +784,10 @@ class NumericRangeValueValidator(Validator):
         upper_bound = float(self.args["upper_bound"])
         cols_to_check = self.args["col_indexes"]
         for col in cols_to_check:
-            value = float(self.args["row"][col])
+            if self.args["row"][col]:
+                value = float(self.args["row"][col])
+            else:
+                value = sys.maxsize
             if value < lower_bound or value > upper_bound:
                 self.cols_error.append(col)
 
@@ -1221,6 +1342,7 @@ check_name_functions = {
     "regex": RegexNameValidator,
     "root": RootValidator,
     "multi-regex": RegexMultiNameValidator,
+    "service_detail_regex": RegexServiceDetailNameValidator
 }
 
 file_functions = {
