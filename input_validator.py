@@ -52,7 +52,7 @@ def main(argv):
         with zipfile.ZipFile(input_path, "r") as zip_ref:
             temporal_path = os.path.join(INPUTS_PATH, "tmp")
             zip_ref.extractall(temporal_path)
-            input_path = os.path.join(temporal_path, zip_ref.namelist()[0])
+            input_path = os.path.join(temporal_path, zip_ref.namelist()[0].replace("/", ""))
 
     # date with file format
     date = pathlib.Path(args.path[0]).stem.replace('-', '')
