@@ -27,7 +27,6 @@
           },
           "rules": {
             "formatRules": [
-
               {
                 "function": "string_domain",
                 "args": {
@@ -38,6 +37,23 @@
                     "DOMINGO",
                     "LABORAL",
                     "SABADO"
+                  ]
+                }
+              },
+              {
+                "function": "string_domain",
+                "args": {
+                  "col_indexes": [
+                    4
+                  ],
+                  "domain": [
+                    "LUNES",
+                    "MARTES",
+                    "MIERCOLES",
+                    "JUEVES",
+                    "VIERNES",
+                    "SABADO",
+                    "DOMINGO"
                   ]
                 }
               }
