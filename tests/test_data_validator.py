@@ -1154,4 +1154,5 @@ class DataValidatorTest(TestCase):
 
         self.assertEqual(expected_report, data.report)
         expected_errors = {}
+        print(data.report_errors)
         self.assertEqual(expected_errors, data.report_errors)

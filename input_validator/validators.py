@@ -7,6 +7,7 @@ import re
 import sys
 from abc import ABCMeta, abstractmethod
 from enum import Enum
+from functools import wraps
 
 from shapely.geometry import Point, Polygon
 
@@ -115,7 +116,7 @@ def utm_to_wsg84(
 class Validator(object, metaclass=ABCMeta):
     def __init__(self, args):
         """
-        Init method, it storage args and initialite a row counter
+        Init method, it storage args and initialize a row counter
 
         Args:
 
@@ -160,6 +161,104 @@ class Validator(object, metaclass=ABCMeta):
         The funtype is
         """
         pass
+
+
+class ColumnValidator(Validator):
+
+    def get_fun_type(self):
+        pass
+
+    def get_error(self):
+        pass
+
+    def apply(self, args=None):
+        pass
+
+    def __init__(self, args):
+        self.cols_error = []
+        self.not_valid_indexes = []
+        super().__init__(args)
+
+    def get_not_valid_cols_indexes(self, row) -> bool:
+        """Check if col indexes exist in row, if not return False.
+
+
+        Returns: True if all indexes are valid in row.
+
+        """
+        self.not_valid_indexes = []
+        col_indexes = self.args.get("col_indexes", [])
+        value_indexes = self.args.get("value_indexes", [])
+        if value_indexes:
+            col_indexes = value_indexes
+        col_index = self.args.get("col_index", None)
+        upper_col = self.args.get("upper_col", None)
+        lower_col = self.args.get("lower_col", None)
+        x_coordinate_index = self.args.get("x_coordinate_index", None)
+        y_coordinate_index = self.args.get("y_coordinate_index", None)
+        if col_index:
+            col_indexes.append(col_index)
+        if upper_col:
+            col_indexes.append(upper_col)
+        if lower_col:
+            col_indexes.append(lower_col)
+        if x_coordinate_index:
+            col_indexes.append(x_coordinate_index)
+        if y_coordinate_index:
+            col_indexes.append(y_coordinate_index)
+        for index in col_indexes:
+            if len(row) <= index:
+                self.not_valid_indexes.append(index)
+        return True if self.not_valid_indexes else False
+
+    @staticmethod
+    def check_not_valid_col_indexes(method):
+        """Decorator that check if col indexes are valid."""
+
+        @wraps(method)
+        def _impl(self, *method_args, **method_kwargs):
+            has_invalid_indexes = self.get_not_valid_cols_indexes(*method_args, **method_kwargs)
+            if has_invalid_indexes:
+                return False
+            method_output = method(self, *method_args, **method_kwargs)
+            return method_output
+
+        return _impl
+
+    def get_not_valid_col_error(self) -> dict:
+        """Check if not valid col error and create formatted message."""
+        if not self.not_valid_indexes:
+            return {}
+
+        header = self.args["header"]
+        cols_names = [header[index] for index in self.not_valid_indexes]
+        head = "Columna faltante"
+        tail = "columna"
+        if len(cols_names) > 1:
+            head = "Columnas faltantes"
+            tail = "columnas"
+
+        return {
+            "name": "Fila inválida",
+            "type": "formato",
+            "message": f"{head} en la fila {self.row_counter}, {tail} {', '.join(cols_names)}.",
+            "row": self.row_counter,
+            "cols": cols_names,
+        }
+
+    @staticmethod
+    def check_not_valid_col_error(method):
+        """Decorator that check if col indexes are valid."""
+
+        @wraps(method)
+        def _impl(self, *method_args, **method_kwargs):
+            has_not_valid_col_error = self.get_not_valid_col_error(*method_args, **method_kwargs)
+            if has_not_valid_col_error:
+                return has_not_valid_col_error
+            method_output = method(self, *method_args, **method_kwargs)
+            return method_output
+
+        return _impl
 
 
 class RootValidator(Validator):
@@ -318,6 +417,7 @@ class RegexMultiNameValidator(Validator):
 
 class RegexServiceDetailNameValidator(Validator):
     """This class validate the service detail file's name."""
+
     def __init__(self, args):
         super().__init__(args)
         self.wrong_date_counter = 0
@@ -440,12 +540,9 @@ class MinRowsValidator(Validator):
         return FunType.FILE
 
 
-class ASCIIColValidator(Validator):
-    def __init__(self, args):
+class ASCIIColValidator(ColumnValidator):
 
-        self.cols_error = []
-        super().__init__(args)
-
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if col is in ASCII
@@ -468,6 +565,7 @@ class ASCIIColValidator(Validator):
         else:
             return False
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         var = [self.args["row"][index] for index in self.cols_error]
         header = self.args["header"]
@@ -596,10 +694,9 @@ class HeaderValidator(Validator):
         return FunType.ROW
 
 
-class NotEmptyValueValidator(Validator):
-    def __init__(self, args):
+class NotEmptyValueValidator(ColumnValidator):
 
-        self.cols_error = []
+    def __init__(self, args):
         self.valid_operators = {
             '==': operator.eq,
         }
@@ -620,6 +717,7 @@ class NotEmptyValueValidator(Validator):
 
         return result
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if col has not empty value
@@ -647,6 +745,7 @@ class NotEmptyValueValidator(Validator):
         else:
             return False
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         header = self.args["header"]
         cols_names = [header[index] for index in self.cols_error]
@@ -670,14 +769,11 @@ class NotEmptyValueValidator(Validator):
         return FunType.ROW
 
 
-class StringDomainValueValidator(Validator):
-    def __init__(self, args):
-        self.cols_error = []
-        super().__init__(args)
+class StringDomainValueValidator(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
-        """
-        Check if columns are in domain list
+        """ Check if columns are in domain list.
 
         Validator args:
 
@@ -699,6 +795,7 @@ class StringDomainValueValidator(Validator):
         else:
             return False
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         header = self.args["header"]
         cols_names = [header[index] for index in self.cols_error]
@@ -722,10 +819,9 @@ class StringDomainValueValidator(Validator):
         return FunType.ROW
 
 
-class RegexValueValidator(Validator):
-    def __init__(self, args):
-        super().__init__(args)
+class RegexValueValidator(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check col value with regex
@@ -742,6 +838,7 @@ class RegexValueValidator(Validator):
         regex = self.args["regex"]
         return True if re.search(regex, value) else False
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         index = self.args["col_index"]
         var = self.args["row"][index]
@@ -762,11 +859,9 @@ class RegexValueValidator(Validator):
         return FunType.ROW
 
 
-class NumericRangeValueValidator(Validator):
-    def __init__(self, args):
-        self.cols_error = []
-        super().__init__(args)
+class NumericRangeValueValidator(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if col is in numeric range
@@ -796,6 +891,7 @@ class NumericRangeValueValidator(Validator):
         else:
             return False
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         header = self.args["header"]
         cols_names = [header[index] for index in self.cols_error]
@@ -824,11 +920,9 @@ class NumericRangeValueValidator(Validator):
         return FunType.ROW
 
 
-class TimeValueValidator(Validator):
-    def __init__(self, args):
-        self.cols_error = []
-        super().__init__(args)
+class TimeValueValidator(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if col is time value (HH:MM:SS)
@@ -854,6 +948,7 @@ class TimeValueValidator(Validator):
         else:
             return False
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         header = self.args["header"]
         cols_names = [header[index] for index in self.cols_error]
@@ -877,11 +972,9 @@ class TimeValueValidator(Validator):
         return FunType.ROW
 
 
-class FloatValueValidator(Validator):
-    def __init__(self, args):
-        self.cols_error = []
-        super().__init__(args)
+class FloatValueValidator(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if col is float value
@@ -903,6 +996,7 @@ class FloatValueValidator(Validator):
         else:
             return False
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         header = self.args["header"]
         cols_names = [header[index] for index in self.cols_error]
@@ -926,10 +1020,9 @@ class FloatValueValidator(Validator):
         return FunType.ROW
 
 
-class GreaterThanValueValidator(Validator):
-    def __init__(self, args):
-        super().__init__(args)
+class GreaterThanValueValidator(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if upper_col is greater than lower_col
@@ -956,6 +1049,7 @@ class GreaterThanValueValidator(Validator):
         else:
             return upper_col > lower_col
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         first_value_header = self.args["header"][self.args["upper_col"]]
         last_value_header = self.args["header"][self.args["lower_col"]]
@@ -974,10 +1068,9 @@ class GreaterThanValueValidator(Validator):
         return FunType.ROW
 
 
-class StoreColValue(Validator):
-    def __init__(self, args):
-        super().__init__(args)
+class StoreColValue(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Save col index in named storage
@@ -997,6 +1090,7 @@ class StoreColValue(Validator):
             data_validator.storage[storage_name].append(var)
         return True
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         return {
             "name": "No se puede almacenar valor",
@@ -1010,10 +1104,9 @@ class StoreColValue(Validator):
         return FunType.STORAGE
 
 
-class CheckColStorageValueValidator(Validator):
-    def __init__(self, args):
-        super().__init__(args)
+class CheckColStorageValueValidator(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if col value is in given storage
@@ -1031,6 +1124,7 @@ class CheckColStorageValueValidator(Validator):
         storage = data_validator.storage.get(self.args["storage_name"], [])
         return val in storage
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         index = self.args["col_index"]
         var = self.args["row"][index]
@@ -1051,10 +1145,9 @@ class CheckColStorageValueValidator(Validator):
         return FunType.STORAGE
 
 
-class BoundingBoxValueValidator(Validator):
-    def __init__(self, args):
-        super().__init__(args)
+class BoundingBoxValueValidator(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if coordinate values are in given bounding box
@@ -1077,6 +1170,7 @@ class BoundingBoxValueValidator(Validator):
             bounding_box = Polygon(self.args["bounding_box"])
         return bounding_box.contains(point)
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         x_coordinate_index = self.args["x_coordinate_index"]
         y_coordinate_index = self.args["y_coordinate_index"]
@@ -1099,7 +1193,7 @@ class BoundingBoxValueValidator(Validator):
         return FunType.ROW
 
 
-class StoreColDictValues(Validator):
+class StoreColDictValues(ColumnValidator):
     def apply(self, args=None) -> bool:
         """
         Save cols index in args
@@ -1147,10 +1241,9 @@ class StoreColDictValues(Validator):
         return FunType.STORAGE
 
 
-class CheckStoreColDictValuesValidator(Validator):
-    def __init__(self, args):
-        super().__init__(args)
+class CheckStoreColDictValuesValidator(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if col value dict is in given storage
@@ -1204,6 +1297,7 @@ class CheckStoreColDictValuesValidator(Validator):
                     break
         return res
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         header = self.args["header"]
         cols_names = [header[index] for index in self.args["value_indexes"]]
@@ -1228,10 +1322,11 @@ class CheckStoreColDictValuesValidator(Validator):
         return FunType.STORAGE
 
 
-class CheckColStorageMultiValueValidator(Validator):
+class CheckColStorageMultiValueValidator(ColumnValidator):
     def __init__(self, args):
         super().__init__(args)
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if col value is in given storage when col value is a list
@@ -1258,6 +1353,7 @@ class CheckColStorageMultiValueValidator(Validator):
 
         return status
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         index = self.args["col_index"]
         header = self.args["header"]
@@ -1282,7 +1378,6 @@ class CheckColStorageMultiValueValidator(Validator):
 
 class MultiRowColValueValidator(Validator):
     def __init__(self, args):
-        self.cols_error = []
         self.row_number_error = [0]
         super().__init__(args)
 

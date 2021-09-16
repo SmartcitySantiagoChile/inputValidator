@@ -1,0 +1,53 @@
+{
+  "path": {
+    "type": "root",
+    "name": ""
+  },
+  "rules": [],
+  "children": [
+    {
+      "path": {
+        "type": "name",
+        "name": "Diccionario"
+      },
+      "rules": [],
+      "children": [
+        {
+          "path": {
+            "type": "regex",
+            "name": "Diccionario-Tipo_dia_202[0-9][0-1][0-9][0-3][0-9].csv",
+            "header": [
+              "Ano",
+              "Mes",
+              "Fecha",
+              "Tipo_Dia",
+              "dia",
+              "Observacion"
+            ]
+          },
+          "rules": {
+            "formatRules": [
+
+              {
+                "function": "string_domain",
+                "args": {
+                  "col_indexes": [
+                    3
+                  ],
+                  "domain": [
+                    "DOMINGO",
+                    "LABORAL",
+                    "SABADO"
+                  ]
+                }
+              }
+            ],
+            "semanticRules": [
+            ]
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
+}
