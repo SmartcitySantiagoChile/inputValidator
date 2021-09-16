@@ -1287,7 +1287,7 @@ Ano;Mes;Fecha;Tipo_Dia;dia;Observacion
 2010;7;2010-07-09;LABORAL;VIERNES;
 2010;7;2010-07-10;SABADO;SABADO;
 2010;7;2010-07-11;DOMINGO;DOMINGO;
-"2010;7;2010-07-12;DOMINGO;LU	NES;""Día excluido; por problemas en la administración de parametros en el SIG (se pierde información)"""
+2010;7;2010-07-12;DOMINGO;LUNES;"Día excluido por problemas en la administración de parametros en el SIG (se pierde información)"
 2010;7;2010-07-13;LABORAL;MARTES;
 2010;7;2010-07-14;LABORAL;MIERCOLES;
 2010;7;2010-07-15;LABORAL;JUEVES;
