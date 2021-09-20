@@ -1432,6 +1432,49 @@ class MultiRowColValueValidator(Validator):
         return FunType.MULTIROW
 
 
+class CompareValueValidator(ColumnValidator):
+
+    @staticmethod
+    def check_year_is_in_date(year, date):
+        year_datetime = datetime.date(int(year), 1, 1)
+        date_datetime = datetime.datetime.strptime(date, "%Y-%m-%d")
+        return year_datetime.year == date_datetime.year
+
+    comparators = {
+        "year_in_date": check_year_is_in_date.__func__
+    }
+
+    @ColumnValidator.check_not_valid_col_indexes
+    def apply(self, args=None) -> bool:
+        row = args
+        comparator = self.args["comparator"]
+        col_indexes = self.args["col_indexes"]
+        return self.comparators[comparator](row[col_indexes[0]], row[col_indexes[1]])
+
+    @ColumnValidator.check_not_valid_col_error
+    def get_error(self) -> dict:
+        header = self.args["header"]
+        cols_names = [header[index] for index in self.cols_error]
+        head = "Valor incorrecto"
+        tail = "columna"
+        if len(cols_names) > 1:
+            head = "Existen valores incorrectos"
+            tail = "columnas"
+
+        return {
+            "name": "Valor incorrecto",
+            "type": "formato",
+            "message": "{0} en la fila {1}, {2} {3}, comparación incorrecta {4}.".format(
+                head, self.row_counter, tail, ", ".join(cols_names), self.args["comparator"]
+            ),
+            "row": self.row_counter,
+            "cols": cols_names,
+        }
+
+    def get_fun_type(self) -> FunType:
+        return FunType.ROW
+
+
 check_name_functions = {
     "name": NameValidator,
     "regex": RegexNameValidator,
@@ -1459,4 +1502,5 @@ file_functions = {
     "check_store_col_dict_values": CheckStoreColDictValuesValidator,
     "check_col_storage_multi_value": CheckColStorageMultiValueValidator,
     "multi_row_col_value": MultiRowColValueValidator,
+    "compare_value": CompareValueValidator
 }

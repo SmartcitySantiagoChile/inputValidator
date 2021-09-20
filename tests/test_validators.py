@@ -26,7 +26,7 @@ from input_validator.validators import (
     FunType,
     RegexMultiNameValidator,
     FloatValueValidator,
-    MultiRowColValueValidator, RegexServiceDetailNameValidator,
+    MultiRowColValueValidator, RegexServiceDetailNameValidator, CompareValueValidator,
 )
 
 
@@ -1633,3 +1633,26 @@ class DataValidatorTest(TestCase):
                          'type': 'formato'}
         self.assertTrue(validator.apply(dummy_validator))
         self.assertEqual(error_message, validator.get_error())
+
+    def test_compare_value_validator(self):
+        header = [
+            "Ano",
+            "Mes",
+            "Fecha",
+            "Tipo_Dia",
+            "Dia",
+            "Observacion"
+        ]
+        args = {
+            "header": header,
+            "col_indexes": [0, 2],
+            "comparator": "year_in_date"
+        }
+        row = ["2007", "1", "2007-01-05", 'LABORAL', 'VIERNES']
+
+        validator = CompareValueValidator(args)
+        print(validator.apply(row))
+
+    def test_compare_value_validator_year_is_in_date(self):
+        self.assertFalse(CompareValueValidator.check_year_is_in_date('2020', '2021-01-20'))
+        self.assertTrue(CompareValueValidator.check_year_is_in_date('2021', '2021-01-20'))

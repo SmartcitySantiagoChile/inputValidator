@@ -21,7 +21,7 @@
               "Mes",
               "Fecha",
               "Tipo_Dia",
-              "dia",
+              "Dia",
               "Observacion"
             ]
           },
@@ -55,6 +55,16 @@
                     "SABADO",
                     "DOMINGO"
                   ]
+                }
+              },
+              {
+                "function": "compare_value",
+                "args": {
+                  "col_indexes": [
+                    0,
+                    2
+                  ],
+                  "comparator": "year_in_date"
                 }
               }
             ],
