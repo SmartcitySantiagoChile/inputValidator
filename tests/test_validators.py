@@ -1661,3 +1661,6 @@ class DataValidatorTest(TestCase):
         self.assertFalse(CompareValueValidator.check_month_in_date('2', '2021-01-20'))
         self.assertTrue(CompareValueValidator.check_month_in_date('1', '2021-01-20'))
 
+    def test_compare_value_validator_day_name_is_in_date(self):
+        self.assertFalse(CompareValueValidator.check_day_name_in_date('LUNES', '2021-01-20'))
+        self.assertTrue(CompareValueValidator.check_day_name_in_date('MIERCOLES', '2021-01-20'))

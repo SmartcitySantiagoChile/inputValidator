@@ -1434,6 +1434,7 @@ class MultiRowColValueValidator(Validator):
 
 class CompareValueValidator(ColumnValidator):
 
+
     @staticmethod
     def check_year_in_date(year, date):
         year_datetime = datetime.date(int(year), 1, 1)
@@ -1446,13 +1447,29 @@ class CompareValueValidator(ColumnValidator):
         date_datetime = datetime.datetime.strptime(date, "%Y-%m-%d")
         return month_datetime.month == date_datetime.month
 
+    @staticmethod
+    def check_day_name_in_date(day_name, date):
+        week_day_dict = {
+            "LUNES": 0,
+            "MARTES": 1,
+            "MIERCOLES": 2,
+            "JUEVES": 3,
+            "VIERNES": 4,
+            "SABADO": 5,
+            "DOMINGO": 6
+        }
+        date_datetime = datetime.datetime.strptime(date, "%Y-%m-%d")
+        return week_day_dict[day_name] == date_datetime.weekday()
+
     comparators = {
         "year_in_date": check_year_in_date.__func__,
-        "month_in_date": check_month_in_date.__func__
+        "month_in_date": check_month_in_date.__func__,
+        "day_name_in_date": check_day_name_in_date.__func__
     }
 
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
+        self.row_counter += 1
         row = args
         comparator = self.args["comparator"]
         col_indexes = self.args["col_indexes"]
@@ -1461,7 +1478,7 @@ class CompareValueValidator(ColumnValidator):
     @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         header = self.args["header"]
-        cols_names = [header[index] for index in self.cols_error]
+        cols_names = [header[index] for index in self.args["col_indexes"]]
         head = "Valor incorrecto"
         tail = "columna"
         if len(cols_names) > 1:
