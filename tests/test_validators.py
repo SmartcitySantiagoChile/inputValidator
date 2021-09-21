@@ -26,7 +26,7 @@ from input_validator.validators import (
     FunType,
     RegexMultiNameValidator,
     FloatValueValidator,
-    MultiRowColValueValidator, RegexServiceDetailNameValidator, CompareValueValidator,
+    MultiRowColValueValidator, RegexServiceDetailNameValidator, CompareValueValidator, DateConsistencyValidator,
 )
 
 
@@ -1651,7 +1651,7 @@ class DataValidatorTest(TestCase):
         row = ["2007", "1", "2007-01-05", 'LABORAL', 'VIERNES']
 
         validator = CompareValueValidator(args)
-        print(validator.apply(row))
+        self.assertTrue(validator.apply(row))
 
     def test_compare_value_validator_year_is_in_date(self):
         self.assertFalse(CompareValueValidator.check_year_in_date('2020', '2021-01-20'))
@@ -1664,3 +1664,29 @@ class DataValidatorTest(TestCase):
     def test_compare_value_validator_day_name_is_in_date(self):
         self.assertFalse(CompareValueValidator.check_day_name_in_date('LUNES', '2021-01-20'))
         self.assertTrue(CompareValueValidator.check_day_name_in_date('MIERCOLES', '2021-01-20'))
+
+    def test_date_consistency_validator(self):
+        header = [
+            "Ano",
+            "Mes",
+            "Fecha",
+            "Tipo_Dia",
+            "Dia",
+            "Observacion"
+        ]
+        args = {
+            "header": header,
+            "col_index": 2,
+        }
+        row = ["2007", "1", "2007-01-05", 'LABORAL', 'VIERNES']
+
+        validator = DateConsistencyValidator(args)
+        self.assertTrue(validator.apply(row))
+
+        row = ["2007", "1", "2007-01-06", 'SABADO', 'SABADO']
+        self.assertTrue(validator.apply(row))
+
+        row = ["2007", "1", "2007-01-07", 'DOMINGO', 'DOMINGO']
+        self.assertTrue(validator.apply(row))
+        row = ["2007", "1", "2007-01-05", 'LABORAL', 'VIERNES']
+        self.assertFalse(validator.apply(row))

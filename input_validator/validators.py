@@ -1434,7 +1434,6 @@ class MultiRowColValueValidator(Validator):
 
 class CompareValueValidator(ColumnValidator):
 
-
     @staticmethod
     def check_year_in_date(year, date):
         year_datetime = datetime.date(int(year), 1, 1)
@@ -1497,6 +1496,23 @@ class CompareValueValidator(ColumnValidator):
 
     def get_fun_type(self) -> FunType:
         return FunType.ROW
+
+
+class DateConsistencyValidator(ColumnValidator):
+
+    def __init__(self, args):
+        self.current_date = None
+        super().__init__(args)
+
+    @ColumnValidator.check_not_valid_col_indexes
+    def apply(self, args=None) -> bool:
+        row = args
+        row_date = datetime.datetime.strptime(row[self.args["col_index"]], "%Y-%m-%d")
+        one_day = datetime.timedelta(days=1)
+        if not self.current_date or row_date == self.current_date:
+            self.current_date = row_date + one_day
+            return True
+        return False
 
 
 check_name_functions = {
