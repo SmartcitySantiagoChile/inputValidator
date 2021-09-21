@@ -66,6 +66,16 @@
                   ],
                   "comparator": "year_in_date"
                 }
+              },
+              {
+                "function": "compare_value",
+                "args": {
+                  "col_indexes": [
+                    1,
+                    2
+                  ],
+                  "comparator": "month_in_date"
+                }
               }
             ],
             "semanticRules": [

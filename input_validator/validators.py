@@ -1435,13 +1435,20 @@ class MultiRowColValueValidator(Validator):
 class CompareValueValidator(ColumnValidator):
 
     @staticmethod
-    def check_year_is_in_date(year, date):
+    def check_year_in_date(year, date):
         year_datetime = datetime.date(int(year), 1, 1)
         date_datetime = datetime.datetime.strptime(date, "%Y-%m-%d")
         return year_datetime.year == date_datetime.year
 
+    @staticmethod
+    def check_month_in_date(month, date):
+        month_datetime = datetime.date(1, int(month), 1)
+        date_datetime = datetime.datetime.strptime(date, "%Y-%m-%d")
+        return month_datetime.month == date_datetime.month
+
     comparators = {
-        "year_in_date": check_year_is_in_date.__func__
+        "year_in_date": check_year_in_date.__func__,
+        "month_in_date": check_month_in_date.__func__
     }
 
     @ColumnValidator.check_not_valid_col_indexes

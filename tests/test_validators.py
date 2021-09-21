@@ -1654,5 +1654,10 @@ class DataValidatorTest(TestCase):
         print(validator.apply(row))
 
     def test_compare_value_validator_year_is_in_date(self):
-        self.assertFalse(CompareValueValidator.check_year_is_in_date('2020', '2021-01-20'))
-        self.assertTrue(CompareValueValidator.check_year_is_in_date('2021', '2021-01-20'))
+        self.assertFalse(CompareValueValidator.check_year_in_date('2020', '2021-01-20'))
+        self.assertTrue(CompareValueValidator.check_year_in_date('2021', '2021-01-20'))
+
+    def test_compare_value_validator_month_is_in_date(self):
+        self.assertFalse(CompareValueValidator.check_month_in_date('2', '2021-01-20'))
+        self.assertTrue(CompareValueValidator.check_month_in_date('1', '2021-01-20'))
+
