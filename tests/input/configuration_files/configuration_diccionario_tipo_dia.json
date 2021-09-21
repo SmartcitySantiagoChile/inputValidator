@@ -86,6 +86,12 @@
                   ],
                   "comparator": "day_name_in_date"
                 }
+              },
+              {
+                "function": "date_consistency",
+                "args": {
+                  "col_index": 2
+                }
               }
             ],
             "semanticRules": [

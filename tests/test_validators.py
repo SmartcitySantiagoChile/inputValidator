@@ -1652,6 +1652,14 @@ class DataValidatorTest(TestCase):
 
         validator = CompareValueValidator(args)
         self.assertTrue(validator.apply(row))
+        row = ["2006", "1", "2007-01-05", 'LABORAL', 'VIERNES']
+        self.assertFalse(validator.apply(row))
+        expected_error = {'name': 'Valor incorrecto', 'type': 'formato',
+                          'message': "Existen valores incorrectos en la fila 2, columnas Ano, Fecha,"
+                                     " comparación incorrecta: 'año en fecha'.",
+                          'row': 2, 'cols': ['Ano', 'Fecha']}
+
+        self.assertEqual(validator.get_error(), expected_error)
 
     def test_compare_value_validator_year_is_in_date(self):
         self.assertFalse(CompareValueValidator.check_year_in_date('2020', '2021-01-20'))
@@ -1690,3 +1698,10 @@ class DataValidatorTest(TestCase):
         self.assertTrue(validator.apply(row))
         row = ["2007", "1", "2007-01-05", 'LABORAL', 'VIERNES']
         self.assertFalse(validator.apply(row))
+        expected_error = {'cols': 'Fecha',
+                          'message': 'Fecha incosistente en la fila 4, columna Fecha, fecha '
+                                     'inconsistente respecto a la fecha anterior.',
+                          'name': 'Fecha inconsistente',
+                          'row': 4,
+                          'type': 'formato'}
+        self.assertEqual(validator.get_error(), expected_error)

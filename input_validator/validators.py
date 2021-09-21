@@ -1434,6 +1434,14 @@ class MultiRowColValueValidator(Validator):
 
 class CompareValueValidator(ColumnValidator):
 
+    def __init__(self, args):
+        super().__init__(args)
+        self.comparators_translator = {
+            "year_in_date": "año en fecha",
+            "month_in_date": "mes en fecha",
+            "day_name_in_date": "nombre del día en fecha"
+        }
+
     @staticmethod
     def check_year_in_date(year, date):
         year_datetime = datetime.date(int(year), 1, 1)
@@ -1466,6 +1474,8 @@ class CompareValueValidator(ColumnValidator):
         "day_name_in_date": check_day_name_in_date.__func__
     }
 
+
+
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         self.row_counter += 1
@@ -1487,8 +1497,8 @@ class CompareValueValidator(ColumnValidator):
         return {
             "name": "Valor incorrecto",
             "type": "formato",
-            "message": "{0} en la fila {1}, {2} {3}, comparación incorrecta {4}.".format(
-                head, self.row_counter, tail, ", ".join(cols_names), self.args["comparator"]
+            "message": "{0} en la fila {1}, {2} {3}, comparación incorrecta: '{4}'.".format(
+                head, self.row_counter, tail, ", ".join(cols_names), self.comparators_translator[self.args["comparator"]]
             ),
             "row": self.row_counter,
             "cols": cols_names,
@@ -1506,6 +1516,7 @@ class DateConsistencyValidator(ColumnValidator):
 
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
+        self.row_counter += 1
         row = args
         row_date = datetime.datetime.strptime(row[self.args["col_index"]], "%Y-%m-%d")
         one_day = datetime.timedelta(days=1)
@@ -1514,13 +1525,31 @@ class DateConsistencyValidator(ColumnValidator):
             return True
         return False
 
+    def get_fun_type(self) -> FunType:
+        return FunType.ROW
+
+    @ColumnValidator.check_not_valid_col_error
+    def get_error(self) -> dict:
+        header = self.args["header"]
+        col_name = header[self.args["col_index"]]
+        return {
+            "name": "Fecha inconsistente",
+            "type": "formato",
+            "message": f"Fecha incosistente en la fila {self.row_counter}, columna {col_name}"
+                       f", fecha inconsistente respecto a la fecha anterior.",
+            "row": self.row_counter,
+            "cols": col_name,
+        }
+
 
 check_name_functions = {
+
     "name": NameValidator,
     "regex": RegexNameValidator,
     "root": RootValidator,
     "multi-regex": RegexMultiNameValidator,
     "service_detail_regex": RegexServiceDetailNameValidator
+
 }
 
 file_functions = {
@@ -1542,5 +1571,6 @@ file_functions = {
     "check_store_col_dict_values": CheckStoreColDictValuesValidator,
     "check_col_storage_multi_value": CheckColStorageMultiValueValidator,
     "multi_row_col_value": MultiRowColValueValidator,
-    "compare_value": CompareValueValidator
+    "compare_value": CompareValueValidator,
+    "date_consistency": DateConsistencyValidator
 }
