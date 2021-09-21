@@ -92,9 +92,16 @@
                 "args": {
                   "col_index": 2
                 }
+              },
+              {
+                "function": "year_file_consistency",
+                "args": {
+                  "col_index": 2
+                }
               }
             ],
             "semanticRules": [
+
             ]
           },
           "children": []

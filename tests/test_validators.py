@@ -1705,3 +1705,18 @@ class DataValidatorTest(TestCase):
                           'row': 4,
                           'type': 'formato'}
         self.assertEqual(validator.get_error(), expected_error)
+
+    def test_year_file_consistency_validator(self):
+        header = [
+            "Ano",
+            "Mes",
+            "Fecha",
+            "Tipo_Dia",
+            "Dia",
+            "Observacion"
+        ]
+        args = {
+            "header": header,
+            "col_index": 2,
+        }
+        row = ["2007", "1", "2007-01-05", 'LABORAL', 'VIERNES']

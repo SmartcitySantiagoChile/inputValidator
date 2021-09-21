@@ -1474,10 +1474,15 @@ class CompareValueValidator(ColumnValidator):
         "day_name_in_date": check_day_name_in_date.__func__
     }
 
-
-
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
+        """Check comparator method for two col values.
+
+        The comparator methods are defined like static class methods and named in comparator dict.
+
+        Validator args:
+            col_indexes: column index list to check
+        """
         self.row_counter += 1
         row = args
         comparator = self.args["comparator"]
@@ -1498,7 +1503,8 @@ class CompareValueValidator(ColumnValidator):
             "name": "Valor incorrecto",
             "type": "formato",
             "message": "{0} en la fila {1}, {2} {3}, comparación incorrecta: '{4}'.".format(
-                head, self.row_counter, tail, ", ".join(cols_names), self.comparators_translator[self.args["comparator"]]
+                head, self.row_counter, tail, ", ".join(cols_names),
+                self.comparators_translator[self.args["comparator"]]
             ),
             "row": self.row_counter,
             "cols": cols_names,
@@ -1516,6 +1522,15 @@ class DateConsistencyValidator(ColumnValidator):
 
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
+        """ Check if the current date col is the next day of the past col date
+
+        Validator args:
+            col_index: col index of the date to check
+
+        Returns:
+
+        """
+
         self.row_counter += 1
         row = args
         row_date = datetime.datetime.strptime(row[self.args["col_index"]], "%Y-%m-%d")
@@ -1527,6 +1542,32 @@ class DateConsistencyValidator(ColumnValidator):
 
     def get_fun_type(self) -> FunType:
         return FunType.ROW
+
+    @ColumnValidator.check_not_valid_col_error
+    def get_error(self) -> dict:
+        header = self.args["header"]
+        col_name = header[self.args["col_index"]]
+        return {
+            "name": "Fecha inconsistente",
+            "type": "formato",
+            "message": f"Fecha incosistente en la fila {self.row_counter}, columna {col_name}"
+                       f", fecha inconsistente respecto a la fecha anterior.",
+            "row": self.row_counter,
+            "cols": col_name,
+        }
+
+
+class YearFileConsistencyValidator(ColumnValidator):
+    def __init__(self, args):
+        self.date = args["file_name"].replace('-', '')
+        super().__init__(args)
+
+    @ColumnValidator.check_not_valid_col_indexes
+    def apply(self, args=None) -> bool:
+        return False
+
+    def get_fun_type(self) -> FunType:
+        return FunType.FILE
 
     @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
@@ -1572,5 +1613,6 @@ file_functions = {
     "check_col_storage_multi_value": CheckColStorageMultiValueValidator,
     "multi_row_col_value": MultiRowColValueValidator,
     "compare_value": CompareValueValidator,
-    "date_consistency": DateConsistencyValidator
+    "date_consistency": DateConsistencyValidator,
+    "year_file_consistency": YearFileConsistencyValidator
 }
