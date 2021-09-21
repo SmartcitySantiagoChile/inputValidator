@@ -233,6 +233,7 @@ class DataValidator:
                             report.append(named_fun.get_error())
                     # apply file fun
                     for named_fun in files_rules_list:
+                        named_fun.file_name = name
                         named_fun.apply(row)
                     # apply storage fun
                     for named_fun in storage_rule_list:
