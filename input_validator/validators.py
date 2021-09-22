@@ -3,6 +3,7 @@ import glob
 import math
 import operator
 import os
+import pathlib
 import re
 import sys
 from abc import ABCMeta, abstractmethod
@@ -506,8 +507,10 @@ class RegexServiceDetailNameValidator(Validator):
 
 
 class MinRowsValidator(Validator):
-    counter = 0
-    status = False
+    def __init__(self, args):
+        self.counter = 0
+        self.status = False
+        super().__init__(args)
 
     def apply(self, args=None) -> bool:
         """
@@ -1420,7 +1423,7 @@ class MultiRowColValueValidator(Validator):
 
         return {
             "name": "Valores distintos en archivos",
-            "type": "formato",
+            "type": "valor",
             "message": "{0} {4} en la fila {1}, {2} {3}.".format(
                 head, self.row_counter, tail, ", ".join(cols_names), error_file_names
             ),
@@ -1501,7 +1504,7 @@ class CompareValueValidator(ColumnValidator):
 
         return {
             "name": "Valor incorrecto",
-            "type": "formato",
+            "type": "valor",
             "message": "{0} en la fila {1}, {2} {3}, comparación incorrecta: '{4}'.".format(
                 head, self.row_counter, tail, ", ".join(cols_names),
                 self.comparators_translator[self.args["comparator"]]
@@ -1549,7 +1552,7 @@ class DateConsistencyValidator(ColumnValidator):
         col_name = header[self.args["col_index"]]
         return {
             "name": "Fecha inconsistente",
-            "type": "formato",
+            "type": "valor",
             "message": f"Fecha incosistente en la fila {self.row_counter}, columna {col_name}"
                        f", fecha inconsistente respecto a la fecha anterior.",
             "row": self.row_counter,
@@ -1557,14 +1560,40 @@ class DateConsistencyValidator(ColumnValidator):
         }
 
 
-class YearFileConsistencyValidator(ColumnValidator):
+class CompleteYearFileConsistencyValidator(ColumnValidator):
     def __init__(self, args):
-        self.date = args["file_name"].replace('-', '')
+        date_str = pathlib.Path(args["file_name"]).stem.split("_")[-1]
+        self.op_date = datetime.datetime.strptime(date_str, "%Y%m%d")
+        self.current_date = self.op_date
+        self.last_date = datetime.datetime(self.op_date.year, 12, 31)
+        self.status = False
+        self.row_counter = 0
+        self.date_found = False
         super().__init__(args)
 
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
-        return False
+        status = False
+        row = args
+        date_to_check = datetime.datetime.strptime(row[2], "%Y-%m-%d")
+        one_day = datetime.timedelta(days=1)
+
+        # if PO date found start to check
+        if date_to_check == self.op_date:
+            self.date_found = True
+        if self.date_found:
+            if date_to_check == self.current_date:
+                if date_to_check == self.last_date:
+                    status = True
+                    self.status = status
+                # Increment row counter when date found and current day valid
+                self.row_counter += 1
+                self.current_date += one_day
+        else:
+            # Increment row counter when not date found
+            self.row_counter += 1
+
+        return status
 
     def get_fun_type(self) -> FunType:
         return FunType.FILE
@@ -1574,10 +1603,9 @@ class YearFileConsistencyValidator(ColumnValidator):
         header = self.args["header"]
         col_name = header[self.args["col_index"]]
         return {
-            "name": "Fecha inconsistente",
+            "name": "Fechas faltantes",
             "type": "formato",
-            "message": f"Fecha incosistente en la fila {self.row_counter}, columna {col_name}"
-                       f", fecha inconsistente respecto a la fecha anterior.",
+            "message": f"Fechas faltantes a partir de la fila {self.row_counter}, columna {col_name}.",
             "row": self.row_counter,
             "cols": col_name,
         }
@@ -1614,5 +1642,5 @@ file_functions = {
     "multi_row_col_value": MultiRowColValueValidator,
     "compare_value": CompareValueValidator,
     "date_consistency": DateConsistencyValidator,
-    "year_file_consistency": YearFileConsistencyValidator
+    "complete_year_file_consistency": CompleteYearFileConsistencyValidator
 }

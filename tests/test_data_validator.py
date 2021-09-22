@@ -165,7 +165,7 @@ class DataValidatorTest(TestCase):
             configuration_file = json.loads(json_config.read())
             rules = configuration_file["children"][0]["children"][0]["rules"]
             header = ["ID", "COMUNA"]
-            rules_dict = data_validator.dispatch_rules(rules, header)
+            rules_dict = data_validator.dispatch_rules(rules, header, "Diccionario_comunas_20200627.csv")
             self.assertEqual(1, len(rules_dict["FILE"]))
             self.assertEqual(3, len(rules_dict["ROW"]))
 

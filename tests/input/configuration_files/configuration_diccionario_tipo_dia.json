@@ -94,7 +94,7 @@
                 }
               },
               {
-                "function": "year_file_consistency",
+                "function": "complete_year_file_consistency",
                 "args": {
                   "col_index": 2
                 }

@@ -27,6 +27,7 @@ from input_validator.validators import (
     RegexMultiNameValidator,
     FloatValueValidator,
     MultiRowColValueValidator, RegexServiceDetailNameValidator, CompareValueValidator, DateConsistencyValidator,
+    CompleteYearFileConsistencyValidator,
 )
 
 
@@ -35,12 +36,14 @@ class Dummy:
         self.storage = {}
 
 
-class DataValidatorTest(TestCase):
-    def setUp(self) -> None:
+class ValidatorTest(TestCase):
+    def setUp(self):
         path = os.path.dirname(os.path.realpath(__file__))
         self.input_path = os.path.join(path, "input")
         self.check_name_data_path = os.path.join(self.input_path, "check_name_data")
 
+
+class MultiValidatorTest(ValidatorTest):
     def test_root_validator(self) -> None:
         validator = RootValidator({"path": self.check_name_data_path, "name": ""})
         error_message = {
@@ -1552,7 +1555,7 @@ class DataValidatorTest(TestCase):
 
         expected_error = {
             "name": "Valores distintos en archivos",
-            "type": "formato",
+            "type": "valor",
             "message": "Existe un valor en distinto en los archivos ['archivo_1', 'archivo_2'] en la fila 2, columna Código TS.",
             "row": 2,
             "cols": ["Código TS"],
@@ -1654,7 +1657,7 @@ class DataValidatorTest(TestCase):
         self.assertTrue(validator.apply(row))
         row = ["2006", "1", "2007-01-05", 'LABORAL', 'VIERNES']
         self.assertFalse(validator.apply(row))
-        expected_error = {'name': 'Valor incorrecto', 'type': 'formato',
+        expected_error = {'name': 'Valor incorrecto', 'type': 'valor',
                           'message': "Existen valores incorrectos en la fila 2, columnas Ano, Fecha,"
                                      " comparación incorrecta: 'año en fecha'.",
                           'row': 2, 'cols': ['Ano', 'Fecha']}
@@ -1703,11 +1706,13 @@ class DataValidatorTest(TestCase):
                                      'inconsistente respecto a la fecha anterior.',
                           'name': 'Fecha inconsistente',
                           'row': 4,
-                          'type': 'formato'}
+                          'type': 'valor'}
         self.assertEqual(validator.get_error(), expected_error)
 
-    def test_year_file_consistency_validator(self):
-        header = [
+
+class CompleteYearFileConsistencyValidatorTest(ValidatorTest):
+    def setUp(self):
+        self.header = [
             "Ano",
             "Mes",
             "Fecha",
@@ -1715,8 +1720,34 @@ class DataValidatorTest(TestCase):
             "Dia",
             "Observacion"
         ]
-        args = {
-            "header": header,
+
+        self.args = {
+            "header": self.header,
             "col_index": 2,
+            "file_name": "Diccionario_Tipo_Dia_20211230.csv"
         }
-        row = ["2007", "1", "2007-01-05", 'LABORAL', 'VIERNES']
+        self.validator = CompleteYearFileConsistencyValidator(self.args)
+
+        super().__init__()
+
+    def test_correct_case(self):
+        rows = [["2007", "1", "2021-12-30", 'LABORAL', 'VIERNES'],
+                ["2007", "1", "2021-12-31", 'SABADO', 'SABADO']
+                ]
+        for row in rows:
+            self.validator.apply(row)
+
+        self.assertTrue(self.validator.status)
+
+    def test_wrong_case(self):
+        rows = [["2007", "1", "2021-12-29", 'LABORAL', 'JUEVES'],
+                ["2007", "1", "2021-12-30", 'LABORAL', 'VIERNES']
+                ]
+        for row in rows:
+            self.validator.apply(row)
+        self.assertFalse(self.validator.status)
+        expected_error = {'name': 'Fechas faltantes', 'type': 'formato',
+                          'message': 'Fechas faltantes a partir de la fila 2, columna Fecha.', 'row': 2,
+                          'cols': 'Fecha'}
+
+        self.assertEqual(expected_error, self.validator.get_error())
