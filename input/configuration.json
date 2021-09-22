@@ -14,90 +14,106 @@
       "children": [
         {
           "path": {
-            "type": "regex",
-            "name": "Diccionario-Tipo_dia_202[0-9][0-1][0-9][0-3][0-9].csv",
-            "header": [
-              "Ano",
-              "Mes",
-              "Fecha",
-              "Tipo_Dia",
-              "Dia",
-              "Observacion"
-            ]
+            "type": "name",
+            "name": "Diccionario"
           },
-          "rules": {
-            "formatRules": [
-              {
-                "function": "string_domain",
-                "args": {
-                  "col_indexes": [
-                    3
-                  ],
-                  "domain": [
-                    "DOMINGO",
-                    "LABORAL",
-                    "SABADO"
-                  ]
-                }
+          "rules": [],
+          "children": [
+            {
+              "path": {
+                "type": "regex",
+                "name": "Diccionario-Tipo_dia_202[0-9][0-1][0-9][0-3][0-9].csv",
+                "header": [
+                  "Ano",
+                  "Mes",
+                  "Fecha",
+                  "Tipo_Dia",
+                  "Dia",
+                  "Observacion"
+                ]
               },
-              {
-                "function": "string_domain",
-                "args": {
-                  "col_indexes": [
-                    4
-                  ],
-                  "domain": [
-                    "LUNES",
-                    "MARTES",
-                    "MIERCOLES",
-                    "JUEVES",
-                    "VIERNES",
-                    "SABADO",
-                    "DOMINGO"
-                  ]
-                }
+              "rules": {
+                "formatRules": [
+                  {
+                    "function": "string_domain",
+                    "args": {
+                      "col_indexes": [
+                        3
+                      ],
+                      "domain": [
+                        "DOMINGO",
+                        "LABORAL",
+                        "SABADO"
+                      ]
+                    }
+                  },
+                  {
+                    "function": "string_domain",
+                    "args": {
+                      "col_indexes": [
+                        4
+                      ],
+                      "domain": [
+                        "LUNES",
+                        "MARTES",
+                        "MIERCOLES",
+                        "JUEVES",
+                        "VIERNES",
+                        "SABADO",
+                        "DOMINGO"
+                      ]
+                    }
+                  },
+                  {
+                    "function": "compare_value",
+                    "args": {
+                      "col_indexes": [
+                        0,
+                        2
+                      ],
+                      "comparator": "year_in_date"
+                    }
+                  },
+                  {
+                    "function": "compare_value",
+                    "args": {
+                      "col_indexes": [
+                        1,
+                        2
+                      ],
+                      "comparator": "month_in_date"
+                    }
+                  },
+                  {
+                    "function": "compare_value",
+                    "args": {
+                      "col_indexes": [
+                        4,
+                        2
+                      ],
+                      "comparator": "day_name_in_date"
+                    }
+                  },
+                  {
+                    "function": "date_consistency",
+                    "args": {
+                      "col_index": 2
+                    }
+                  },
+                  {
+                    "function": "complete_year_file_consistency",
+                    "args": {
+                      "col_index": 2
+                    }
+                  }
+                ],
+                "semanticRules": [
+
+                ]
               },
-              {
-                "function": "compare_value",
-                "args": {
-                  "col_indexes": [
-                    0,
-                    2
-                  ],
-                  "comparator": "year_in_date"
-                }
-              },
-              {
-                "function": "compare_value",
-                "args": {
-                  "col_indexes": [
-                    1,
-                    2
-                  ],
-                  "comparator": "month_in_date"
-                }
-              },
-              {
-                "function": "compare_value",
-                "args": {
-                  "col_indexes": [
-                    4,
-                    2
-                  ],
-                  "comparator": "day_name_in_date"
-                }
-              },
-              {
-                "function": "date_consistency",
-                "args": {
-                  "col_index": 2
-                }
-              }
-            ],
-            "semanticRules": [
-            ]
-          },
-          "children": []
+              "children": []
+            }
+          ]
         },
         {
           "path": {
