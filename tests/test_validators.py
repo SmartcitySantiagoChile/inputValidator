@@ -1637,7 +1637,9 @@ class MultiValidatorTest(ValidatorTest):
         self.assertTrue(validator.apply(dummy_validator))
         self.assertEqual(error_message, validator.get_error())
 
-    def test_compare_value_validator(self):
+
+class CompareValueValidatorTest(ValidatorTest):
+    def setUp(self):
         header = [
             "Ano",
             "Mes",
@@ -1646,21 +1648,26 @@ class MultiValidatorTest(ValidatorTest):
             "Dia",
             "Observacion"
         ]
-        args = {
+        self.args = {
             "header": header,
             "col_indexes": [0, 2],
             "comparator": "year_in_date"
         }
-        row = ["2007", "1", "2007-01-05", 'LABORAL', 'VIERNES']
+        super().__init__()
 
-        validator = CompareValueValidator(args)
+    def test_correct_case(self):
+        validator = CompareValueValidator(self.args)
+        row = ["2007", "1", "2007-01-05", 'LABORAL', 'VIERNES']
         self.assertTrue(validator.apply(row))
+
+    def test_wrong_case(self):
+        validator = CompareValueValidator(self.args)
         row = ["2006", "1", "2007-01-05", 'LABORAL', 'VIERNES']
         self.assertFalse(validator.apply(row))
         expected_error = {'name': 'Valor incorrecto', 'type': 'valor',
-                          'message': "Existen valores incorrectos en la fila 2, columnas Ano, Fecha,"
+                          'message': "Existen valores incorrectos en la fila 1, columnas Ano, Fecha,"
                                      " comparación incorrecta: 'año en fecha'.",
-                          'row': 2, 'cols': ['Ano', 'Fecha']}
+                          'row': 1, 'cols': ['Ano', 'Fecha']}
 
         self.assertEqual(validator.get_error(), expected_error)
 
@@ -1676,7 +1683,14 @@ class MultiValidatorTest(ValidatorTest):
         self.assertFalse(CompareValueValidator.check_day_name_in_date('LUNES', '2021-01-20'))
         self.assertTrue(CompareValueValidator.check_day_name_in_date('MIERCOLES', '2021-01-20'))
 
-    def test_date_consistency_validator(self):
+    def test_fun_type(self):
+        validator = CompareValueValidator(self.args)
+        self.assertEqual(validator.get_fun_type(), FunType.ROW)
+
+
+class DateConsistencyValidatorTest(ValidatorTest):
+
+    def setUp(self):
         header = [
             "Ano",
             "Mes",
@@ -1685,34 +1699,43 @@ class MultiValidatorTest(ValidatorTest):
             "Dia",
             "Observacion"
         ]
-        args = {
+        self.args = {
             "header": header,
             "col_index": 2,
         }
+        super().__init__()
+
+    def test_date_consistency_validator(self):
+        validator = DateConsistencyValidator(self.args)
         row = ["2007", "1", "2007-01-05", 'LABORAL', 'VIERNES']
-
-        validator = DateConsistencyValidator(args)
         self.assertTrue(validator.apply(row))
-
         row = ["2007", "1", "2007-01-06", 'SABADO', 'SABADO']
         self.assertTrue(validator.apply(row))
-
         row = ["2007", "1", "2007-01-07", 'DOMINGO', 'DOMINGO']
         self.assertTrue(validator.apply(row))
+
+    def test_wrong_case(self):
+        validator = DateConsistencyValidator(self.args)
         row = ["2007", "1", "2007-01-05", 'LABORAL', 'VIERNES']
+        self.assertTrue(validator.apply(row))
+        row = ["2007", "1", "2007-01-05", 'SABADO', 'SABADO']
         self.assertFalse(validator.apply(row))
         expected_error = {'cols': 'Fecha',
-                          'message': 'Fecha incosistente en la fila 4, columna Fecha, fecha '
+                          'message': 'Fecha incosistente en la fila 2, columna Fecha, fecha '
                                      'inconsistente respecto a la fecha anterior.',
                           'name': 'Fecha inconsistente',
-                          'row': 4,
+                          'row': 2,
                           'type': 'valor'}
         self.assertEqual(validator.get_error(), expected_error)
+
+    def test_fun_type(self):
+        validator = DateConsistencyValidator(self.args)
+        self.assertEqual(validator.get_fun_type(), FunType.ROW)
 
 
 class CompleteYearFileConsistencyValidatorTest(ValidatorTest):
     def setUp(self):
-        self.header = [
+        header = [
             "Ano",
             "Mes",
             "Fecha",
@@ -1722,32 +1745,35 @@ class CompleteYearFileConsistencyValidatorTest(ValidatorTest):
         ]
 
         self.args = {
-            "header": self.header,
+            "header": header,
             "col_index": 2,
             "file_name": "Diccionario_Tipo_Dia_20211230.csv"
         }
-        self.validator = CompleteYearFileConsistencyValidator(self.args)
-
         super().__init__()
 
     def test_correct_case(self):
+        validator = CompleteYearFileConsistencyValidator(self.args)
         rows = [["2007", "1", "2021-12-30", 'LABORAL', 'VIERNES'],
                 ["2007", "1", "2021-12-31", 'SABADO', 'SABADO']
                 ]
         for row in rows:
-            self.validator.apply(row)
+            validator.apply(row)
 
-        self.assertTrue(self.validator.status)
+        self.assertTrue(validator.status)
 
     def test_wrong_case(self):
+        validator = CompleteYearFileConsistencyValidator(self.args)
         rows = [["2007", "1", "2021-12-29", 'LABORAL', 'JUEVES'],
                 ["2007", "1", "2021-12-30", 'LABORAL', 'VIERNES']
                 ]
         for row in rows:
-            self.validator.apply(row)
-        self.assertFalse(self.validator.status)
+            validator.apply(row)
+        self.assertFalse(validator.status)
         expected_error = {'name': 'Fechas faltantes', 'type': 'formato',
                           'message': 'Fechas faltantes a partir de la fila 2, columna Fecha.', 'row': 2,
                           'cols': 'Fecha'}
+        self.assertEqual(expected_error, validator.get_error())
 
-        self.assertEqual(expected_error, self.validator.get_error())
+    def test_fun_type(self):
+        validator = CompleteYearFileConsistencyValidator(self.args)
+        self.assertEqual(validator.get_fun_type(), FunType.FILE)

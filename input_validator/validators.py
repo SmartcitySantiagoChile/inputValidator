@@ -1529,9 +1529,6 @@ class DateConsistencyValidator(ColumnValidator):
 
         Validator args:
             col_index: col index of the date to check
-
-        Returns:
-
         """
 
         self.row_counter += 1
@@ -1573,6 +1570,11 @@ class CompleteYearFileConsistencyValidator(ColumnValidator):
 
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
+        """ Check if the file has a complete year based on op date.
+
+        Validator args:
+            col_index:  index to check date
+        """
         status = False
         row = args
         date_to_check = datetime.datetime.strptime(row[2], "%Y-%m-%d")
