@@ -165,7 +165,7 @@ class DataValidatorTest(TestCase):
             configuration_file = json.loads(json_config.read())
             rules = configuration_file["children"][0]["children"][0]["rules"]
             header = ["ID", "COMUNA"]
-            rules_dict = data_validator.dispatch_rules(rules, header)
+            rules_dict = data_validator.dispatch_rules(rules, header, "Diccionario_comunas_20200627.csv")
             self.assertEqual(1, len(rules_dict["FILE"]))
             self.assertEqual(3, len(rules_dict["ROW"]))
 
@@ -1042,12 +1042,12 @@ class DataValidatorTest(TestCase):
         )
 
         expected_report = [['Diccionario', 'Diccionario'],
-         ['Diccionario-Comunas.csv', 'Diccionario/Diccionario-Comunas.csv'],
-         ['Diccionario-Zonificaciones.csv',
-          'Diccionario/Diccionario-Zonificaciones.csv'],
-         [['Diccionario-DetalleServicioZP_20200627_20200731.csv',
-           'Diccionario-DetalleServicioZP_20200801_20200830.csv'],
-          'Diccionario/Diccionario-DetalleServicioZP_*_*.csv']]
+                           ['Diccionario-Comunas.csv', os.path.join('Diccionario', 'Diccionario-Comunas.csv')],
+                           ['Diccionario-Zonificaciones.csv',
+                            os.path.join('Diccionario', 'Diccionario-Zonificaciones.csv')],
+                           [['Diccionario-DetalleServicioZP_20200627_20200731.csv',
+                             'Diccionario-DetalleServicioZP_20200801_20200830.csv'],
+                            os.path.join('Diccionario', 'Diccionario-DetalleServicioZP_*_*.csv')]]
 
         data.start_iteration_over_configuration_tree()
         self.assertEqual(expected_report, data.report)
@@ -1099,7 +1099,7 @@ class DataValidatorTest(TestCase):
                 os.path.join("Diccionario", "Diccionario-Zonificaciones.csv"),
             ],
             ["Evasion", "Evasion"],
-            ['Zonas777Fevasion_20200627.csv', 'Evasion/Zonas777Fevasion*.csv'],
+            ['Zonas777Fevasion_20200627.csv', os.path.join('Evasion', 'Zonas777Fevasion*.csv')],
         ]
         self.assertEqual(expected_report, data.report)
 
@@ -1135,5 +1135,24 @@ class DataValidatorTest(TestCase):
         ]
         self.assertEqual(expected_report, data.report)
 
+        expected_errors = {}
+        self.assertEqual(expected_errors, data.report_errors)
+
+    def test_diccionario_tipo_dia(self):
+        # base case
+        data = DataValidator(
+            data_path=os.path.join(self.input_path, "check_diccionario_calendario"),
+            config_path=os.path.join(
+                self.configuration_path,
+                "configuration_diccionario_tipo_dia.json",
+            ),
+            date='20210405'
+        )
+        data.start_iteration_over_configuration_tree()
+        expected_report = [['Diccionario', 'Diccionario'], ['Diccionario-Tipo_dia_20210405.csv',
+                                                            os.path.join('Diccionario',
+                                                                         'Diccionario-Tipo_dia_202[0-9][0-1][0-9][0-3][0-9].csv')]]
+
+        self.assertEqual(expected_report, data.report)
         expected_errors = {}
         self.assertEqual(expected_errors, data.report_errors)

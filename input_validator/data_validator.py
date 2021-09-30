@@ -162,15 +162,16 @@ class DataValidator:
             # report name and path errors
             self.report_error_by_validator(name, validator)
 
-    def dispatch_rules(self, rules: dict, header: list) -> dict:
-        """ Take the rules dict and split them in
-        :param rules:
-        :param header:
-        :return: dict of rules
+    def dispatch_rules(self, rules: dict, header: list, file_name: str) -> dict:
+        """ Take the rules dict and split them by type
 
         Args:
-            rules:
-            header:
+            rules: rules dict
+            header: file's header
+            file_name: file name
+
+        Returns:
+
         """
         format_rules = rules.get("formatRules", [])
         semantic_rules = rules.get("semanticRules", [])
@@ -179,8 +180,7 @@ class DataValidator:
 
         for rule in rules_list:
             rule_name = rule["function"]
-            rule_args = rule["args"]
-            rule_args["header"] = header
+            rule_args = {**rule["args"], **{"file_name": file_name}, "header": header}
             try:
                 fun_object = file_functions[rule_name](rule_args)
             except KeyError as e:
@@ -233,6 +233,7 @@ class DataValidator:
                             report.append(named_fun.get_error())
                     # apply file fun
                     for named_fun in files_rules_list:
+                        named_fun.file_name = name
                         named_fun.apply(row)
                     # apply storage fun
                     for named_fun in storage_rule_list:
@@ -272,7 +273,7 @@ class DataValidator:
         """
         report = []
         if rules:
-            rules_dict = self.dispatch_rules(rules, header)
+            rules_dict = self.dispatch_rules(rules, header, name)
             report = self.check_rules(rules_dict, path, name, header)
         return report
 
@@ -329,7 +330,7 @@ class DataValidator:
     def validate_multi_node_rules(self, path, name_list, rules, header):
         report = []
         if rules:
-            rules_dict = self.dispatch_rules(rules, header)
+            rules_dict = self.dispatch_rules(rules, header, name_list)
             report = self.check_multiple_rules(rules_dict, path, name_list, header)
 
         return report

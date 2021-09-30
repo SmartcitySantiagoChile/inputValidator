@@ -3,10 +3,12 @@ import glob
 import math
 import operator
 import os
+import pathlib
 import re
 import sys
 from abc import ABCMeta, abstractmethod
 from enum import Enum
+from functools import wraps
 
 from shapely.geometry import Point, Polygon
 
@@ -115,7 +117,7 @@ def utm_to_wsg84(
 class Validator(object, metaclass=ABCMeta):
     def __init__(self, args):
         """
-        Init method, it storage args and initialite a row counter
+        Init method, it storage args and initialize a row counter
 
         Args:
 
@@ -160,6 +162,104 @@ class Validator(object, metaclass=ABCMeta):
         The funtype is
         """
         pass
+
+
+class ColumnValidator(Validator):
+
+    def get_fun_type(self):
+        pass
+
+    def get_error(self):
+        pass
+
+    def apply(self, args=None):
+        pass
+
+    def __init__(self, args):
+        self.cols_error = []
+        self.not_valid_indexes = []
+        super().__init__(args)
+
+    def get_not_valid_cols_indexes(self, row) -> bool:
+        """Check if col indexes exist in row, if not return False.
+
+
+        Returns: True if all indexes are valid in row.
+
+        """
+        self.not_valid_indexes = []
+        col_indexes = self.args.get("col_indexes", [])
+        value_indexes = self.args.get("value_indexes", [])
+        if value_indexes:
+            col_indexes = value_indexes
+        col_index = self.args.get("col_index", None)
+        upper_col = self.args.get("upper_col", None)
+        lower_col = self.args.get("lower_col", None)
+        x_coordinate_index = self.args.get("x_coordinate_index", None)
+        y_coordinate_index = self.args.get("y_coordinate_index", None)
+        if col_index:
+            col_indexes.append(col_index)
+        if upper_col:
+            col_indexes.append(upper_col)
+        if lower_col:
+            col_indexes.append(lower_col)
+        if x_coordinate_index:
+            col_indexes.append(x_coordinate_index)
+        if y_coordinate_index:
+            col_indexes.append(y_coordinate_index)
+        for index in col_indexes:
+            if len(row) <= index:
+                self.not_valid_indexes.append(index)
+        return True if self.not_valid_indexes else False
+
+    @staticmethod
+    def check_not_valid_col_indexes(method):
+        """Decorator that check if col indexes are valid."""
+
+        @wraps(method)
+        def _impl(self, *method_args, **method_kwargs):
+            has_invalid_indexes = self.get_not_valid_cols_indexes(*method_args, **method_kwargs)
+            if has_invalid_indexes:
+                return False
+            method_output = method(self, *method_args, **method_kwargs)
+            return method_output
+
+        return _impl
+
+    def get_not_valid_col_error(self) -> dict:
+        """Check if not valid col error and create formatted message."""
+        if not self.not_valid_indexes:
+            return {}
+
+        header = self.args["header"]
+        cols_names = [header[index] for index in self.not_valid_indexes]
+        head = "Columna faltante"
+        tail = "columna"
+        if len(cols_names) > 1:
+            head = "Columnas faltantes"
+            tail = "columnas"
+
+        return {
+            "name": "Fila inválida",
+            "type": "formato",
+            "message": f"{head} en la fila {self.row_counter}, {tail} {', '.join(cols_names)}.",
+            "row": self.row_counter,
+            "cols": cols_names,
+        }
+
+    @staticmethod
+    def check_not_valid_col_error(method):
+        """Decorator that check if col indexes are valid."""
+
+        @wraps(method)
+        def _impl(self, *method_args, **method_kwargs):
+            has_not_valid_col_error = self.get_not_valid_col_error(*method_args, **method_kwargs)
+            if has_not_valid_col_error:
+                return has_not_valid_col_error
+            method_output = method(self, *method_args, **method_kwargs)
+            return method_output
+
+        return _impl
 
 
 class RootValidator(Validator):
@@ -318,6 +418,7 @@ class RegexMultiNameValidator(Validator):
 
 class RegexServiceDetailNameValidator(Validator):
     """This class validate the service detail file's name."""
+
     def __init__(self, args):
         super().__init__(args)
         self.wrong_date_counter = 0
@@ -406,8 +507,10 @@ class RegexServiceDetailNameValidator(Validator):
 
 
 class MinRowsValidator(Validator):
-    counter = 0
-    status = False
+    def __init__(self, args):
+        self.counter = 0
+        self.status = False
+        super().__init__(args)
 
     def apply(self, args=None) -> bool:
         """
@@ -440,12 +543,9 @@ class MinRowsValidator(Validator):
         return FunType.FILE
 
 
-class ASCIIColValidator(Validator):
-    def __init__(self, args):
+class ASCIIColValidator(ColumnValidator):
 
-        self.cols_error = []
-        super().__init__(args)
-
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if col is in ASCII
@@ -468,6 +568,7 @@ class ASCIIColValidator(Validator):
         else:
             return False
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         var = [self.args["row"][index] for index in self.cols_error]
         header = self.args["header"]
@@ -596,10 +697,9 @@ class HeaderValidator(Validator):
         return FunType.ROW
 
 
-class NotEmptyValueValidator(Validator):
-    def __init__(self, args):
+class NotEmptyValueValidator(ColumnValidator):
 
-        self.cols_error = []
+    def __init__(self, args):
         self.valid_operators = {
             '==': operator.eq,
         }
@@ -620,6 +720,7 @@ class NotEmptyValueValidator(Validator):
 
         return result
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if col has not empty value
@@ -647,6 +748,7 @@ class NotEmptyValueValidator(Validator):
         else:
             return False
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         header = self.args["header"]
         cols_names = [header[index] for index in self.cols_error]
@@ -670,14 +772,11 @@ class NotEmptyValueValidator(Validator):
         return FunType.ROW
 
 
-class StringDomainValueValidator(Validator):
-    def __init__(self, args):
-        self.cols_error = []
-        super().__init__(args)
+class StringDomainValueValidator(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
-        """
-        Check if columns are in domain list
+        """ Check if columns are in domain list.
 
         Validator args:
 
@@ -699,6 +798,7 @@ class StringDomainValueValidator(Validator):
         else:
             return False
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         header = self.args["header"]
         cols_names = [header[index] for index in self.cols_error]
@@ -722,10 +822,9 @@ class StringDomainValueValidator(Validator):
         return FunType.ROW
 
 
-class RegexValueValidator(Validator):
-    def __init__(self, args):
-        super().__init__(args)
+class RegexValueValidator(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check col value with regex
@@ -742,6 +841,7 @@ class RegexValueValidator(Validator):
         regex = self.args["regex"]
         return True if re.search(regex, value) else False
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         index = self.args["col_index"]
         var = self.args["row"][index]
@@ -762,11 +862,9 @@ class RegexValueValidator(Validator):
         return FunType.ROW
 
 
-class NumericRangeValueValidator(Validator):
-    def __init__(self, args):
-        self.cols_error = []
-        super().__init__(args)
+class NumericRangeValueValidator(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if col is in numeric range
@@ -796,6 +894,7 @@ class NumericRangeValueValidator(Validator):
         else:
             return False
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         header = self.args["header"]
         cols_names = [header[index] for index in self.cols_error]
@@ -824,11 +923,9 @@ class NumericRangeValueValidator(Validator):
         return FunType.ROW
 
 
-class TimeValueValidator(Validator):
-    def __init__(self, args):
-        self.cols_error = []
-        super().__init__(args)
+class TimeValueValidator(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if col is time value (HH:MM:SS)
@@ -854,6 +951,7 @@ class TimeValueValidator(Validator):
         else:
             return False
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         header = self.args["header"]
         cols_names = [header[index] for index in self.cols_error]
@@ -877,11 +975,9 @@ class TimeValueValidator(Validator):
         return FunType.ROW
 
 
-class FloatValueValidator(Validator):
-    def __init__(self, args):
-        self.cols_error = []
-        super().__init__(args)
+class FloatValueValidator(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if col is float value
@@ -903,6 +999,7 @@ class FloatValueValidator(Validator):
         else:
             return False
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         header = self.args["header"]
         cols_names = [header[index] for index in self.cols_error]
@@ -926,10 +1023,9 @@ class FloatValueValidator(Validator):
         return FunType.ROW
 
 
-class GreaterThanValueValidator(Validator):
-    def __init__(self, args):
-        super().__init__(args)
+class GreaterThanValueValidator(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if upper_col is greater than lower_col
@@ -956,6 +1052,7 @@ class GreaterThanValueValidator(Validator):
         else:
             return upper_col > lower_col
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         first_value_header = self.args["header"][self.args["upper_col"]]
         last_value_header = self.args["header"][self.args["lower_col"]]
@@ -974,10 +1071,9 @@ class GreaterThanValueValidator(Validator):
         return FunType.ROW
 
 
-class StoreColValue(Validator):
-    def __init__(self, args):
-        super().__init__(args)
+class StoreColValue(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Save col index in named storage
@@ -997,6 +1093,7 @@ class StoreColValue(Validator):
             data_validator.storage[storage_name].append(var)
         return True
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         return {
             "name": "No se puede almacenar valor",
@@ -1010,10 +1107,9 @@ class StoreColValue(Validator):
         return FunType.STORAGE
 
 
-class CheckColStorageValueValidator(Validator):
-    def __init__(self, args):
-        super().__init__(args)
+class CheckColStorageValueValidator(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if col value is in given storage
@@ -1031,6 +1127,7 @@ class CheckColStorageValueValidator(Validator):
         storage = data_validator.storage.get(self.args["storage_name"], [])
         return val in storage
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         index = self.args["col_index"]
         var = self.args["row"][index]
@@ -1051,10 +1148,9 @@ class CheckColStorageValueValidator(Validator):
         return FunType.STORAGE
 
 
-class BoundingBoxValueValidator(Validator):
-    def __init__(self, args):
-        super().__init__(args)
+class BoundingBoxValueValidator(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if coordinate values are in given bounding box
@@ -1077,6 +1173,7 @@ class BoundingBoxValueValidator(Validator):
             bounding_box = Polygon(self.args["bounding_box"])
         return bounding_box.contains(point)
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         x_coordinate_index = self.args["x_coordinate_index"]
         y_coordinate_index = self.args["y_coordinate_index"]
@@ -1099,7 +1196,7 @@ class BoundingBoxValueValidator(Validator):
         return FunType.ROW
 
 
-class StoreColDictValues(Validator):
+class StoreColDictValues(ColumnValidator):
     def apply(self, args=None) -> bool:
         """
         Save cols index in args
@@ -1147,10 +1244,9 @@ class StoreColDictValues(Validator):
         return FunType.STORAGE
 
 
-class CheckStoreColDictValuesValidator(Validator):
-    def __init__(self, args):
-        super().__init__(args)
+class CheckStoreColDictValuesValidator(ColumnValidator):
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if col value dict is in given storage
@@ -1204,6 +1300,7 @@ class CheckStoreColDictValuesValidator(Validator):
                     break
         return res
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         header = self.args["header"]
         cols_names = [header[index] for index in self.args["value_indexes"]]
@@ -1228,10 +1325,11 @@ class CheckStoreColDictValuesValidator(Validator):
         return FunType.STORAGE
 
 
-class CheckColStorageMultiValueValidator(Validator):
+class CheckColStorageMultiValueValidator(ColumnValidator):
     def __init__(self, args):
         super().__init__(args)
 
+    @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
         Check if col value is in given storage when col value is a list
@@ -1258,6 +1356,7 @@ class CheckColStorageMultiValueValidator(Validator):
 
         return status
 
+    @ColumnValidator.check_not_valid_col_error
     def get_error(self) -> dict:
         index = self.args["col_index"]
         header = self.args["header"]
@@ -1282,7 +1381,6 @@ class CheckColStorageMultiValueValidator(Validator):
 
 class MultiRowColValueValidator(Validator):
     def __init__(self, args):
-        self.cols_error = []
         self.row_number_error = [0]
         super().__init__(args)
 
@@ -1325,7 +1423,7 @@ class MultiRowColValueValidator(Validator):
 
         return {
             "name": "Valores distintos en archivos",
-            "type": "formato",
+            "type": "valor",
             "message": "{0} {4} en la fila {1}, {2} {3}.".format(
                 head, self.row_counter, tail, ", ".join(cols_names), error_file_names
             ),
@@ -1337,12 +1435,192 @@ class MultiRowColValueValidator(Validator):
         return FunType.MULTIROW
 
 
+class CompareValueValidator(ColumnValidator):
+
+    def __init__(self, args):
+        super().__init__(args)
+        self.comparators_translator = {
+            "year_in_date": "año en fecha",
+            "month_in_date": "mes en fecha",
+            "day_name_in_date": "nombre del día en fecha"
+        }
+
+    @staticmethod
+    def check_year_in_date(year, date):
+        year_datetime = datetime.date(int(year), 1, 1)
+        date_datetime = datetime.datetime.strptime(date, "%Y-%m-%d")
+        return year_datetime.year == date_datetime.year
+
+    @staticmethod
+    def check_month_in_date(month, date):
+        month_datetime = datetime.date(1, int(month), 1)
+        date_datetime = datetime.datetime.strptime(date, "%Y-%m-%d")
+        return month_datetime.month == date_datetime.month
+
+    @staticmethod
+    def check_day_name_in_date(day_name, date):
+        week_day_dict = {
+            "LUNES": 0,
+            "MARTES": 1,
+            "MIERCOLES": 2,
+            "JUEVES": 3,
+            "VIERNES": 4,
+            "SABADO": 5,
+            "DOMINGO": 6
+        }
+        date_datetime = datetime.datetime.strptime(date, "%Y-%m-%d")
+        return week_day_dict[day_name] == date_datetime.weekday()
+
+    comparators = {
+        "year_in_date": check_year_in_date.__func__,
+        "month_in_date": check_month_in_date.__func__,
+        "day_name_in_date": check_day_name_in_date.__func__
+    }
+
+    @ColumnValidator.check_not_valid_col_indexes
+    def apply(self, args=None) -> bool:
+        """Check comparator method for two col values.
+
+        The comparator methods are defined like static class methods and named in comparator dict.
+
+        Validator args:
+            col_indexes: column index list to check
+        """
+        self.row_counter += 1
+        row = args
+        comparator = self.args["comparator"]
+        col_indexes = self.args["col_indexes"]
+        return self.comparators[comparator](row[col_indexes[0]], row[col_indexes[1]])
+
+    @ColumnValidator.check_not_valid_col_error
+    def get_error(self) -> dict:
+        header = self.args["header"]
+        cols_names = [header[index] for index in self.args["col_indexes"]]
+        head = "Valor incorrecto"
+        tail = "columna"
+        if len(cols_names) > 1:
+            head = "Existen valores incorrectos"
+            tail = "columnas"
+
+        return {
+            "name": "Valor incorrecto",
+            "type": "valor",
+            "message": "{0} en la fila {1}, {2} {3}, comparación incorrecta: '{4}'.".format(
+                head, self.row_counter, tail, ", ".join(cols_names),
+                self.comparators_translator[self.args["comparator"]]
+            ),
+            "row": self.row_counter,
+            "cols": cols_names,
+        }
+
+    def get_fun_type(self) -> FunType:
+        return FunType.ROW
+
+
+class DateConsistencyValidator(ColumnValidator):
+
+    def __init__(self, args):
+        self.current_date = None
+        super().__init__(args)
+
+    @ColumnValidator.check_not_valid_col_indexes
+    def apply(self, args=None) -> bool:
+        """ Check if the current date col is the next day of the past col date
+
+        Validator args:
+            col_index: col index of the date to check
+        """
+
+        self.row_counter += 1
+        row = args
+        row_date = datetime.datetime.strptime(row[self.args["col_index"]], "%Y-%m-%d")
+        one_day = datetime.timedelta(days=1)
+        if not self.current_date or row_date == self.current_date:
+            self.current_date = row_date + one_day
+            return True
+        return False
+
+    def get_fun_type(self) -> FunType:
+        return FunType.ROW
+
+    @ColumnValidator.check_not_valid_col_error
+    def get_error(self) -> dict:
+        header = self.args["header"]
+        col_name = header[self.args["col_index"]]
+        return {
+            "name": "Fecha inconsistente",
+            "type": "valor",
+            "message": f"Fecha incosistente en la fila {self.row_counter}, columna {col_name}"
+                       f", fecha inconsistente respecto a la fecha anterior.",
+            "row": self.row_counter,
+            "cols": col_name,
+        }
+
+
+class CompleteYearFileConsistencyValidator(ColumnValidator):
+    def __init__(self, args):
+        date_str = pathlib.Path(args["file_name"]).stem.split("_")[-1]
+        self.op_date = datetime.datetime.strptime(date_str, "%Y%m%d")
+        self.current_date = self.op_date
+        self.last_date = datetime.datetime(self.op_date.year, 12, 31)
+        self.status = False
+        self.row_counter = 0
+        self.date_found = False
+        super().__init__(args)
+
+    @ColumnValidator.check_not_valid_col_indexes
+    def apply(self, args=None) -> bool:
+        """ Check if the file has a complete year based on op date.
+
+        Validator args:
+            col_index:  index to check date
+        """
+        status = False
+        row = args
+        date_to_check = datetime.datetime.strptime(row[2], "%Y-%m-%d")
+        one_day = datetime.timedelta(days=1)
+
+        # if PO date found start to check
+        if date_to_check == self.op_date:
+            self.date_found = True
+        if self.date_found:
+            if date_to_check == self.current_date:
+                if date_to_check == self.last_date:
+                    status = True
+                    self.status = status
+                # Increment row counter when date found and current day valid
+                self.row_counter += 1
+                self.current_date += one_day
+        else:
+            # Increment row counter when not date found
+            self.row_counter += 1
+
+        return status
+
+    def get_fun_type(self) -> FunType:
+        return FunType.FILE
+
+    @ColumnValidator.check_not_valid_col_error
+    def get_error(self) -> dict:
+        header = self.args["header"]
+        col_name = header[self.args["col_index"]]
+        return {
+            "name": "Fechas faltantes",
+            "type": "formato",
+            "message": f"Fechas faltantes a partir de la fila {self.row_counter}, columna {col_name}.",
+            "row": self.row_counter,
+            "cols": col_name,
+        }
+
+
 check_name_functions = {
+
     "name": NameValidator,
     "regex": RegexNameValidator,
     "root": RootValidator,
     "multi-regex": RegexMultiNameValidator,
     "service_detail_regex": RegexServiceDetailNameValidator
+
 }
 
 file_functions = {
@@ -1364,4 +1642,7 @@ file_functions = {
     "check_store_col_dict_values": CheckStoreColDictValuesValidator,
     "check_col_storage_multi_value": CheckColStorageMultiValueValidator,
     "multi_row_col_value": MultiRowColValueValidator,
+    "compare_value": CompareValueValidator,
+    "date_consistency": DateConsistencyValidator,
+    "complete_year_file_consistency": CompleteYearFileConsistencyValidator
 }
