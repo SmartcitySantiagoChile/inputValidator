@@ -464,15 +464,11 @@
             "name": "Diccionario-EstacionesMetro_202[0-9][0-1][0-9][0-3][0-9].csv",
             "header": [
               "CODIGOTRX",
+              "ESTANDAR_ESTACION_UNICA",
               "COMUNA",
               "LATITUD",
               "LONGITUD",
-              "LINEA",
-              "ESTANDAR",
-              "TIPO",
-              "ESTANDAR_ESTACION_UNICA",
-              "CODIGO",
-              "COLOR"
+              "LINEA"
             ],
             "dependencies": [
               "Diccionario-Comunas*.csv",
