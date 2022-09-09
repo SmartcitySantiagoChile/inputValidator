@@ -501,7 +501,7 @@
                 "function": "string_domain",
                 "args": {
                   "col_indexes": [
-                    4
+                    5
                   ],
                   "domain": [
                     "L1",
@@ -519,7 +519,7 @@
               {
                 "function": "check_col_storage_value",
                 "args": {
-                  "col_index": 1,
+                  "col_index": 2,
                   "storage_name": "comunas"
                 }
               }
