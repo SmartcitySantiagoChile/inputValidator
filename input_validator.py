@@ -10,6 +10,7 @@ import zipfile
 from pyfiglet import Figlet
 
 from input_validator.data_validator import DataValidator
+from input_validator.utils import write_errors_to_csv
 
 logger = logging.getLogger(__name__)
 
@@ -75,23 +76,9 @@ def main(argv):
             logger.error(f"{key} contiene los siguientes errores:")
             for error in value:
                 logger.error(error)
-    with open(
-        os.path.join(OUTPUT_PATH, OUTPUT_NAME), "w", newline="", encoding="utf-8-SIG"
-    ) as f:
-        writer = csv.writer(f)
-        writer.writerow(["Archivo", "Error", "Tipo", "Fila", "Columna(s)", "Detalle"])
-        for key, value in validator.report_errors.items():
-            for error in value:
-                writer.writerow(
-                    [
-                        key,
-                        error["name"],
-                        error["type"],
-                        error["row"],
-                        error["cols"],
-                        error["message"],
-                    ]
-                )
+
+    file_path = os.path.join(OUTPUT_PATH, OUTPUT_NAME)
+    write_errors_to_csv(file_path, validator)
 
     if not is_path_list:
         shutil.rmtree(os.path.join(INPUTS_PATH, "tmp"))

@@ -1,11 +1,12 @@
+import csv
 import math
 
 
 def utm_to_wsg84(
-    east_coordinate: float,
-    north_coordinate: float,
-    zone: int = 19,
-    north_hemisphere: bool = False,
+        east_coordinate: float,
+        north_coordinate: float,
+        zone: int = 19,
+        north_hemisphere: bool = False,
 ) -> tuple:
     """
     Convert utm to wsg84 coordinates
@@ -32,13 +33,13 @@ def utm_to_wsg84(
 
     arc = north_coordinate / k0
     mu = arc / (
-        a
-        * (
-            1
-            - math.pow(e, 2) / 4.0
-            - 3 * math.pow(e, 4) / 64.0
-            - 5 * math.pow(e, 6) / 256.0
-        )
+            a
+            * (
+                    1
+                    - math.pow(e, 2) / 4.0
+                    - 3 * math.pow(e, 4) / 64.0
+                    - 5 * math.pow(e, 6) / 256.0
+            )
     )
 
     ei = (1 - math.pow((1 - e * e), (1 / 2.0))) / (1 + math.pow((1 - e * e), (1 / 2.0)))
@@ -49,11 +50,11 @@ def utm_to_wsg84(
     cc = 151 * math.pow(ei, 3) / 96
     cd = 1097 * math.pow(ei, 4) / 512
     phi1 = (
-        mu
-        + ca * math.sin(2 * mu)
-        + cb * math.sin(4 * mu)
-        + cc * math.sin(6 * mu)
-        + cd * math.sin(8 * mu)
+            mu
+            + ca * math.sin(2 * mu)
+            + cb * math.sin(4 * mu)
+            + cc * math.sin(6 * mu)
+            + cd * math.sin(8 * mu)
     )
 
     n0 = a / math.pow((1 - math.pow((e * math.sin(phi1)), 2)), (1 / 2.0))
@@ -70,17 +71,17 @@ def utm_to_wsg84(
     fact3 = (5 + 3 * t0 + 10 * q0 - 4 * q0 * q0 - 9 * e1sq) * math.pow(dd0, 4) / 24
 
     fact4 = (
-        (61 + 90 * t0 + 298 * q0 + 45 * t0 * t0 - 252 * e1sq - 3 * q0 * q0)
-        * math.pow(dd0, 6)
-        / 720
+            (61 + 90 * t0 + 298 * q0 + 45 * t0 * t0 - 252 * e1sq - 3 * q0 * q0)
+            * math.pow(dd0, 6)
+            / 720
     )
 
     lof1 = _a1 / (n0 * k0)
     lof2 = (1 + 2 * t0 + q0) * math.pow(dd0, 3) / 6.0
     lof3 = (
-        (5 - 2 * q0 + 28 * t0 - 3 * math.pow(q0, 2) + 8 * e1sq + 24 * math.pow(t0, 2))
-        * math.pow(dd0, 5)
-        / 120
+            (5 - 2 * q0 + 28 * t0 - 3 * math.pow(q0, 2) + 8 * e1sq + 24 * math.pow(t0, 2))
+            * math.pow(dd0, 5)
+            / 120
     )
     _a2 = (lof1 - lof2 + lof3) / math.cos(phi1)
     _a3 = _a2 * 180 / math.pi
@@ -93,3 +94,23 @@ def utm_to_wsg84(
     longitude = ((zone > 0) and (6 * zone - 183.0) or 3.0) - _a3
 
     return latitude, longitude
+
+
+def write_errors_to_csv(file_path, validator_obj):
+    with open(
+            file_path, "w", newline="", encoding="utf-8-SIG"
+    ) as f:
+        writer = csv.writer(f)
+        writer.writerow(["Archivo", "Error", "Tipo", "Fila", "Columna(s)", "Detalle"])
+        for key, value in validator_obj.report_errors.items():
+            for error in value:
+                writer.writerow(
+                    [
+                        key,
+                        error["name"],
+                        error["type"],
+                        error["row"],
+                        error["cols"],
+                        error["message"],
+                    ]
+                )
