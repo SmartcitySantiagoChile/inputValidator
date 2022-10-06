@@ -1,5 +1,4 @@
 import argparse
-import csv
 import logging
 import os
 import pathlib
@@ -36,7 +35,7 @@ def main(argv):
     parser.add_argument("path", help="Path for .zip data or list of paths", nargs="+")
     parser.add_argument(
         "--output",
-        default=None,
+        default=OUTPUT_NAME,
         help="path where report will be saved, if it is not provided we will use output path",
     )
     parser.add_argument(
@@ -44,17 +43,18 @@ def main(argv):
     )
 
     args = parser.parse_args(argv[1:])
+    output_name = args.output
     is_path_list = len(args.path) > 1
+
     if is_path_list:
         input_path = args.path
     else:
-        input_path = os.path.join(DIR_PATH, args.path[0])
-        with zipfile.ZipFile(input_path, "r") as zip_ref:
-            temporal_path = os.path.join(INPUTS_PATH, "tmp")
-            zip_ref.extractall(temporal_path)
-            input_path = os.path.join(
-                temporal_path, zip_ref.namelist()[0].replace("/", "")
-            )
+        input_path = args.path[0]
+        if zipfile.is_zipfile(input_path):
+            with zipfile.ZipFile(input_path, "r") as zip_ref:
+                temporal_path = os.path.join(INPUTS_PATH, "tmp")
+                zip_ref.extractall(temporal_path)
+                input_path = os.path.join(temporal_path, zip_ref.namelist()[0].replace("/", ""))
 
     # date with file format
     date = pathlib.Path(args.path[0]).stem.replace("-", "")
@@ -66,8 +66,6 @@ def main(argv):
         validator.start_iteration_over_path_list()
     else:
         validator.start_iteration_over_configuration_tree()
-
-    output_name = args.output if args.output else OUTPUT_NAME
 
     # for success in validator.report:
     #    logger.info("{0} found in {1}".format(success[0], success[1]))
