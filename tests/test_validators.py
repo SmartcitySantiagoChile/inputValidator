@@ -54,7 +54,7 @@ class MultiValidatorTest(ValidatorTest):
             "message": "La raíz del directorio debe tener un nombre vacío en la "
             "configuración.",
             "row": "",
-            "name": "Raiz incorrecta",
+            "name": "Raíz incorrecta",
             "type": "formato",
         }
         self.assertTrue(validator.apply())

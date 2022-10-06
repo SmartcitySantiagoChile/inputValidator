@@ -38,7 +38,7 @@ class DataValidator:
         """
         if self.log:
             self.log.error("Archivo de configuración mal formado")
-            # self.log.error(exception)
+            self.log.error(str(exception))
         sys.exit("Procesamiento cancelado.")
 
     def configuration_fun_error(self, exception: Exception, fun_name: str):
@@ -95,80 +95,80 @@ class DataValidator:
             else:
                 new_path = path
             rules = node["rules"]
+
+            # check name and path format
+            validator = check_name_functions[type_name](
+                {"path": absolute_path, "name": name, "date": self.date}
+            )
+            # check dependencies
+            missing_dependencies = []
+            for dependency in dependencies:
+                dependency_found = False
+                for file in self.files_checked:
+                    if fnmatch.fnmatch(file, dependency):
+                        dependency_found = True
+                if not dependency_found:
+                    missing_dependencies.append(dependency)
+
+            if validator.apply(self):
+                # if name correct check rules and report errors
+                if (
+                        type_name == "regex"
+                        or type_name == "multi-regex"
+                        or type_name == "service_detail_regex"
+                ):
+                    name = self.temp_name
+                    self.temp_name = None
+                # check service detail error files
+                if type_name == "service_detail_regex":
+                    self.report_error_by_validator(
+                        validator.args["names_with_incorrect_date"], validator
+                    )
+
+                if missing_dependencies:
+                    for dependency in missing_dependencies:
+                        error = {
+                            "name": "Error de dependencias",
+                            "type": "formato",
+                            "message": f"El archivo {name} requiere el procesamiento del archivo con patrón {dependency}.",
+                            "row": "",
+                            "cols": "",
+                        }
+                        self.report_errors[name].append(error)
+                    return
+                if rules:
+                    if type_name == "multi-regex":
+                        status = self.validate_multi_node_rules(
+                            absolute_path, name, rules, header
+                        )
+                    elif type_name == "service_detail_regex":
+                        status = []
+                        for n in name:
+                            status += self.validate_node_rules(
+                                absolute_path, n, rules, header
+                            )
+                    else:
+                        status = self.validate_node_rules(
+                            absolute_path, name, rules, header
+                        )
+                    for error in status:
+                        if isinstance(name, list):
+                            for name_file in name:
+                                self.report_errors[name_file].append(error)
+                        else:
+                            self.report_errors[name].append(error)
+                # if not root case
+                if name and new_path:
+                    self.report.append([name, new_path])
+
+                # iterate over children
+                for child in node.get("children", []):
+                    self.iterate_over_configuration_tree(child, new_path)
+            else:
+                # report name and path errors
+                self.report_error_by_validator(name, validator)
         except KeyError as e:
             self.configuration_file_error(e)
-
-        # check name and path format
-        validator = check_name_functions[type_name](
-            {"path": absolute_path, "name": name, "date": self.date}
-        )
-        # check dependencies
-        missing_dependencies = []
-        for dependency in dependencies:
-            dependency_found = False
-            for file in self.files_checked:
-                if fnmatch.fnmatch(file, dependency):
-                    dependency_found = True
-            if not dependency_found:
-                missing_dependencies.append(dependency)
-
-        if validator.apply(self):
-            # if name correct check rules and report errors
-            if (
-                type_name == "regex"
-                or type_name == "multi-regex"
-                or type_name == "service_detail_regex"
-            ):
-                name = self.temp_name
-                self.temp_name = None
-            # check service detail error files
-            if type_name == "service_detail_regex":
-                self.report_error_by_validator(
-                    validator.args["names_with_incorrect_date"], validator
-                )
-
-            if missing_dependencies:
-                for dependency in missing_dependencies:
-                    error = {
-                        "name": "Error de dependencias",
-                        "type": "formato",
-                        "message": f"El archivo {name} requiere el procesamiento del archivo con patrón {dependency}.",
-                        "row": "",
-                        "cols": "",
-                    }
-                    self.report_errors[name].append(error)
-                return
-            if rules:
-                if type_name == "multi-regex":
-                    status = self.validate_multi_node_rules(
-                        absolute_path, name, rules, header
-                    )
-                elif type_name == "service_detail_regex":
-                    status = []
-                    for n in name:
-                        status += self.validate_node_rules(
-                            absolute_path, n, rules, header
-                        )
-                else:
-                    status = self.validate_node_rules(
-                        absolute_path, name, rules, header
-                    )
-                for error in status:
-                    if isinstance(name, list):
-                        for name_file in name:
-                            self.report_errors[name_file].append(error)
-                    else:
-                        self.report_errors[name].append(error)
-            # if not root case
-            if name and new_path:
-                self.report.append([name, new_path])
-
-            # iterate over childs
-            for child in node.get("children", []):
-                self.iterate_over_configuration_tree(child, new_path)
-        else:
-            # report name and path errors
-            self.report_error_by_validator(name, validator)
 
     def dispatch_rules(self, rules: dict, header: list, file_name: str) -> dict:
         """Take the rules dict and split them by type
@@ -191,10 +191,10 @@ class DataValidator:
             rule_args = {**rule["args"], **{"file_name": file_name}, "header": header}
             try:
                 fun_object = file_functions[rule_name](rule_args)
+                fun_type = fun_object.get_fun_type().name
+                rules_dict[fun_type].append(fun_object)
             except KeyError as e:
                 self.configuration_fun_error(e, rule_name)
-            fun_type = fun_object.get_fun_type().name
-            rules_dict[fun_type].append(fun_object)
         return rules_dict
 
     def check_rules(self, rules_dict, path, name, header) -> list:
@@ -235,6 +235,7 @@ class DataValidator:
                     continue
 
                 # check row fun
+                named_fun = 'function_not_defined'
                 try:
                     for named_fun in row_rules_list:
                         if not named_fun.apply(row):
@@ -363,8 +364,8 @@ class DataValidator:
         not_empty_row_validator = NotEmptyRowValidator({})
 
         # open all files
+        name = 'name_not_defined'
         try:
-
             for name in name_list:
                 # open file
                 file = open(
@@ -410,6 +411,8 @@ class DataValidator:
                         continue
 
                     # check row fun
+                    file_num = 'file_not_defined'
+                    named_fun = 'function_not_defined'
                     try:
                         # apply file fun
                         for named_fun in files_rules_list:

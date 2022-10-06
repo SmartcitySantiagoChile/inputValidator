@@ -26,7 +26,7 @@ class FunType(Enum):
 class Validator(object, metaclass=ABCMeta):
     def __init__(self, args):
         """
-        Init method, it storage args and initialize a row counter
+        Init method, storage args and initialize a row counter
 
         Args:
 
@@ -50,7 +50,7 @@ class Validator(object, metaclass=ABCMeta):
     @abstractmethod
     def get_error(self):
         """
-        Method that return a error dict
+        Method that return an error dict
 
         The error dict has 4 parameters:
 
@@ -66,9 +66,7 @@ class Validator(object, metaclass=ABCMeta):
     @abstractmethod
     def get_fun_type(self):
         """
-        Return the fun type
-
-        The funtype is
+        Return the fun type of class
         """
         pass
 
@@ -186,11 +184,11 @@ class RootValidator(Validator):
         Return error dict with info about the validation.
 
         Returns:
-            dict: A dict with all the parameteres
+            dict: A dict with all the parameters
 
         """
         return {
-            "name": "Raiz incorrecta",
+            "name": "Raíz incorrecta",
             "type": "formato",
             "message": "La raíz del directorio debe tener un nombre vacío en la configuración.",
             "row": "",
@@ -303,8 +301,7 @@ class RegexMultiNameValidator(Validator):
         validator.temp_name = name_list
         return (
             True
-            if len(name_list) == len(regex_list)
-            and not len(self.args["names_with_incorrect_date"])
+            if len(name_list) == len(regex_list) and not len(self.args["names_with_incorrect_date"])
             else False
         )
 
@@ -357,7 +354,7 @@ class RegexServiceDetailNameValidator(Validator):
             )
 
         def get_date_from_service_detail(
-            service_detail_date: str,
+                service_detail_date: str,
         ) -> (datetime.date, datetime.date):
             lower_date, upper_date = service_detail_date.split("_")[1:3]
             return string_date_to_date(lower_date), string_date_to_date(upper_date)
@@ -410,7 +407,7 @@ class RegexServiceDetailNameValidator(Validator):
                 "name": "No existen archivos con expresiones regulares",
                 "type": "formato",
                 "message": f"No existen directorios o archivos con la expresión regular '{self.args['name']}' en el "
-                f"directorio '{self.args['path']}",
+                           f"directorio '{self.args['path']}",
                 "row": "",
                 "cols": "",
             }
@@ -419,13 +416,13 @@ class RegexServiceDetailNameValidator(Validator):
                 "name": "Fecha de archivo incorrecta",
                 "type": "formato",
                 "message": f"La fecha del archivo '{self.args['names_with_incorrect_date'][self.wrong_date_counter]}' "
-                f"no corresponde al formato para la fecha del programa PO '{self.args['date']}' ",
+                           f"no corresponde al formato para la fecha del programa PO '{self.args['date']}' ",
                 "row": "",
                 "cols": "",
             }
             if (
-                len(self.args["names_with_incorrect_date"]) - 1
-                > self.wrong_date_counter
+                    len(self.args["names_with_incorrect_date"]) - 1
+                    > self.wrong_date_counter
             ):
                 self.wrong_date_counter += 1
             return message
@@ -1090,6 +1087,9 @@ class BoundingBoxValueValidator(ColumnValidator):
             x, y = utm_to_wsg84(x, y, 19)
             point = Point(x, y)
             bounding_box = Polygon(self.args["bounding_box"])
+        else:
+            raise ValueError('There is no coordinate system defined')
+
         return bounding_box.contains(point)
 
     @ColumnValidator.check_not_valid_col_error
@@ -1192,7 +1192,7 @@ class CheckStoreColDictValuesValidator(ColumnValidator):
                     float(storage_values[0]), float(storage_values[1])
                 )
                 if math.isclose(
-                    storage_values[0], values[0], abs_tol=0.1
+                        storage_values[0], values[0], abs_tol=0.1
                 ) and math.isclose(storage_values[1], values[1], abs_tol=0.1):
                     res = True
                     break
@@ -1212,7 +1212,7 @@ class CheckStoreColDictValuesValidator(ColumnValidator):
             for storage_values in storage_key:
                 storage_values = [float(storage_values[0]), float(storage_values[1])]
                 if math.isclose(
-                    storage_values[0], values[0], abs_tol=0.1
+                        storage_values[0], values[0], abs_tol=0.1
                 ) and math.isclose(storage_values[1], values[1], abs_tol=0.1):
                     res = True
                     break
@@ -1469,8 +1469,8 @@ class DateConsistencyValidator(ColumnValidator):
         return {
             "name": "Fecha inconsistente",
             "type": "valor",
-            "message": f"Fecha incosistente en la fila {self.row_counter}, columna {col_name}"
-            f", fecha inconsistente respecto a la fecha anterior.",
+            "message": f"Fecha inconsistente en la fila {self.row_counter}, columna {col_name}"
+                       f", fecha inconsistente respecto a la fecha anterior.",
             "row": self.row_counter,
             "cols": col_name,
         }
