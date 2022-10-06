@@ -30,7 +30,7 @@ def main(argv):
     logger.info(f.renderText("Input Validator"))
 
     # Arguments and description
-    parser = argparse.ArgumentParser(description="validate Trasantiago data.")
+    parser = argparse.ArgumentParser(description="validate Transantiago data.")
 
     parser.add_argument("path", help="Path for .zip data or list of paths", nargs="+")
     parser.add_argument(
