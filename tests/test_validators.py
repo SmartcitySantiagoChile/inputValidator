@@ -1765,7 +1765,7 @@ class DateConsistencyValidatorTest(ValidatorTest):
         self.assertFalse(validator.apply(row))
         expected_error = {
             "cols": "Fecha",
-            "message": "Fecha incosistente en la fila 2, columna Fecha, fecha "
+            "message": "Fecha inconsistente en la fila 2, columna Fecha, fecha "
             "inconsistente respecto a la fecha anterior.",
             "name": "Fecha inconsistente",
             "row": 2,
