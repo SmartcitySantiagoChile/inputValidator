@@ -12,6 +12,8 @@ from functools import wraps
 
 from shapely.geometry import Point, Polygon
 
+from input_validator.utils import utm_to_wsg84
+
 
 class FunType(Enum):
     NAME = 1
@@ -19,99 +21,6 @@ class FunType(Enum):
     FILE = 3
     STORAGE = 4
     MULTIROW = 5
-
-
-def utm_to_wsg84(
-        east_coordinate: float,
-        north_coordinate: float,
-        zone: int = 19,
-        north_hemisphere: bool = False,
-) -> tuple:
-    """
-    Convert utm to wsg84 coordinates
-
-    Args:
-
-        east_coordinate: easting
-        north_coordinate: northing
-        zone:  zone
-        north_hemisphere: true | false
-
-    Returns:
-
-        tuple: (lat, long)
-
-    """
-    if not north_hemisphere:
-        north_coordinate = 10000000 - north_coordinate
-
-    a = 6378137
-    e = 0.081819191
-    e1sq = 0.006739497
-    k0 = 0.9996
-
-    arc = north_coordinate / k0
-    mu = arc / (
-            a
-            * (
-                    1
-                    - math.pow(e, 2) / 4.0
-                    - 3 * math.pow(e, 4) / 64.0
-                    - 5 * math.pow(e, 6) / 256.0
-            )
-    )
-
-    ei = (1 - math.pow((1 - e * e), (1 / 2.0))) / (1 + math.pow((1 - e * e), (1 / 2.0)))
-
-    ca = 3 * ei / 2 - 27 * math.pow(ei, 3) / 32.0
-
-    cb = 21 * math.pow(ei, 2) / 16 - 55 * math.pow(ei, 4) / 32
-    cc = 151 * math.pow(ei, 3) / 96
-    cd = 1097 * math.pow(ei, 4) / 512
-    phi1 = (
-            mu
-            + ca * math.sin(2 * mu)
-            + cb * math.sin(4 * mu)
-            + cc * math.sin(6 * mu)
-            + cd * math.sin(8 * mu)
-    )
-
-    n0 = a / math.pow((1 - math.pow((e * math.sin(phi1)), 2)), (1 / 2.0))
-
-    r0 = a * (1 - e * e) / math.pow((1 - math.pow((e * math.sin(phi1)), 2)), (3 / 2.0))
-    fact1 = n0 * math.tan(phi1) / r0
-
-    _a1 = 500000 - east_coordinate
-    dd0 = _a1 / (n0 * k0)
-    fact2 = dd0 * dd0 / 2
-
-    t0 = math.pow(math.tan(phi1), 2)
-    q0 = e1sq * math.pow(math.cos(phi1), 2)
-    fact3 = (5 + 3 * t0 + 10 * q0 - 4 * q0 * q0 - 9 * e1sq) * math.pow(dd0, 4) / 24
-
-    fact4 = (
-            (61 + 90 * t0 + 298 * q0 + 45 * t0 * t0 - 252 * e1sq - 3 * q0 * q0)
-            * math.pow(dd0, 6)
-            / 720
-    )
-
-    lof1 = _a1 / (n0 * k0)
-    lof2 = (1 + 2 * t0 + q0) * math.pow(dd0, 3) / 6.0
-    lof3 = (
-            (5 - 2 * q0 + 28 * t0 - 3 * math.pow(q0, 2) + 8 * e1sq + 24 * math.pow(t0, 2))
-            * math.pow(dd0, 5)
-            / 120
-    )
-    _a2 = (lof1 - lof2 + lof3) / math.cos(phi1)
-    _a3 = _a2 * 180 / math.pi
-
-    latitude = 180 * (phi1 - fact1 * (fact2 + fact3 + fact4)) / math.pi
-
-    if not north_hemisphere:
-        latitude = -latitude
-
-    longitude = ((zone > 0) and (6 * zone - 183.0) or 3.0) - _a3
-    return latitude, longitude
 
 
 class Validator(object, metaclass=ABCMeta):
@@ -165,7 +74,6 @@ class Validator(object, metaclass=ABCMeta):
 
 
 class ColumnValidator(Validator):
-
     def get_fun_type(self):
         pass
 
@@ -218,7 +126,9 @@ class ColumnValidator(Validator):
 
         @wraps(method)
         def _impl(self, *method_args, **method_kwargs):
-            has_invalid_indexes = self.get_not_valid_cols_indexes(*method_args, **method_kwargs)
+            has_invalid_indexes = self.get_not_valid_cols_indexes(
+                *method_args, **method_kwargs
+            )
             if has_invalid_indexes:
                 return False
             method_output = method(self, *method_args, **method_kwargs)
@@ -253,7 +163,9 @@ class ColumnValidator(Validator):
 
         @wraps(method)
         def _impl(self, *method_args, **method_kwargs):
-            has_not_valid_col_error = self.get_not_valid_col_error(*method_args, **method_kwargs)
+            has_not_valid_col_error = self.get_not_valid_col_error(
+                *method_args, **method_kwargs
+            )
             if has_not_valid_col_error:
                 return has_not_valid_col_error
             method_output = method(self, *method_args, **method_kwargs)
@@ -344,7 +256,7 @@ class RegexNameValidator(Validator):
         return True if len(name) > 0 and self.args["date_is_in_name"] else False
 
     def get_error(self) -> dict:
-        if self.args['date_is_in_name']:
+        if self.args["date_is_in_name"]:
             message = {
                 "name": "No existe archivo con expresión regular",
                 "type": "formato",
@@ -383,11 +295,18 @@ class RegexMultiNameValidator(Validator):
         name_list = [glob.glob(os.path.join(path, regex)) for regex in regex_list]
         if name_list[0]:
             name_list = [os.path.split(name[0])[1] for name in name_list]
-            self.args["names_with_incorrect_date"] = [name for name in name_list if date not in name]
+            self.args["names_with_incorrect_date"] = [
+                name for name in name_list if date not in name
+            ]
         self.args["name_list"] = name_list
         validator = args
         validator.temp_name = name_list
-        return True if len(name_list) == len(regex_list) and not len(self.args["names_with_incorrect_date"]) else False
+        return (
+            True
+            if len(name_list) == len(regex_list)
+            and not len(self.args["names_with_incorrect_date"])
+            else False
+        )
 
     def get_error(self) -> dict:
         if not len(self.args["names_with_incorrect_date"]):
@@ -400,7 +319,7 @@ class RegexMultiNameValidator(Validator):
             }
         else:
             if len(self.args["names_with_incorrect_date"]) > 1:
-                names = ','.join(self.args["names_with_incorrect_date"])
+                names = ",".join(self.args["names_with_incorrect_date"])
                 message = f"La fecha de los archivos '{names}' no corresponde a la fecha del programa PO '{self.args['date']}' ."
             else:
                 message = f"La fecha del archivo '{self.args['names_with_incorrect_date'][0]}' no corresponde a la fecha del programa PO '{self.args['date']}' ."
@@ -433,10 +352,14 @@ class RegexServiceDetailNameValidator(Validator):
         """
 
         def string_date_to_date(string_date: str) -> datetime.date:
-            return datetime.datetime(int(string_date[:4]), int(string_date[4:6]), int(string_date[6:8]))
+            return datetime.datetime(
+                int(string_date[:4]), int(string_date[4:6]), int(string_date[6:8])
+            )
 
-        def get_date_from_service_detail(service_detail_date: str) -> (datetime.date, datetime.date):
-            lower_date, upper_date = service_detail_date.split('_')[1:3]
+        def get_date_from_service_detail(
+            service_detail_date: str,
+        ) -> (datetime.date, datetime.date):
+            lower_date, upper_date = service_detail_date.split("_")[1:3]
             return string_date_to_date(lower_date), string_date_to_date(upper_date)
 
         path = self.args["path"]
@@ -448,7 +371,9 @@ class RegexServiceDetailNameValidator(Validator):
         error_format = False
         if name_list:
             name_list = [os.path.split(name)[1] for name in name_list]
-            name_list = [[name, *get_date_from_service_detail(name)] for name in name_list]
+            name_list = [
+                [name, *get_date_from_service_detail(name)] for name in name_list
+            ]
             # order names by first date
             name_list.sort(key=lambda x: x[1])
             valid_date = string_date_to_date(date)
@@ -485,7 +410,7 @@ class RegexServiceDetailNameValidator(Validator):
                 "name": "No existen archivos con expresiones regulares",
                 "type": "formato",
                 "message": f"No existen directorios o archivos con la expresión regular '{self.args['name']}' en el "
-                           f"directorio '{self.args['path']}",
+                f"directorio '{self.args['path']}",
                 "row": "",
                 "cols": "",
             }
@@ -494,11 +419,14 @@ class RegexServiceDetailNameValidator(Validator):
                 "name": "Fecha de archivo incorrecta",
                 "type": "formato",
                 "message": f"La fecha del archivo '{self.args['names_with_incorrect_date'][self.wrong_date_counter]}' "
-                           f"no corresponde al formato para la fecha del programa PO '{self.args['date']}' ",
+                f"no corresponde al formato para la fecha del programa PO '{self.args['date']}' ",
                 "row": "",
                 "cols": "",
             }
-            if len(self.args['names_with_incorrect_date']) - 1 > self.wrong_date_counter:
+            if (
+                len(self.args["names_with_incorrect_date"]) - 1
+                > self.wrong_date_counter
+            ):
                 self.wrong_date_counter += 1
             return message
 
@@ -544,7 +472,6 @@ class MinRowsValidator(Validator):
 
 
 class ASCIIColValidator(ColumnValidator):
-
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
@@ -698,10 +625,9 @@ class HeaderValidator(Validator):
 
 
 class NotEmptyValueValidator(ColumnValidator):
-
     def __init__(self, args):
         self.valid_operators = {
-            '==': operator.eq,
+            "==": operator.eq,
         }
         super().__init__(args)
 
@@ -711,10 +637,12 @@ class NotEmptyValueValidator(ColumnValidator):
 
         try:
             for condition in conditions:
-                first_argument = self.args['row'][int(condition[0])]
+                first_argument = self.args["row"][int(condition[0])]
                 second_argument = condition[2]
                 operator_name = condition[1]
-                result = result and self.valid_operators[operator_name](first_argument, second_argument)
+                result = result and self.valid_operators[operator_name](
+                    first_argument, second_argument
+                )
         except KeyError:
             raise ValueError('Operator "{0}" is not valid'.format(operator_name))
 
@@ -773,10 +701,9 @@ class NotEmptyValueValidator(ColumnValidator):
 
 
 class StringDomainValueValidator(ColumnValidator):
-
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
-        """ Check if columns are in domain list.
+        """Check if columns are in domain list.
 
         Validator args:
 
@@ -823,7 +750,6 @@ class StringDomainValueValidator(ColumnValidator):
 
 
 class RegexValueValidator(ColumnValidator):
-
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
@@ -863,7 +789,6 @@ class RegexValueValidator(ColumnValidator):
 
 
 class NumericRangeValueValidator(ColumnValidator):
-
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
@@ -924,7 +849,6 @@ class NumericRangeValueValidator(ColumnValidator):
 
 
 class TimeValueValidator(ColumnValidator):
-
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
@@ -976,7 +900,6 @@ class TimeValueValidator(ColumnValidator):
 
 
 class FloatValueValidator(ColumnValidator):
-
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
@@ -1024,7 +947,6 @@ class FloatValueValidator(ColumnValidator):
 
 
 class GreaterThanValueValidator(ColumnValidator):
-
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
@@ -1072,7 +994,6 @@ class GreaterThanValueValidator(ColumnValidator):
 
 
 class StoreColValue(ColumnValidator):
-
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
@@ -1108,7 +1029,6 @@ class StoreColValue(ColumnValidator):
 
 
 class CheckColStorageValueValidator(ColumnValidator):
-
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
@@ -1149,7 +1069,6 @@ class CheckColStorageValueValidator(ColumnValidator):
 
 
 class BoundingBoxValueValidator(ColumnValidator):
-
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
@@ -1245,7 +1164,6 @@ class StoreColDictValues(ColumnValidator):
 
 
 class CheckStoreColDictValuesValidator(ColumnValidator):
-
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
         """
@@ -1274,7 +1192,7 @@ class CheckStoreColDictValuesValidator(ColumnValidator):
                     float(storage_values[0]), float(storage_values[1])
                 )
                 if math.isclose(
-                        storage_values[0], values[0], abs_tol=0.1
+                    storage_values[0], values[0], abs_tol=0.1
                 ) and math.isclose(storage_values[1], values[1], abs_tol=0.1):
                     res = True
                     break
@@ -1294,7 +1212,7 @@ class CheckStoreColDictValuesValidator(ColumnValidator):
             for storage_values in storage_key:
                 storage_values = [float(storage_values[0]), float(storage_values[1])]
                 if math.isclose(
-                        storage_values[0], values[0], abs_tol=0.1
+                    storage_values[0], values[0], abs_tol=0.1
                 ) and math.isclose(storage_values[1], values[1], abs_tol=0.1):
                     res = True
                     break
@@ -1436,13 +1354,12 @@ class MultiRowColValueValidator(Validator):
 
 
 class CompareValueValidator(ColumnValidator):
-
     def __init__(self, args):
         super().__init__(args)
         self.comparators_translator = {
             "year_in_date": "año en fecha",
             "month_in_date": "mes en fecha",
-            "day_name_in_date": "nombre del día en fecha"
+            "day_name_in_date": "nombre del día en fecha",
         }
 
     @staticmethod
@@ -1466,7 +1383,7 @@ class CompareValueValidator(ColumnValidator):
             "JUEVES": 3,
             "VIERNES": 4,
             "SABADO": 5,
-            "DOMINGO": 6
+            "DOMINGO": 6,
         }
         date_datetime = datetime.datetime.strptime(date, "%Y-%m-%d")
         return week_day_dict[day_name] == date_datetime.weekday()
@@ -1474,7 +1391,7 @@ class CompareValueValidator(ColumnValidator):
     comparators = {
         "year_in_date": check_year_in_date.__func__,
         "month_in_date": check_month_in_date.__func__,
-        "day_name_in_date": check_day_name_in_date.__func__
+        "day_name_in_date": check_day_name_in_date.__func__,
     }
 
     @ColumnValidator.check_not_valid_col_indexes
@@ -1506,8 +1423,11 @@ class CompareValueValidator(ColumnValidator):
             "name": "Valor incorrecto",
             "type": "valor",
             "message": "{0} en la fila {1}, {2} {3}, comparación incorrecta: '{4}'.".format(
-                head, self.row_counter, tail, ", ".join(cols_names),
-                self.comparators_translator[self.args["comparator"]]
+                head,
+                self.row_counter,
+                tail,
+                ", ".join(cols_names),
+                self.comparators_translator[self.args["comparator"]],
             ),
             "row": self.row_counter,
             "cols": cols_names,
@@ -1518,14 +1438,13 @@ class CompareValueValidator(ColumnValidator):
 
 
 class DateConsistencyValidator(ColumnValidator):
-
     def __init__(self, args):
         self.current_date = None
         super().__init__(args)
 
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
-        """ Check if the current date col is the next day of the past col date
+        """Check if the current date col is the next day of the past col date
 
         Validator args:
             col_index: col index of the date to check
@@ -1551,7 +1470,7 @@ class DateConsistencyValidator(ColumnValidator):
             "name": "Fecha inconsistente",
             "type": "valor",
             "message": f"Fecha incosistente en la fila {self.row_counter}, columna {col_name}"
-                       f", fecha inconsistente respecto a la fecha anterior.",
+            f", fecha inconsistente respecto a la fecha anterior.",
             "row": self.row_counter,
             "cols": col_name,
         }
@@ -1570,7 +1489,7 @@ class CompleteYearFileConsistencyValidator(ColumnValidator):
 
     @ColumnValidator.check_not_valid_col_indexes
     def apply(self, args=None) -> bool:
-        """ Check if the file has a complete year based on op date.
+        """Check if the file has a complete year based on op date.
 
         Validator args:
             col_index:  index to check date
@@ -1614,13 +1533,11 @@ class CompleteYearFileConsistencyValidator(ColumnValidator):
 
 
 check_name_functions = {
-
     "name": NameValidator,
     "regex": RegexNameValidator,
     "root": RootValidator,
     "multi-regex": RegexMultiNameValidator,
-    "service_detail_regex": RegexServiceDetailNameValidator
-
+    "service_detail_regex": RegexServiceDetailNameValidator,
 }
 
 file_functions = {
@@ -1644,5 +1561,5 @@ file_functions = {
     "multi_row_col_value": MultiRowColValueValidator,
     "compare_value": CompareValueValidator,
     "date_consistency": DateConsistencyValidator,
-    "complete_year_file_consistency": CompleteYearFileConsistencyValidator
+    "complete_year_file_consistency": CompleteYearFileConsistencyValidator,
 }

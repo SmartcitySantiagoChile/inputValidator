@@ -51,10 +51,12 @@ def main(argv):
         with zipfile.ZipFile(input_path, "r") as zip_ref:
             temporal_path = os.path.join(INPUTS_PATH, "tmp")
             zip_ref.extractall(temporal_path)
-            input_path = os.path.join(temporal_path, zip_ref.namelist()[0].replace("/", ""))
+            input_path = os.path.join(
+                temporal_path, zip_ref.namelist()[0].replace("/", "")
+            )
 
     # date with file format
-    date = pathlib.Path(args.path[0]).stem.replace('-', '')
+    date = pathlib.Path(args.path[0]).stem.replace("-", "")
     validator = DataValidator(
         CONFIG_PATH, input_path, date, path_list=is_path_list, logger=logger
     )
@@ -73,7 +75,9 @@ def main(argv):
             logger.error(f"{key} contiene los siguientes errores:")
             for error in value:
                 logger.error(error)
-    with open(os.path.join(OUTPUT_PATH, OUTPUT_NAME), "w", newline="", encoding='utf-8-SIG') as f:
+    with open(
+        os.path.join(OUTPUT_PATH, OUTPUT_NAME), "w", newline="", encoding="utf-8-SIG"
+    ) as f:
         writer = csv.writer(f)
         writer.writerow(["Archivo", "Error", "Tipo", "Fila", "Columna(s)", "Detalle"])
         for key, value in validator.report_errors.items():
@@ -93,7 +97,8 @@ def main(argv):
         shutil.rmtree(os.path.join(INPUTS_PATH, "tmp"))
     logger.info(
         f"Archivos procesados, los resultados se encuentran en"
-        f" {os.path.join(os.path.dirname(OUTPUT_PATH), output_name)}")
+        f" {os.path.join(os.path.dirname(OUTPUT_PATH), output_name)}"
+    )
 
 
 if __name__ == "__main__":

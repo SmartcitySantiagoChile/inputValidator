@@ -26,7 +26,10 @@ from input_validator.validators import (
     FunType,
     RegexMultiNameValidator,
     FloatValueValidator,
-    MultiRowColValueValidator, RegexServiceDetailNameValidator, CompareValueValidator, DateConsistencyValidator,
+    MultiRowColValueValidator,
+    RegexServiceDetailNameValidator,
+    CompareValueValidator,
+    DateConsistencyValidator,
     CompleteYearFileConsistencyValidator,
 )
 
@@ -49,7 +52,7 @@ class MultiValidatorTest(ValidatorTest):
         error_message = {
             "cols": "",
             "message": "La raíz del directorio debe tener un nombre vacío en la "
-                       "configuración.",
+            "configuración.",
             "row": "",
             "name": "Raiz incorrecta",
             "type": "formato",
@@ -65,8 +68,8 @@ class MultiValidatorTest(ValidatorTest):
         error_message = {
             "cols": "",
             "message": "El nombre del directorio o archivo 'Diccionario' no se encuentra "
-                       "en el directorio "
-                       f"'{self.check_name_data_path}'.",
+            "en el directorio "
+            f"'{self.check_name_data_path}'.",
             "row": "",
             "name": "Nombre incorrecto",
             "type": "formato",
@@ -89,14 +92,18 @@ class MultiValidatorTest(ValidatorTest):
         path = os.path.join(self.check_name_data_path, "Diccionario")
         dummy_validator = Dummy()
         dummy_validator.temp_name = "test"
-        args = {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv", "date": '20200627'}
+        args = {
+            "path": path,
+            "name": "Diccionario-DetalleServicioZP_*_*.csv",
+            "date": "20200627",
+        }
         validator = RegexNameValidator(args)
 
         error_message = {
             "cols": "",
             "message": "No existe directorio o archivo con la expresión regular "
-                       "'Diccionario-DetalleServicioZP_*_*.csv' en el directorio "
-                       f"'{path}' .",
+            "'Diccionario-DetalleServicioZP_*_*.csv' en el directorio "
+            f"'{path}' .",
             "row": "",
             "name": "No existe archivo con expresión regular",
             "type": "formato",
@@ -106,16 +113,27 @@ class MultiValidatorTest(ValidatorTest):
         self.assertEqual(error_message, validator.get_error())
 
         # wrong case regex
-        validator = RegexNameValidator({"path": path, "name": "wrong.csv", "date": '20200627'})
+        validator = RegexNameValidator(
+            {"path": path, "name": "wrong.csv", "date": "20200627"}
+        )
         self.assertFalse(validator.apply(dummy_validator))
 
         # wrong case date
         validator = RegexNameValidator(
-            {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv", "date": '20200127'})
-        error_message = {'name': 'Fecha del archivo no corresponde con PO', 'type': 'formato',
-                         'message': "La fecha del archivo Diccionario-DetalleServicioZP_20200627_20200731.csv no "
-                                    "corresponde a la fecha del programa PO '20200127'.",
-                         'row': '', 'cols': ''}
+            {
+                "path": path,
+                "name": "Diccionario-DetalleServicioZP_*_*.csv",
+                "date": "20200127",
+            }
+        )
+        error_message = {
+            "name": "Fecha del archivo no corresponde con PO",
+            "type": "formato",
+            "message": "La fecha del archivo Diccionario-DetalleServicioZP_20200627_20200731.csv no "
+            "corresponde a la fecha del programa PO '20200127'.",
+            "row": "",
+            "cols": "",
+        }
 
         self.assertFalse(validator.apply(dummy_validator))
         self.assertEqual(error_message, validator.get_error())
@@ -133,7 +151,7 @@ class MultiValidatorTest(ValidatorTest):
                 "Frecuencias_PO*.csv",
                 "Velocidades_PO*.csv",
             ],
-            "date": "20200627"
+            "date": "20200627",
         }
         validator = RegexMultiNameValidator(args)
 
@@ -165,15 +183,17 @@ class MultiValidatorTest(ValidatorTest):
                 "Frecuencias_PO*.csv",
                 "Velocidades_PO*.csv",
             ],
-            "date": "20200628"
+            "date": "20200628",
         }
-        expected_error = {'cols': '',
-                          'message': 'La fecha de los archivos '
-                                     "'Capacidades_PO20200627.csv,Distancias_PO20200627.csv,Frecuencias_PO20200627.csv,Velocidades_PO20200627.csv' "
-                                     "no corresponde a la fecha del programa PO '20200628' .",
-                          'name': 'Fecha de archivos no corresponde con PO',
-                          'row': '',
-                          'type': 'formato'}
+        expected_error = {
+            "cols": "",
+            "message": "La fecha de los archivos "
+            "'Capacidades_PO20200627.csv,Distancias_PO20200627.csv,Frecuencias_PO20200627.csv,Velocidades_PO20200627.csv' "
+            "no corresponde a la fecha del programa PO '20200628' .",
+            "name": "Fecha de archivos no corresponde con PO",
+            "row": "",
+            "type": "formato",
+        }
         validator = RegexMultiNameValidator(args)
         self.assertFalse(validator.apply(dummy_validator))
         self.assertEqual(expected_error, validator.get_error())
@@ -187,14 +207,16 @@ class MultiValidatorTest(ValidatorTest):
                 "Frecuencias_PO*.csv",
                 "Velocidades_PO*.csv",
             ],
-            "date": "20200627"
+            "date": "20200627",
         }
-        expected_error = {'cols': '',
-                          'message': "La fecha del archivo 'Capacidades_PO20200628.csv' no corresponde "
-                                     "a la fecha del programa PO '20200627' .",
-                          'name': 'Fecha de archivos no corresponde con PO',
-                          'row': '',
-                          'type': 'formato'}
+        expected_error = {
+            "cols": "",
+            "message": "La fecha del archivo 'Capacidades_PO20200628.csv' no corresponde "
+            "a la fecha del programa PO '20200627' .",
+            "name": "Fecha de archivos no corresponde con PO",
+            "row": "",
+            "type": "formato",
+        }
         validator = RegexMultiNameValidator(args)
         self.assertFalse(validator.apply(dummy_validator))
         self.assertEqual(expected_error, validator.get_error())
@@ -205,7 +227,7 @@ class MultiValidatorTest(ValidatorTest):
         error_message = {
             "cols": "",
             "message": "El archivo posee 1 filas, cuando debería tener 3 filas como "
-                       "mínimo.",
+            "mínimo.",
             "name": "Número de filas menor al correcto",
             "row": "",
             "type": "formato",
@@ -231,7 +253,7 @@ class MultiValidatorTest(ValidatorTest):
         error_message = {
             "cols": ["COMUNA"],
             "message": "La variable '['ÑUÑOA']' posee ñ o acentos en la fila 2 columna "
-                       "COMUNA.",
+            "COMUNA.",
             "name": "Valores contienen ñ o acentos",
             "row": 2,
             "type": "formato",
@@ -244,7 +266,7 @@ class MultiValidatorTest(ValidatorTest):
         error_message = {
             "cols": ["COMUNA"],
             "message": "La variable '['Pucón']' posee ñ o acentos en la fila 3 columna "
-                       "COMUNA.",
+            "COMUNA.",
             "name": "Valores contienen ñ o acentos",
             "row": 3,
             "type": "formato",
@@ -258,7 +280,7 @@ class MultiValidatorTest(ValidatorTest):
         error_message = {
             "cols": ["ID", "COMUNA"],
             "message": "Las variables '['Ñuñoa', 'Pucón']' poseen ñ o acentos en la fila "
-                       "1 columnas ID, COMUNA.",
+            "1 columnas ID, COMUNA.",
             "name": "Valores contienen ñ o acentos",
             "row": 1,
             "type": "formato",
@@ -321,7 +343,7 @@ class MultiValidatorTest(ValidatorTest):
         error_message = {
             "cols": "",
             "message": "El header no corresponde al archivo. Este debe ser: ['ID', "
-                       "'COMUNA']",
+            "'COMUNA']",
             "name": "Header incorrecto",
             "row": "",
             "type": "formato",
@@ -356,7 +378,9 @@ class MultiValidatorTest(ValidatorTest):
             "SEN1",
             "VALIDA",
         ]
-        validator = NotEmptyValueValidator({"header": header, "col_indexes": [1, 2], "conditions_to_ignore_row": []})
+        validator = NotEmptyValueValidator(
+            {"header": header, "col_indexes": [1, 2], "conditions_to_ignore_row": []}
+        )
         self.assertTrue(validator.apply(header))
 
         # wrong case
@@ -425,7 +449,7 @@ class MultiValidatorTest(ValidatorTest):
         error_message = {
             "cols": ["ROUTE_NAME", "SERVICE_NA"],
             "message": "Existen valores vacíos en la fila 3, columnas ROUTE_NAME, "
-                       "SERVICE_NA.",
+            "SERVICE_NA.",
             "name": "Valor vacío",
             "row": 3,
             "type": "formato",
@@ -522,7 +546,7 @@ class MultiValidatorTest(ValidatorTest):
         error_message = {
             "cols": ["SENTIDO"],
             "message": "Existe un valor incorrecto en la fila 2, columna SENTIDO. Los "
-                       "valores solo pueden ser '['I', 'R']'",
+            "valores solo pueden ser '['I', 'R']'",
             "name": "Valores incorrectos",
             "row": 2,
             "type": "formato",
@@ -562,7 +586,7 @@ class MultiValidatorTest(ValidatorTest):
         error_message = {
             "cols": ["SENTIDO", "COD_USUARI"],
             "message": "Existen valores incorrectos en la fila 1, columnas SENTIDO, "
-                       "COD_USUARI. Los valores solo pueden ser '['I', 'R']'",
+            "COD_USUARI. Los valores solo pueden ser '['I', 'R']'",
             "name": "Valores incorrectos",
             "row": 1,
             "type": "formato",
@@ -616,7 +640,7 @@ class MultiValidatorTest(ValidatorTest):
         expected_message = {
             "cols": "PLACA",
             "message": "La variable 'BXBXBX' no cumple con el formato AAAA11 o AA1111 en "
-                       "la fila 3, columna PLACA.",
+            "la fila 3, columna PLACA.",
             "name": "El valor no cumple con la expresión regular",
             "row": 3,
             "type": "formato",
@@ -666,7 +690,7 @@ class MultiValidatorTest(ValidatorTest):
         expected_message = {
             "cols": ["PLAZAS"],
             "message": "Valor fuera de rango [11] en la fila 2, columna PLAZAS. Los "
-                       "valores solo pueden ser parte del rango [20, 200]",
+            "valores solo pueden ser parte del rango [20, 200]",
             "name": "Valores fuera de rango",
             "row": 2,
             "type": "formato",
@@ -674,13 +698,13 @@ class MultiValidatorTest(ValidatorTest):
         self.assertEqual(expected_message, validator.get_error())
 
         # empty case
-        row = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '']
+        row = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ""]
 
         self.assertEqual(FunType.ROW, validator.get_fun_type())
         expected_message = {
             "cols": ["PLAZAS"],
             "message": "Valor fuera de rango [11] en la fila 2, columna PLAZAS. Los "
-                       "valores solo pueden ser parte del rango [20, 200]",
+            "valores solo pueden ser parte del rango [20, 200]",
             "name": "Valores fuera de rango",
             "row": 2,
             "type": "formato",
@@ -710,7 +734,7 @@ class MultiValidatorTest(ValidatorTest):
         expected_error = {
             "cols": ["HORAINI", "HORAFIN"],
             "message": "Existen valores en formato de hora incorrecto en la fila 2, "
-                       "columnas HORAINI, HORAFIN.",
+            "columnas HORAINI, HORAFIN.",
             "name": "Formato de hora incorrecto",
             "row": 2,
             "type": "formato",
@@ -734,7 +758,7 @@ class MultiValidatorTest(ValidatorTest):
         expected_error = {
             "cols": ["HORAFIN", "HORAINI"],
             "message": "En la fila 2 el valor de la columna HORAFIN es menor al valor de "
-                       "la columna HORAINI.",
+            "la columna HORAINI.",
             "name": "Inconsistencia entre valores",
             "row": 2,
             "type": "formato",
@@ -799,7 +823,7 @@ class MultiValidatorTest(ValidatorTest):
         expected_error = {
             "cols": "ROUTE_NAME",
             "message": "La variable '201R' no se encuentra en los valores válidos para "
-                       "'route_name' en la fila 2, columna ROUTE_NAME.",
+            "'route_name' en la fila 2, columna ROUTE_NAME.",
             "name": "El valor no es válido",
             "row": 2,
             "type": "valor",
@@ -833,7 +857,7 @@ class MultiValidatorTest(ValidatorTest):
         expected_error = {
             "cols": ["X-Coordinate", "Y-Coordinate"],
             "message": "Las coordenadas '28029.0', '1006246.0' en la fila 2 no se "
-                       "encuentran en el rango geográfico correcto.",
+            "encuentran en el rango geográfico correcto.",
             "name": "Coordenadas inválidas",
             "row": 2,
             "type": "valor",
@@ -1024,8 +1048,8 @@ class MultiValidatorTest(ValidatorTest):
         expected_error = {
             "cols": ["LATITUD", "LONGITUD"],
             "message": "'['-33.491584', '-75.617529']' no se encuentran en los valores "
-                       "válidos para zonas_6 en la fila 1, columnas ['LATITUD', "
-                       "'LONGITUD'].",
+            "válidos para zonas_6 en la fila 1, columnas ['LATITUD', "
+            "'LONGITUD'].",
             "name": "El valor no es válido",
             "row": 1,
             "type": "valor",
@@ -1105,7 +1129,7 @@ class MultiValidatorTest(ValidatorTest):
         expected_error = {
             "cols": "Servicios",
             "message": "La variable '['B01 00I']' no se encuentra en los valores válidos "
-                       "para servicios en la fila 2, columna Servicios.",
+            "para servicios en la fila 2, columna Servicios.",
             "name": "El valor no es válido",
             "row": 2,
             "type": "valor",
@@ -1569,119 +1593,146 @@ class MultiValidatorTest(ValidatorTest):
         path = os.path.join(self.check_name_data_path, "DiccionarioDosErrores")
         dummy_validator = Dummy()
         dummy_validator.temp_name = "test"
-        args = {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv", "date": '20210405'}
+        args = {
+            "path": path,
+            "name": "Diccionario-DetalleServicioZP_*_*.csv",
+            "date": "20210405",
+        }
         validator = RegexServiceDetailNameValidator(args)
 
-        error_message = {'cols': '',
-                         'message': 'La fecha del archivo '
-                                    "'Diccionario-DetalleServicioZP_20210301_20210315.csv' no "
-                                    "corresponde al formato para la fecha del programa PO '20210405' ",
-                         'name': 'Fecha de archivo incorrecta',
-                         'row': '',
-                         'type': 'formato'}
+        error_message = {
+            "cols": "",
+            "message": "La fecha del archivo "
+            "'Diccionario-DetalleServicioZP_20210301_20210315.csv' no "
+            "corresponde al formato para la fecha del programa PO '20210405' ",
+            "name": "Fecha de archivo incorrecta",
+            "row": "",
+            "type": "formato",
+        }
         self.assertFalse(validator.apply(dummy_validator))
         self.assertEqual(FunType.NAME, validator.get_fun_type())
         self.assertEqual(error_message, validator.get_error())
-        error_message = {'cols': '',
-                         'message': 'La fecha del archivo '
-                                    "'Diccionario-DetalleServicioZP_20210415_20210430.csv' no "
-                                    "corresponde al formato para la fecha del programa PO '20210405' ",
-                         'name': 'Fecha de archivo incorrecta',
-                         'row': '',
-                         'type': 'formato'}
+        error_message = {
+            "cols": "",
+            "message": "La fecha del archivo "
+            "'Diccionario-DetalleServicioZP_20210415_20210430.csv' no "
+            "corresponde al formato para la fecha del programa PO '20210405' ",
+            "name": "Fecha de archivo incorrecta",
+            "row": "",
+            "type": "formato",
+        }
         self.assertEqual(error_message, validator.get_error())
 
         # wrong case no date
         path = os.path.join(self.check_name_data_path, "DiccionarioVacío")
-        args = {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv", "date": '20210405'}
+        args = {
+            "path": path,
+            "name": "Diccionario-DetalleServicioZP_*_*.csv",
+            "date": "20210405",
+        }
         validator = RegexServiceDetailNameValidator(args)
 
-        error_message = {'cols': '',
-                         'message': 'No existen directorios o archivos con la expresión regular '
-                                    "'Diccionario-DetalleServicioZP_*_*.csv' en el directorio "
-                                    f"'{path}",
-                         'name': 'No existen archivos con expresiones regulares',
-                         'row': '',
-                         'type': 'formato'}
+        error_message = {
+            "cols": "",
+            "message": "No existen directorios o archivos con la expresión regular "
+            "'Diccionario-DetalleServicioZP_*_*.csv' en el directorio "
+            f"'{path}",
+            "name": "No existen archivos con expresiones regulares",
+            "row": "",
+            "type": "formato",
+        }
         self.assertFalse(validator.apply(dummy_validator))
         self.assertEqual(error_message, validator.get_error())
 
         # wrong case lower_date > upper_date
         path = os.path.join(self.check_name_data_path, "DiccionarioFechasInvertidas")
-        args = {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv", "date": '20210405'}
+        args = {
+            "path": path,
+            "name": "Diccionario-DetalleServicioZP_*_*.csv",
+            "date": "20210405",
+        }
         validator = RegexServiceDetailNameValidator(args)
 
-        error_message = {'cols': '',
-                         'message': 'La fecha del archivo '
-                                    "'Diccionario-DetalleServicioZP_20210430_20210416.csv' no "
-                                    "corresponde al formato para la fecha del programa PO '20210405' ",
-                         'name': 'Fecha de archivo incorrecta',
-                         'row': '',
-                         'type': 'formato'}
+        error_message = {
+            "cols": "",
+            "message": "La fecha del archivo "
+            "'Diccionario-DetalleServicioZP_20210430_20210416.csv' no "
+            "corresponde al formato para la fecha del programa PO '20210405' ",
+            "name": "Fecha de archivo incorrecta",
+            "row": "",
+            "type": "formato",
+        }
         self.assertFalse(validator.apply(dummy_validator))
         self.assertEqual(error_message, validator.get_error())
 
         # wrong case lower_date > upper_date with correct dates first
 
         path = os.path.join(self.check_name_data_path, "DiccionarioFechasInvertidas2")
-        args = {"path": path, "name": "Diccionario-DetalleServicioZP_*_*.csv", "date": '20210405'}
+        args = {
+            "path": path,
+            "name": "Diccionario-DetalleServicioZP_*_*.csv",
+            "date": "20210405",
+        }
         validator = RegexServiceDetailNameValidator(args)
 
-        error_message = {'cols': '',
-                         'message': 'La fecha del archivo '
-                                    "'Diccionario-DetalleServicioZP_20210502_20210515.csv' no "
-                                    "corresponde al formato para la fecha del programa PO '20210405' ",
-                         'name': 'Fecha de archivo incorrecta',
-                         'row': '',
-                         'type': 'formato'}
+        error_message = {
+            "cols": "",
+            "message": "La fecha del archivo "
+            "'Diccionario-DetalleServicioZP_20210502_20210515.csv' no "
+            "corresponde al formato para la fecha del programa PO '20210405' ",
+            "name": "Fecha de archivo incorrecta",
+            "row": "",
+            "type": "formato",
+        }
         self.assertTrue(validator.apply(dummy_validator))
         self.assertEqual(error_message, validator.get_error())
 
 
 class CompareValueValidatorTest(ValidatorTest):
     def setUp(self):
-        header = [
-            "Ano",
-            "Mes",
-            "Fecha",
-            "Tipo_Dia",
-            "Dia",
-            "Observacion"
-        ]
+        header = ["Ano", "Mes", "Fecha", "Tipo_Dia", "Dia", "Observacion"]
         self.args = {
             "header": header,
             "col_indexes": [0, 2],
-            "comparator": "year_in_date"
+            "comparator": "year_in_date",
         }
         super().__init__()
 
     def test_correct_case(self):
         validator = CompareValueValidator(self.args)
-        row = ["2007", "1", "2007-01-05", 'LABORAL', 'VIERNES']
+        row = ["2007", "1", "2007-01-05", "LABORAL", "VIERNES"]
         self.assertTrue(validator.apply(row))
 
     def test_wrong_case(self):
         validator = CompareValueValidator(self.args)
-        row = ["2006", "1", "2007-01-05", 'LABORAL', 'VIERNES']
+        row = ["2006", "1", "2007-01-05", "LABORAL", "VIERNES"]
         self.assertFalse(validator.apply(row))
-        expected_error = {'name': 'Valor incorrecto', 'type': 'valor',
-                          'message': "Existen valores incorrectos en la fila 1, columnas Ano, Fecha,"
-                                     " comparación incorrecta: 'año en fecha'.",
-                          'row': 1, 'cols': ['Ano', 'Fecha']}
+        expected_error = {
+            "name": "Valor incorrecto",
+            "type": "valor",
+            "message": "Existen valores incorrectos en la fila 1, columnas Ano, Fecha,"
+            " comparación incorrecta: 'año en fecha'.",
+            "row": 1,
+            "cols": ["Ano", "Fecha"],
+        }
 
         self.assertEqual(validator.get_error(), expected_error)
 
     def test_compare_value_validator_year_is_in_date(self):
-        self.assertFalse(CompareValueValidator.check_year_in_date('2020', '2021-01-20'))
-        self.assertTrue(CompareValueValidator.check_year_in_date('2021', '2021-01-20'))
+        self.assertFalse(CompareValueValidator.check_year_in_date("2020", "2021-01-20"))
+        self.assertTrue(CompareValueValidator.check_year_in_date("2021", "2021-01-20"))
 
     def test_compare_value_validator_month_is_in_date(self):
-        self.assertFalse(CompareValueValidator.check_month_in_date('2', '2021-01-20'))
-        self.assertTrue(CompareValueValidator.check_month_in_date('1', '2021-01-20'))
+        self.assertFalse(CompareValueValidator.check_month_in_date("2", "2021-01-20"))
+        self.assertTrue(CompareValueValidator.check_month_in_date("1", "2021-01-20"))
 
     def test_compare_value_validator_day_name_is_in_date(self):
-        self.assertFalse(CompareValueValidator.check_day_name_in_date('LUNES', '2021-01-20'))
-        self.assertTrue(CompareValueValidator.check_day_name_in_date('MIERCOLES', '2021-01-20'))
+        self.assertFalse(
+            CompareValueValidator.check_day_name_in_date("LUNES", "2021-01-20")
+        )
+        self.assertTrue(
+            CompareValueValidator.check_day_name_in_date("MIERCOLES", "2021-01-20")
+        )
 
     def test_fun_type(self):
         validator = CompareValueValidator(self.args)
@@ -1689,16 +1740,8 @@ class CompareValueValidatorTest(ValidatorTest):
 
 
 class DateConsistencyValidatorTest(ValidatorTest):
-
     def setUp(self):
-        header = [
-            "Ano",
-            "Mes",
-            "Fecha",
-            "Tipo_Dia",
-            "Dia",
-            "Observacion"
-        ]
+        header = ["Ano", "Mes", "Fecha", "Tipo_Dia", "Dia", "Observacion"]
         self.args = {
             "header": header,
             "col_index": 2,
@@ -1707,25 +1750,27 @@ class DateConsistencyValidatorTest(ValidatorTest):
 
     def test_date_consistency_validator(self):
         validator = DateConsistencyValidator(self.args)
-        row = ["2007", "1", "2007-01-05", 'LABORAL', 'VIERNES']
+        row = ["2007", "1", "2007-01-05", "LABORAL", "VIERNES"]
         self.assertTrue(validator.apply(row))
-        row = ["2007", "1", "2007-01-06", 'SABADO', 'SABADO']
+        row = ["2007", "1", "2007-01-06", "SABADO", "SABADO"]
         self.assertTrue(validator.apply(row))
-        row = ["2007", "1", "2007-01-07", 'DOMINGO', 'DOMINGO']
+        row = ["2007", "1", "2007-01-07", "DOMINGO", "DOMINGO"]
         self.assertTrue(validator.apply(row))
 
     def test_wrong_case(self):
         validator = DateConsistencyValidator(self.args)
-        row = ["2007", "1", "2007-01-05", 'LABORAL', 'VIERNES']
+        row = ["2007", "1", "2007-01-05", "LABORAL", "VIERNES"]
         self.assertTrue(validator.apply(row))
-        row = ["2007", "1", "2007-01-05", 'SABADO', 'SABADO']
+        row = ["2007", "1", "2007-01-05", "SABADO", "SABADO"]
         self.assertFalse(validator.apply(row))
-        expected_error = {'cols': 'Fecha',
-                          'message': 'Fecha incosistente en la fila 2, columna Fecha, fecha '
-                                     'inconsistente respecto a la fecha anterior.',
-                          'name': 'Fecha inconsistente',
-                          'row': 2,
-                          'type': 'valor'}
+        expected_error = {
+            "cols": "Fecha",
+            "message": "Fecha incosistente en la fila 2, columna Fecha, fecha "
+            "inconsistente respecto a la fecha anterior.",
+            "name": "Fecha inconsistente",
+            "row": 2,
+            "type": "valor",
+        }
         self.assertEqual(validator.get_error(), expected_error)
 
     def test_fun_type(self):
@@ -1735,27 +1780,21 @@ class DateConsistencyValidatorTest(ValidatorTest):
 
 class CompleteYearFileConsistencyValidatorTest(ValidatorTest):
     def setUp(self):
-        header = [
-            "Ano",
-            "Mes",
-            "Fecha",
-            "Tipo_Dia",
-            "Dia",
-            "Observacion"
-        ]
+        header = ["Ano", "Mes", "Fecha", "Tipo_Dia", "Dia", "Observacion"]
 
         self.args = {
             "header": header,
             "col_index": 2,
-            "file_name": "Diccionario_Tipo_Dia_20211230.csv"
+            "file_name": "Diccionario_Tipo_Dia_20211230.csv",
         }
         super().__init__()
 
     def test_correct_case(self):
         validator = CompleteYearFileConsistencyValidator(self.args)
-        rows = [["2007", "1", "2021-12-30", 'LABORAL', 'VIERNES'],
-                ["2007", "1", "2021-12-31", 'SABADO', 'SABADO']
-                ]
+        rows = [
+            ["2007", "1", "2021-12-30", "LABORAL", "VIERNES"],
+            ["2007", "1", "2021-12-31", "SABADO", "SABADO"],
+        ]
         for row in rows:
             validator.apply(row)
 
@@ -1763,15 +1802,20 @@ class CompleteYearFileConsistencyValidatorTest(ValidatorTest):
 
     def test_wrong_case(self):
         validator = CompleteYearFileConsistencyValidator(self.args)
-        rows = [["2007", "1", "2021-12-29", 'LABORAL', 'JUEVES'],
-                ["2007", "1", "2021-12-30", 'LABORAL', 'VIERNES']
-                ]
+        rows = [
+            ["2007", "1", "2021-12-29", "LABORAL", "JUEVES"],
+            ["2007", "1", "2021-12-30", "LABORAL", "VIERNES"],
+        ]
         for row in rows:
             validator.apply(row)
         self.assertFalse(validator.status)
-        expected_error = {'name': 'Fechas faltantes', 'type': 'formato',
-                          'message': 'Fechas faltantes a partir de la fila 2, columna Fecha.', 'row': 2,
-                          'cols': 'Fecha'}
+        expected_error = {
+            "name": "Fechas faltantes",
+            "type": "formato",
+            "message": "Fechas faltantes a partir de la fila 2, columna Fecha.",
+            "row": 2,
+            "cols": "Fecha",
+        }
         self.assertEqual(expected_error, validator.get_error())
 
     def test_fun_type(self):

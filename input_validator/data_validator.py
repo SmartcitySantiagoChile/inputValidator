@@ -17,7 +17,7 @@ class DataValidator:
     """A class to iterate over a tree configuration json file and validate data"""
 
     def __init__(self, config_path, data_path, date, path_list=False, logger=None):
-        with open(config_path, encoding='utf-8-SIG') as json_config:
+        with open(config_path, encoding="utf-8-SIG") as json_config:
             self.config = json.loads(json_config.read())
         self.report_errors = defaultdict(list)
         self.report = []
@@ -114,12 +114,18 @@ class DataValidator:
 
         if validator.apply(self):
             # if name correct check rules and report errors
-            if type_name == "regex" or type_name == "multi-regex" or type_name == "service_detail_regex":
+            if (
+                type_name == "regex"
+                or type_name == "multi-regex"
+                or type_name == "service_detail_regex"
+            ):
                 name = self.temp_name
                 self.temp_name = None
             # check service detail error files
             if type_name == "service_detail_regex":
-                self.report_error_by_validator(validator.args['names_with_incorrect_date'], validator)
+                self.report_error_by_validator(
+                    validator.args["names_with_incorrect_date"], validator
+                )
 
             if missing_dependencies:
                 for dependency in missing_dependencies:
@@ -140,7 +146,9 @@ class DataValidator:
                 elif type_name == "service_detail_regex":
                     status = []
                     for n in name:
-                        status += self.validate_node_rules(absolute_path, n, rules, header)
+                        status += self.validate_node_rules(
+                            absolute_path, n, rules, header
+                        )
                 else:
                     status = self.validate_node_rules(
                         absolute_path, name, rules, header
@@ -163,7 +171,7 @@ class DataValidator:
             self.report_error_by_validator(name, validator)
 
     def dispatch_rules(self, rules: dict, header: list, file_name: str) -> dict:
-        """ Take the rules dict and split them by type
+        """Take the rules dict and split them by type
 
         Args:
             rules: rules dict
