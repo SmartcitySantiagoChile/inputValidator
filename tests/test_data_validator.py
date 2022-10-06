@@ -5,6 +5,7 @@ from unittest import TestCase
 
 import mock
 
+from input_validator.configuration import ConfigFromFile
 from input_validator.data_validator import (
     DataValidator,
 )
@@ -20,18 +21,18 @@ class DataValidatorTest(TestCase):
         self.data_path = os.path.join(self.input_path, "testData")
         self.check_name_data_path = os.path.join(self.input_path, "check_name_data")
         with open(
-            os.path.join(self.configuration_path, "configuration.json")
+                os.path.join(self.configuration_path, "configuration.json")
         ) as json_config:
             self.configuration_file = json.loads(json_config.read())
 
     @mock.patch("input_validator.data_validator.DataValidator.validate_node_rules")
     def test_file_iterator_name(self, validate_node_rules):
         validate_node_rules.return_value = []
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_check_name.json"))
         data = DataValidator(
+            config_obj,
             data_path=self.data_path,
-            config_path=os.path.join(
-                self.configuration_path, "configuration_check_name.json"
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -45,8 +46,8 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": "",
                     "message": "El nombre del directorio o archivo 'asd' no "
-                    "se encuentra en el directorio "
-                    f"'{self.data_path + os.path.sep}'.",
+                               "se encuentra en el directorio "
+                               f"'{self.data_path + os.path.sep}'.",
                     "row": "",
                     "name": "Nombre incorrecto",
                     "type": "formato",
@@ -54,11 +55,11 @@ class DataValidatorTest(TestCase):
             ]
         }
 
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_check_name_wrong_root.json"))
         data = DataValidator(
+            config_obj,
             data_path=self.data_path,
-            config_path=os.path.join(
-                self.configuration_path, "configuration_check_name_wrong_root.json"
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -67,11 +68,11 @@ class DataValidatorTest(TestCase):
     @mock.patch("input_validator.data_validator.DataValidator.validate_node_rules")
     def test_file_wrong_configuration(self, validate_node_rules):
         validate_node_rules.return_value = []
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_wrong_file.json"))
         data = DataValidator(
+            config_obj,
             data_path=self.data_path,
-            config_path=os.path.join(
-                self.configuration_path, "configuration_wrong_file.json"
-            ),
             date="20200627",
         )
         with self.assertRaises(SystemExit) as cm:
@@ -81,11 +82,11 @@ class DataValidatorTest(TestCase):
     def test_file_wrong_fun_name(self):
         logger = logging.getLogger(__name__)
 
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_wrong_fun_name.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_fun_name"),
-            config_path=os.path.join(
-                self.configuration_path, "configuration_wrong_fun_name.json"
-            ),
             logger=logger,
             date="20200627",
         )
@@ -95,11 +96,12 @@ class DataValidatorTest(TestCase):
 
     def test_file_wrong_fun_args(self):
         logger = logging.getLogger(__name__)
+
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_wrong_fun_args.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_fun_name"),
-            config_path=os.path.join(
-                self.configuration_path, "configuration_wrong_fun_args.json"
-            ),
             logger=logger,
             date="20200627",
         )
@@ -113,11 +115,11 @@ class DataValidatorTest(TestCase):
         expected_errors = {
             "Diccionario-Comunas.csv": [{"error1", "error2"}],
         }
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_check_name.json"))
         data = DataValidator(
+            config_obj,
             data_path=self.data_path,
-            config_path=os.path.join(
-                self.configuration_path, "configuration_check_name.json"
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -126,8 +128,9 @@ class DataValidatorTest(TestCase):
         self.assertEqual(expected_errors, data.report_errors)
 
     def test_validate_nodes_rules_empty_case(self):
+        config_obj = ConfigFromFile(os.path.join(self.configuration_path, "configuration.json"))
         data_validator = DataValidator(
-            os.path.join(self.configuration_path, "configuration.json"),
+            config_obj,
             self.data_path,
             date="20200627",
         )
@@ -141,8 +144,9 @@ class DataValidatorTest(TestCase):
     def test_validate_nodes_rules_format_rule(self, check_rules, dispatch_rules):
         check_rules.return_value = []
         dispatch_rules.return_value = []
+        config_obj = ConfigFromFile(os.path.join(self.configuration_path, "configuration.json"))
         data_validator = DataValidator(
-            os.path.join(self.configuration_path, "configuration.json"),
+            config_obj,
             self.data_path,
             date="20200627",
         )
@@ -156,8 +160,10 @@ class DataValidatorTest(TestCase):
         )
 
     def test_dispatch_rules(self):
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration.json"))
         data_validator = DataValidator(
-            os.path.join(self.configuration_path, "configuration.json"),
+            config_obj,
             self.data_path,
             date="20200627",
         )
@@ -201,18 +207,17 @@ class DataValidatorTest(TestCase):
             "SEN1",
             "VALIDA",
         ]
+        config_obj = ConfigFromFile(os.path.join(self.configuration_path, "configuration_check_name.json"))
         data_validator = DataValidator(
+            config_obj,
             data_path=self.data_path,
-            config_path=os.path.join(
-                self.configuration_path, "configuration_check_name.json"
-            ),
             date="20200627",
         )
         expected_error = [
             {
                 "cols": "",
                 "message": "El archivo Diccionario-Servicios-Latin1.csv no se encuentra en "
-                "UTF-8.",
+                           "UTF-8.",
                 "name": "Error de encoding",
                 "row": "",
                 "type": "formato",
@@ -228,13 +233,8 @@ class DataValidatorTest(TestCase):
     def test_check_rules_empty_row(self):
         path = os.path.join(self.input_path, "empty_row_data")
         empty_row_name = "Diccionario-Comunas-Empty-Row.csv"
-        data_validator = DataValidator(
-            data_path=self.data_path,
-            config_path=os.path.join(
-                self.configuration_path, "configuration_check_name.json"
-            ),
-            date="20200627",
-        )
+        config_obj = ConfigFromFile(os.path.join(self.configuration_path, "configuration_check_name.json"))
+        data_validator = DataValidator(config_obj, data_path=self.data_path, date="20200627", )
         expected_error = [
             {
                 "cols": "",
@@ -256,10 +256,11 @@ class DataValidatorTest(TestCase):
             path_list_data, "Diccionario-EstacionesMetro.csv"
         )
         path_list = [comunas_path, estaciones_path]
+
+        config_obj = ConfigFromFile(os.path.join(self.configuration_path, "configuration.json"))
         data = DataValidator(
+            config_obj,
             data_path=path_list,
-            path_list=True,
-            config_path=os.path.join(self.configuration_path, "configuration.json"),
             date="20200627",
         )
         data.start_iteration_over_path_list()
@@ -276,12 +277,12 @@ class DataValidatorTest(TestCase):
             path_list_data, "Diccionario-EstacionesMetro.csv"
         )
         path_list = [comunas_path, estaciones_path]
+
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_path_list.json"))
         data = DataValidator(
+            config_obj,
             data_path=path_list,
-            path_list=True,
-            config_path=os.path.join(
-                self.configuration_path, "configuration_path_list.json"
-            ),
             date="20200627",
         )
         path_list_name = ["Diccionario-Comunas.csv", "Diccionario-EstacionesMetro.csv"]
@@ -326,11 +327,10 @@ class DataValidatorTest(TestCase):
 
     def test_diccionario_comunas(self):
         # base case
+        config_obj = ConfigFromFile(os.path.join(self.configuration_path, "configuration_diccionario_comunas.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_diccionario_comunas"),
-            config_path=os.path.join(
-                self.configuration_path, "configuration_diccionario_comunas.json"
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -345,11 +345,11 @@ class DataValidatorTest(TestCase):
         self.assertEqual({}, data.report_errors)
 
         # wrong case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_diccionario_comunas_wrong.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_diccionario_comunas"),
-            config_path=os.path.join(
-                self.configuration_path, "configuration_diccionario_comunas_wrong.json"
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -366,9 +366,9 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": "ID",
                     "message": "La variable '0' "
-                    "está duplicada en "
-                    "la fila 2, columna "
-                    "ID.",
+                               "está duplicada en "
+                               "la fila 2, columna "
+                               "ID.",
                     "name": "Valor duplicado",
                     "row": 2,
                     "type": "formato",
@@ -376,10 +376,10 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": "NOMBRE",
                     "message": "La variable "
-                    "'LAMPA' está "
-                    "duplicada en la "
-                    "fila 2, columna "
-                    "NOMBRE.",
+                               "'LAMPA' está "
+                               "duplicada en la "
+                               "fila 2, columna "
+                               "NOMBRE.",
                     "name": "Valor duplicado",
                     "row": 2,
                     "type": "formato",
@@ -391,11 +391,11 @@ class DataValidatorTest(TestCase):
 
     def test_diccionario_servicios(self):
         # base case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_diccionario_servicios.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_diccionario_servicios"),
-            config_path=os.path.join(
-                self.configuration_path, "configuration_diccionario_servicios.json"
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -410,12 +410,11 @@ class DataValidatorTest(TestCase):
         self.assertEqual({}, data.report_errors)
 
         # wrong case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_diccionario_servicios_wrong.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_diccionario_servicios"),
-            config_path=os.path.join(
-                self.configuration_path,
-                "configuration_diccionario_servicios_wrong.json",
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -433,10 +432,10 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": "COD_SINRUT",
                     "message": "La variable "
-                    "'T207 00R' está "
-                    "duplicada en la "
-                    "fila 40, columna "
-                    "COD_SINRUT.",
+                               "'T207 00R' está "
+                               "duplicada en la "
+                               "fila 40, columna "
+                               "COD_SINRUT.",
                     "name": "Valor duplicado",
                     "row": 40,
                     "type": "formato",
@@ -444,11 +443,11 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": "COD_SINRUT",
                     "message": "La variable "
-                    "'SCA' está "
-                    "duplicada en la "
-                    "fila 414, "
-                    "columna "
-                    "COD_SINRUT.",
+                               "'SCA' está "
+                               "duplicada en la "
+                               "fila 414, "
+                               "columna "
+                               "COD_SINRUT.",
                     "name": "Valor duplicado",
                     "row": 414,
                     "type": "formato",
@@ -456,11 +455,11 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": "COD_SINRUT",
                     "message": "La variable "
-                    "'SCA' está "
-                    "duplicada en la "
-                    "fila 418, "
-                    "columna "
-                    "COD_SINRUT.",
+                               "'SCA' está "
+                               "duplicada en la "
+                               "fila 418, "
+                               "columna "
+                               "COD_SINRUT.",
                     "name": "Valor duplicado",
                     "row": 418,
                     "type": "formato",
@@ -468,11 +467,11 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": "COD_SINRUT",
                     "message": "La variable "
-                    "'SCA' está "
-                    "duplicada en la "
-                    "fila 580, "
-                    "columna "
-                    "COD_SINRUT.",
+                               "'SCA' está "
+                               "duplicada en la "
+                               "fila 580, "
+                               "columna "
+                               "COD_SINRUT.",
                     "name": "Valor duplicado",
                     "row": 580,
                     "type": "formato",
@@ -480,11 +479,11 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": "COD_SINRUT",
                     "message": "La variable "
-                    "'SCA' está "
-                    "duplicada en la "
-                    "fila 585, "
-                    "columna "
-                    "COD_SINRUT.",
+                               "'SCA' está "
+                               "duplicada en la "
+                               "fila 585, "
+                               "columna "
+                               "COD_SINRUT.",
                     "name": "Valor duplicado",
                     "row": 585,
                     "type": "formato",
@@ -492,11 +491,11 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": "COD_SINRUT",
                     "message": "La variable "
-                    "'SCA' está "
-                    "duplicada en la "
-                    "fila 1314, "
-                    "columna "
-                    "COD_SINRUT.",
+                               "'SCA' está "
+                               "duplicada en la "
+                               "fila 1314, "
+                               "columna "
+                               "COD_SINRUT.",
                     "name": "Valor duplicado",
                     "row": 1314,
                     "type": "formato",
@@ -504,11 +503,11 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": "COD_SINRUT",
                     "message": "La variable "
-                    "'SCA' está "
-                    "duplicada en la "
-                    "fila 1405, "
-                    "columna "
-                    "COD_SINRUT.",
+                               "'SCA' está "
+                               "duplicada en la "
+                               "fila 1405, "
+                               "columna "
+                               "COD_SINRUT.",
                     "name": "Valor duplicado",
                     "row": 1405,
                     "type": "formato",
@@ -520,11 +519,11 @@ class DataValidatorTest(TestCase):
 
     def test_diccionario_patentes(self):
         # base case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_diccionario_patentes.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_diccionario_patentes"),
-            config_path=os.path.join(
-                self.configuration_path, "configuration_diccionario_patentes.json"
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -539,11 +538,11 @@ class DataValidatorTest(TestCase):
         self.assertEqual({}, data.report_errors)
 
         # wrong case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_diccionario_patentes_wrong.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_diccionario_patentes"),
-            config_path=os.path.join(
-                self.configuration_path, "configuration_diccionario_patentes_wrong.json"
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -560,24 +559,24 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": "",
                     "message": "El header no "
-                    "corresponde al "
-                    "archivo. Este "
-                    "debe ser: "
-                    "['FOLIO', 'UN', "
-                    "'PLACA', "
-                    "'PRIMERA', "
-                    "'INGRESA', "
-                    "'TIPO_FLOTA', "
-                    "'MARCA', "
-                    "'MODELO', "
-                    "'MARCA_C', "
-                    "'MODELO_C', "
-                    "'AÑO', 'PLAZAS', "
-                    "'TIPO_VEH', "
-                    "'NORMA', "
-                    "'Filtro_FAB_INC', "
-                    "'Fecha_Instalación_Filtro_INC', "
-                    "'Marca_Filtro_INC']",
+                               "corresponde al "
+                               "archivo. Este "
+                               "debe ser: "
+                               "['FOLIO', 'UN', "
+                               "'PLACA', "
+                               "'PRIMERA', "
+                               "'INGRESA', "
+                               "'TIPO_FLOTA', "
+                               "'MARCA', "
+                               "'MODELO', "
+                               "'MARCA_C', "
+                               "'MODELO_C', "
+                               "'AÑO', 'PLAZAS', "
+                               "'TIPO_VEH', "
+                               "'NORMA', "
+                               "'Filtro_FAB_INC', "
+                               "'Fecha_Instalación_Filtro_INC', "
+                               "'Marca_Filtro_INC']",
                     "name": "Header incorrecto",
                     "row": "",
                     "type": "formato",
@@ -589,11 +588,11 @@ class DataValidatorTest(TestCase):
 
     def test_diccionario_periodos_ts(self):
         # base case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_diccionario_periodos_ts.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_diccionario_periodos_ts"),
-            config_path=os.path.join(
-                self.configuration_path, "configuration_diccionario_periodos_ts.json"
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -608,12 +607,11 @@ class DataValidatorTest(TestCase):
         self.assertEqual({}, data.report_errors)
 
         # wrong case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_diccionario_periodos_ts_wrong.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_diccionario_periodos_ts"),
-            config_path=os.path.join(
-                self.configuration_path,
-                "configuration_diccionario_periodos_ts_wrong.json",
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -629,12 +627,12 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": ["HORAFIN", "HORAINI"],
                     "message": "En la fila 1 el "
-                    "valor de la "
-                    "columna HORAFIN "
-                    "es menor al "
-                    "valor de la "
-                    "columna "
-                    "HORAINI.",
+                               "valor de la "
+                               "columna HORAFIN "
+                               "es menor al "
+                               "valor de la "
+                               "columna "
+                               "HORAINI.",
                     "name": "Inconsistencia " "entre valores",
                     "row": 1,
                     "type": "formato",
@@ -646,11 +644,10 @@ class DataValidatorTest(TestCase):
 
     def test_shape_rutas(self):
         # base case
+        config_obj = ConfigFromFile(os.path.join(self.configuration_path, "configuration_shape_rutas.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_shape_rutas"),
-            config_path=os.path.join(
-                self.configuration_path, "configuration_shape_rutas.json"
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -667,12 +664,11 @@ class DataValidatorTest(TestCase):
         self.assertEqual({}, data.report_errors)
 
         # wrong case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_shape_rutas_wrong.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_shape_rutas"),
-            config_path=os.path.join(
-                self.configuration_path,
-                "configuration_shape_rutas_wrong.json",
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -691,10 +687,10 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": "ROUTE_NAME",
                     "message": "La variable 'E06PRN' no se "
-                    "encuentra en los valores "
-                    "válidos para 'route_name' en "
-                    "la fila 1, columna "
-                    "ROUTE_NAME.",
+                               "encuentra en los valores "
+                               "válidos para 'route_name' en "
+                               "la fila 1, columna "
+                               "ROUTE_NAME.",
                     "name": "El valor no es válido",
                     "row": 1,
                     "type": "valor",
@@ -705,11 +701,11 @@ class DataValidatorTest(TestCase):
 
     def test_diccionario_zonificaciones(self):
         # base case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_diccionario_zonificaciones.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_diccionario_zonificaciones"),
-            config_path=os.path.join(
-                self.configuration_path, "configuration_diccionario_zonificaciones.json"
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -724,12 +720,11 @@ class DataValidatorTest(TestCase):
         self.assertEqual(expected_data_report, data.report)
         self.assertEqual({}, data.report_errors)
         # wrong case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_diccionario_zonificaciones_wrong.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_diccionario_zonificaciones"),
-            config_path=os.path.join(
-                self.configuration_path,
-                "configuration_diccionario_zonificaciones_wrong.json",
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -746,13 +741,13 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": ["X", "Y"],
                     "message": "Las coordenadas "
-                    "'320439.3733', "
-                    "'6299473.56' en "
-                    "la fila 149819 no "
-                    "se encuentran en "
-                    "el rango "
-                    "geográfico "
-                    "correcto.",
+                               "'320439.3733', "
+                               "'6299473.56' en "
+                               "la fila 149819 no "
+                               "se encuentran en "
+                               "el rango "
+                               "geográfico "
+                               "correcto.",
                     "name": "Coordenadas " "inválidas",
                     "row": 149819,
                     "type": "valor",
@@ -764,13 +759,12 @@ class DataValidatorTest(TestCase):
 
     def test_diccionario_estaciones_metro(self):
         # base case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_diccionario_estaciones_metro.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(
                 self.input_path, "check_diccionario_estaciones_metro"
-            ),
-            config_path=os.path.join(
-                self.configuration_path,
-                "configuration_diccionario_estaciones_metro.json",
             ),
             date="20200627",
         )
@@ -795,13 +789,12 @@ class DataValidatorTest(TestCase):
         self.assertEqual({}, data.report_errors)
 
         # wrong case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_diccionario_estaciones_metro_wrong.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(
                 self.input_path, "check_diccionario_estaciones_metro"
-            ),
-            config_path=os.path.join(
-                self.configuration_path,
-                "configuration_diccionario_estaciones_metro_wrong.json",
             ),
             date="20200627",
         )
@@ -828,14 +821,14 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": ["LINEA"],
                     "message": "Existe un valor "
-                    "incorrecto en la "
-                    "fila 8, columna "
-                    "LINEA. Los "
-                    "valores solo "
-                    "pueden ser "
-                    "'['L1', 'L2', "
-                    "'L3', 'L4', "
-                    "'L4A', 'L5']'",
+                               "incorrecto en la "
+                               "fila 8, columna "
+                               "LINEA. Los "
+                               "valores solo "
+                               "pueden ser "
+                               "'['L1', 'L2', "
+                               "'L3', 'L4', "
+                               "'L4A', 'L5']'",
                     "name": "Valores incorrectos",
                     "row": 8,
                     "type": "formato",
@@ -843,14 +836,14 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": ["LINEA"],
                     "message": "Existe un valor "
-                    "incorrecto en la "
-                    "fila 13, columna "
-                    "LINEA. Los "
-                    "valores solo "
-                    "pueden ser "
-                    "'['L1', 'L2', "
-                    "'L3', 'L4', "
-                    "'L4A', 'L5']'",
+                               "incorrecto en la "
+                               "fila 13, columna "
+                               "LINEA. Los "
+                               "valores solo "
+                               "pueden ser "
+                               "'['L1', 'L2', "
+                               "'L3', 'L4', "
+                               "'L4A', 'L5']'",
                     "name": "Valores incorrectos",
                     "row": 13,
                     "type": "formato",
@@ -858,14 +851,14 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": ["LINEA"],
                     "message": "Existe un valor "
-                    "incorrecto en la "
-                    "fila 28, columna "
-                    "LINEA. Los "
-                    "valores solo "
-                    "pueden ser "
-                    "'['L1', 'L2', "
-                    "'L3', 'L4', "
-                    "'L4A', 'L5']'",
+                               "incorrecto en la "
+                               "fila 28, columna "
+                               "LINEA. Los "
+                               "valores solo "
+                               "pueden ser "
+                               "'['L1', 'L2', "
+                               "'L3', 'L4', "
+                               "'L4A', 'L5']'",
                     "name": "Valores incorrectos",
                     "row": 28,
                     "type": "formato",
@@ -873,14 +866,14 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": ["LINEA"],
                     "message": "Existe un valor "
-                    "incorrecto en la "
-                    "fila 34, columna "
-                    "LINEA. Los "
-                    "valores solo "
-                    "pueden ser "
-                    "'['L1', 'L2', "
-                    "'L3', 'L4', "
-                    "'L4A', 'L5']'",
+                               "incorrecto en la "
+                               "fila 34, columna "
+                               "LINEA. Los "
+                               "valores solo "
+                               "pueden ser "
+                               "'['L1', 'L2', "
+                               "'L3', 'L4', "
+                               "'L4A', 'L5']'",
                     "name": "Valores incorrectos",
                     "row": 34,
                     "type": "formato",
@@ -888,14 +881,14 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": ["LINEA"],
                     "message": "Existe un valor "
-                    "incorrecto en la "
-                    "fila 48, columna "
-                    "LINEA. Los "
-                    "valores solo "
-                    "pueden ser "
-                    "'['L1', 'L2', "
-                    "'L3', 'L4', "
-                    "'L4A', 'L5']'",
+                               "incorrecto en la "
+                               "fila 48, columna "
+                               "LINEA. Los "
+                               "valores solo "
+                               "pueden ser "
+                               "'['L1', 'L2', "
+                               "'L3', 'L4', "
+                               "'L4A', 'L5']'",
                     "name": "Valores incorrectos",
                     "row": 48,
                     "type": "formato",
@@ -903,14 +896,14 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": ["LINEA"],
                     "message": "Existe un valor "
-                    "incorrecto en la "
-                    "fila 76, columna "
-                    "LINEA. Los "
-                    "valores solo "
-                    "pueden ser "
-                    "'['L1', 'L2', "
-                    "'L3', 'L4', "
-                    "'L4A', 'L5']'",
+                               "incorrecto en la "
+                               "fila 76, columna "
+                               "LINEA. Los "
+                               "valores solo "
+                               "pueden ser "
+                               "'['L1', 'L2', "
+                               "'L3', 'L4', "
+                               "'L4A', 'L5']'",
                     "name": "Valores incorrectos",
                     "row": 76,
                     "type": "formato",
@@ -921,14 +914,11 @@ class DataValidatorTest(TestCase):
 
     def test_diccionario_estaciones_metrotren(self):
         # base case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_diccionario_estaciones_metrotren.json"))
         data = DataValidator(
-            data_path=os.path.join(
-                self.input_path, "check_diccionario_estaciones_metrotren"
-            ),
-            config_path=os.path.join(
-                self.configuration_path,
-                "configuration_diccionario_estaciones_metrotren.json",
-            ),
+            config_obj,
+            data_path=os.path.join(self.input_path, "check_diccionario_estaciones_metrotren"),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -951,13 +941,12 @@ class DataValidatorTest(TestCase):
         self.assertEqual({}, data.report_errors)
 
         # wrong case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_diccionario_estaciones_metrotren_wrong.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(
                 self.input_path, "check_diccionario_estaciones_metrotren"
-            ),
-            config_path=os.path.join(
-                self.configuration_path,
-                "configuration_diccionario_estaciones_metrotren_wrong.json",
             ),
             date="20200627",
         )
@@ -1041,11 +1030,10 @@ class DataValidatorTest(TestCase):
 
     def test_paraderos(self):
         # base case
+        config_obj = ConfigFromFile(os.path.join(self.configuration_path, "configuration_paraderos.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_paraderos"),
-            config_path=os.path.join(
-                self.configuration_path, "configuration_paraderos.json"
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -1071,13 +1059,12 @@ class DataValidatorTest(TestCase):
 
     def test_diccionario_detalle_servicio(self):
         # base case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_diccionario_detalle_servicio.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(
                 self.input_path, "check_diccionario_detalle_servicio"
-            ),
-            config_path=os.path.join(
-                self.configuration_path,
-                "configuration_diccionario_detalle_servicio.json",
             ),
             date="20200627",
         )
@@ -1107,12 +1094,11 @@ class DataValidatorTest(TestCase):
 
     def test_frecuencias(self):
         # base case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_frecuencias.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_frecuencias"),
-            config_path=os.path.join(
-                self.configuration_path,
-                "configuration_frecuencias.json",
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -1134,12 +1120,11 @@ class DataValidatorTest(TestCase):
 
     def test_evasion_777(self):
         # base case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_evasion_zona777.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_evasion"),
-            config_path=os.path.join(
-                self.configuration_path,
-                "configuration_evasion_zona777.json",
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -1163,12 +1148,11 @@ class DataValidatorTest(TestCase):
 
     def test_evasion_servicio_sentido_parada(self):
         # base case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_evasion_servicio.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_evasion"),
-            config_path=os.path.join(
-                self.configuration_path,
-                "configuration_evasion_servicio.json",
-            ),
             date="20200627",
         )
         data.start_iteration_over_configuration_tree()
@@ -1201,12 +1185,11 @@ class DataValidatorTest(TestCase):
 
     def test_diccionario_tipo_dia(self):
         # base case
+        config_obj = ConfigFromFile(
+            os.path.join(self.configuration_path, "configuration_diccionario_tipo_dia.json"))
         data = DataValidator(
+            config_obj,
             data_path=os.path.join(self.input_path, "check_diccionario_calendario"),
-            config_path=os.path.join(
-                self.configuration_path,
-                "configuration_diccionario_tipo_dia.json",
-            ),
             date="20210405",
         )
         data.start_iteration_over_configuration_tree()

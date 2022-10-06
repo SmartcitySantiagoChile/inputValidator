@@ -16,12 +16,10 @@ from input_validator.validators import (
 class DataValidator:
     """A class to iterate over a tree configuration json file and validate data"""
 
-    def __init__(self, config_path, data_path, date, path_list=False, logger=None):
-        with open(config_path, encoding="utf-8-SIG") as json_config:
-            self.config = json.loads(json_config.read())
+    def __init__(self, config_obj, data_path, date, logger=None):
+        self.config = config_obj.get_config()
         self.report_errors = defaultdict(list)
         self.report = []
-        self.path_list = path_list
         self.data_path = data_path
         self.path_list_dict = []
         self.storage = {}

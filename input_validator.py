@@ -8,6 +8,7 @@ import zipfile
 
 from pyfiglet import Figlet
 
+from input_validator.configuration import ConfigFromFile
 from input_validator.data_validator import DataValidator
 from input_validator.utils import write_errors_to_csv
 
@@ -58,25 +59,24 @@ def main(argv):
 
     # date with file format
     date = pathlib.Path(args.path[0]).stem.replace("-", "")
-    validator = DataValidator(
-        CONFIG_PATH, input_path, date, path_list=is_path_list, logger=logger
-    )
+    config_obj = ConfigFromFile(CONFIG_PATH)
+    data_validator = DataValidator(config_obj, input_path, date, logger=logger)
 
     if is_path_list:
-        validator.start_iteration_over_path_list()
+        data_validator.start_iteration_over_path_list()
     else:
-        validator.start_iteration_over_configuration_tree()
+        data_validator.start_iteration_over_configuration_tree()
 
     # for success in validator.report:
     #    logger.info("{0} found in {1}".format(success[0], success[1]))
     if args.verbose:
-        for key, value in validator.report_errors.items():
+        for key, value in data_validator.report_errors.items():
             logger.error(f"{key} contiene los siguientes errores:")
             for error in value:
                 logger.error(error)
 
     file_path = os.path.join(OUTPUT_PATH, OUTPUT_NAME)
-    write_errors_to_csv(file_path, validator)
+    write_errors_to_csv(file_path, data_validator)
 
     if not is_path_list:
         shutil.rmtree(os.path.join(INPUTS_PATH, "tmp"))
