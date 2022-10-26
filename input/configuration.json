@@ -533,6 +533,7 @@
             "name": "Diccionario-EstacionesMetroTren_202[0-9][0-1][0-9][0-3][0-9].csv",
             "header": [
               "CODIGOTRX",
+              "CODIGO_ESTANDAR",
               "COMUNA",
               "LATITUD",
               "LONGITUD"
