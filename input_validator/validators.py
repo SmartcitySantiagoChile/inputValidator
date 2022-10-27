@@ -34,7 +34,7 @@ class Validator(object, metaclass=ABCMeta):
 
         """
         self.args = args
-        self.row_counter = 0
+        self.row_counter = 1  # to count header
         super().__init__()
 
     @abstractmethod
