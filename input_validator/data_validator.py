@@ -1,6 +1,5 @@
 import csv
 import fnmatch
-import json
 import os
 import sys
 from collections import defaultdict
@@ -136,25 +135,19 @@ class DataValidator:
                     return
                 if rules:
                     if type_name == "multi-regex":
-                        status = self.validate_multi_node_rules(
-                            absolute_path, name, rules, header
-                        )
-                    elif type_name == "service_detail_regex":
-                        status = []
-                        for n in name:
-                            status += self.validate_node_rules(
-                                absolute_path, n, rules, header
-                            )
-                    else:
-                        status = self.validate_node_rules(
-                            absolute_path, name, rules, header
-                        )
-                    for error in status:
-                        if isinstance(name, list):
-                            for name_file in name:
-                                self.report_errors[name_file].append(error)
-                        else:
+                        status = self.validate_multi_node_rules(absolute_path, name, rules, header)
+                        for error in status:
                             self.report_errors[name].append(error)
+                    elif type_name == "service_detail_regex":
+                        for n in name:
+                            status = self.validate_node_rules(absolute_path, n, rules, header)
+                            for error in status:
+                                self.report_errors[n].append(error)
+                    else:
+                        status = self.validate_node_rules(absolute_path, name, rules, header)
+                        for error in status:
+                            self.report_errors[name].append(error)
+
                 # if not root case
                 if name and new_path:
                     self.report.append([name, new_path])
