@@ -110,7 +110,7 @@ def write_errors_to_csv(file_path, validator_obj):
                         error["name"],
                         error["type"],
                         error["row"],
-                        error["cols"],
+                        ",".join(error["cols"]) if isinstance(error["cols"], list) else error["cols"],
                         error["message"],
                     ]
                 )
