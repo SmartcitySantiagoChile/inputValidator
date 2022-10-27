@@ -8,7 +8,7 @@ import zipfile
 
 from pyfiglet import Figlet
 
-from input_validator.configuration import ConfigFromFile
+from input_validator.configuration import ConfigFromFile, ConfigFromString
 from input_validator.data_validator import DataValidator
 from input_validator.utils import write_errors_to_csv
 
@@ -34,6 +34,7 @@ def main(argv):
     parser = argparse.ArgumentParser(description="validate Transantiago data.")
 
     parser.add_argument("path", help="Path for .zip data or list of paths", nargs="+")
+    parser.add_argument("--parser", help="configuration json file to evaluate path")
     parser.add_argument(
         "--output",
         default=OUTPUT_NAME,
@@ -45,6 +46,7 @@ def main(argv):
 
     args = parser.parse_args(argv[1:])
     output_name = args.output
+    configuration_file_content = args.parser
     is_path_list = len(args.path) > 1
 
     if is_path_list:
@@ -59,7 +61,12 @@ def main(argv):
 
     # date with file format
     date = pathlib.Path(args.path[0]).stem.replace("-", "")
-    config_obj = ConfigFromFile(CONFIG_PATH)
+
+    if configuration_file_content is None:
+        config_obj = ConfigFromFile(CONFIG_PATH)
+    else:
+        configuration_file_content = configuration_file_content.replace('\'', '"')
+        config_obj = ConfigFromString(configuration_file_content)
     data_validator = DataValidator(config_obj, input_path, date, logger=logger)
 
     if is_path_list:
