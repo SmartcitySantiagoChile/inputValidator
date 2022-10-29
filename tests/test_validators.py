@@ -252,10 +252,10 @@ class MultiValidatorTest(ValidatorTest):
         self.assertFalse(validator.apply(row))
         error_message = {
             "cols": ["COMUNA"],
-            "message": "La variable '['ÑUÑOA']' posee ñ o acentos en la fila 2 columna "
+            "message": "La variable '['ÑUÑOA']' posee ñ o acentos en la fila 3 columna "
             "COMUNA.",
             "name": "Valores contienen ñ o acentos",
-            "row": 2,
+            "row": 3,
             "type": "formato",
         }
         self.assertEqual(error_message, validator.get_error())
@@ -265,10 +265,10 @@ class MultiValidatorTest(ValidatorTest):
         self.assertFalse(validator.apply(row))
         error_message = {
             "cols": ["COMUNA"],
-            "message": "La variable '['Pucón']' posee ñ o acentos en la fila 3 columna "
+            "message": "La variable '['Pucón']' posee ñ o acentos en la fila 4 columna "
             "COMUNA.",
             "name": "Valores contienen ñ o acentos",
-            "row": 3,
+            "row": 4,
             "type": "formato",
         }
         self.assertEqual(error_message, validator.get_error())
@@ -280,9 +280,9 @@ class MultiValidatorTest(ValidatorTest):
         error_message = {
             "cols": ["ID", "COMUNA"],
             "message": "Las variables '['Ñuñoa', 'Pucón']' poseen ñ o acentos en la fila "
-            "1 columnas ID, COMUNA.",
+            "2 columnas ID, COMUNA.",
             "name": "Valores contienen ñ o acentos",
-            "row": 1,
+            "row": 2,
             "type": "formato",
         }
         self.assertEqual(error_message, validator.get_error())
@@ -301,9 +301,9 @@ class MultiValidatorTest(ValidatorTest):
         self.assertFalse(validator.apply(row))
         error_message = {
             "cols": "ID",
-            "message": "La variable '0' está duplicada en la fila 2, columna ID.",
+            "message": "La variable '0' está duplicada en la fila 3, columna ID.",
             "name": "Valor duplicado",
-            "row": 2,
+            "row": 3,
             "type": "formato",
         }
         self.assertEqual(error_message, validator.get_error())
@@ -321,9 +321,9 @@ class MultiValidatorTest(ValidatorTest):
         self.assertFalse(validator.apply(row))
         error_message = {
             "cols": "",
-            "message": "El archivo posee una linea vacía en la fila 2.",
+            "message": "El archivo posee una linea vacía en la fila 3.",
             "name": "Fila vacía",
-            "row": 2,
+            "row": 3,
             "type": "formato",
         }
         self.assertEqual(error_message, validator.get_error())
@@ -413,9 +413,9 @@ class MultiValidatorTest(ValidatorTest):
 
         error_message = {
             "cols": ["ROUTE_NAME"],
-            "message": "Existe un valor vacío en la fila 2, columna ROUTE_NAME.",
+            "message": "Existe un valor vacío en la fila 3, columna ROUTE_NAME.",
             "name": "Valor vacío",
-            "row": 2,
+            "row": 3,
             "type": "formato",
         }
 
@@ -448,10 +448,10 @@ class MultiValidatorTest(ValidatorTest):
 
         error_message = {
             "cols": ["ROUTE_NAME", "SERVICE_NA"],
-            "message": "Existen valores vacíos en la fila 3, columnas ROUTE_NAME, "
+            "message": "Existen valores vacíos en la fila 4, columnas ROUTE_NAME, "
             "SERVICE_NA.",
             "name": "Valor vacío",
-            "row": 3,
+            "row": 4,
             "type": "formato",
         }
         self.assertFalse(validator.apply(row))
@@ -545,10 +545,10 @@ class MultiValidatorTest(ValidatorTest):
 
         error_message = {
             "cols": ["SENTIDO"],
-            "message": "Existe un valor incorrecto en la fila 2, columna SENTIDO. Los "
+            "message": "Existe un valor incorrecto en la fila 3, columna SENTIDO. Los "
             "valores solo pueden ser '['I', 'R']'",
             "name": "Valores incorrectos",
-            "row": 2,
+            "row": 3,
             "type": "formato",
         }
 
@@ -585,10 +585,10 @@ class MultiValidatorTest(ValidatorTest):
 
         error_message = {
             "cols": ["SENTIDO", "COD_USUARI"],
-            "message": "Existen valores incorrectos en la fila 1, columnas SENTIDO, "
+            "message": "Existen valores incorrectos en la fila 2, columnas SENTIDO, "
             "COD_USUARI. Los valores solo pueden ser '['I', 'R']'",
             "name": "Valores incorrectos",
-            "row": 1,
+            "row": 2,
             "type": "formato",
         }
         self.assertFalse(validator.apply(row))
@@ -640,9 +640,9 @@ class MultiValidatorTest(ValidatorTest):
         expected_message = {
             "cols": "PLACA",
             "message": "La variable 'BXBXBX' no cumple con el formato AAAA11 o AA1111 en "
-            "la fila 3, columna PLACA.",
+            "la fila 4, columna PLACA.",
             "name": "El valor no cumple con la expresión regular",
-            "row": 3,
+            "row": 4,
             "type": "formato",
         }
 
@@ -689,10 +689,10 @@ class MultiValidatorTest(ValidatorTest):
 
         expected_message = {
             "cols": ["PLAZAS"],
-            "message": "Valor fuera de rango [11] en la fila 2, columna PLAZAS. Los "
+            "message": "Valor fuera de rango [11] en la fila 3, columna PLAZAS. Los "
             "valores solo pueden ser parte del rango [20, 200]",
             "name": "Valores fuera de rango",
-            "row": 2,
+            "row": 3,
             "type": "formato",
         }
         self.assertEqual(expected_message, validator.get_error())
@@ -703,10 +703,10 @@ class MultiValidatorTest(ValidatorTest):
         self.assertEqual(FunType.ROW, validator.get_fun_type())
         expected_message = {
             "cols": ["PLAZAS"],
-            "message": "Valor fuera de rango [11] en la fila 2, columna PLAZAS. Los "
+            "message": "Valor fuera de rango [11] en la fila 3, columna PLAZAS. Los "
             "valores solo pueden ser parte del rango [20, 200]",
             "name": "Valores fuera de rango",
-            "row": 2,
+            "row": 3,
             "type": "formato",
         }
         self.assertEqual(expected_message, validator.get_error())
@@ -733,10 +733,10 @@ class MultiValidatorTest(ValidatorTest):
 
         expected_error = {
             "cols": ["HORAINI", "HORAFIN"],
-            "message": "Existen valores en formato de hora incorrecto en la fila 2, "
+            "message": "Existen valores en formato de hora incorrecto en la fila 3, "
             "columnas HORAINI, HORAFIN.",
             "name": "Formato de hora incorrecto",
-            "row": 2,
+            "row": 3,
             "type": "formato",
         }
         self.assertEqual(expected_error, validator.get_error())
@@ -757,10 +757,10 @@ class MultiValidatorTest(ValidatorTest):
         self.assertFalse(validator.apply(row))
         expected_error = {
             "cols": ["HORAFIN", "HORAINI"],
-            "message": "En la fila 2 el valor de la columna HORAFIN es menor al valor de "
+            "message": "En la fila 3 el valor de la columna HORAFIN es menor al valor de "
             "la columna HORAINI.",
             "name": "Inconsistencia entre valores",
-            "row": 2,
+            "row": 3,
             "type": "formato",
         }
         self.assertEqual(expected_error, validator.get_error())
@@ -823,9 +823,9 @@ class MultiValidatorTest(ValidatorTest):
         expected_error = {
             "cols": "ROUTE_NAME",
             "message": "La variable '201R' no se encuentra en los valores válidos para "
-            "'route_name' en la fila 2, columna ROUTE_NAME.",
+            "'route_name' en la fila 3, columna ROUTE_NAME.",
             "name": "El valor no es válido",
-            "row": 2,
+            "row": 3,
             "type": "valor",
         }
 
@@ -856,10 +856,10 @@ class MultiValidatorTest(ValidatorTest):
         row = ["131985", "430I", "28029", "1006246"]
         expected_error = {
             "cols": ["X-Coordinate", "Y-Coordinate"],
-            "message": "Las coordenadas '28029.0', '1006246.0' en la fila 2 no se "
+            "message": "Las coordenadas '28029.0', '1006246.0' en la fila 3 no se "
             "encuentran en el rango geográfico correcto.",
             "name": "Coordenadas inválidas",
-            "row": 2,
+            "row": 3,
             "type": "valor",
         }
         self.assertFalse(validator.apply(row))
@@ -1048,10 +1048,10 @@ class MultiValidatorTest(ValidatorTest):
         expected_error = {
             "cols": ["LATITUD", "LONGITUD"],
             "message": "'['-33.491584', '-75.617529']' no se encuentran en los valores "
-            "válidos para zonas_6 en la fila 1, columnas ['LATITUD', "
+            "válidos para zonas_6 en la fila 2, columnas ['LATITUD', "
             "'LONGITUD'].",
             "name": "El valor no es válido",
-            "row": 1,
+            "row": 2,
             "type": "valor",
         }
 
@@ -1129,9 +1129,9 @@ class MultiValidatorTest(ValidatorTest):
         expected_error = {
             "cols": "Servicios",
             "message": "La variable '['B01 00I']' no se encuentra en los valores válidos "
-            "para servicios en la fila 2, columna Servicios.",
+            "para servicios en la fila 3, columna Servicios.",
             "name": "El valor no es válido",
-            "row": 2,
+            "row": 3,
             "type": "valor",
         }
 
@@ -1295,8 +1295,8 @@ class MultiValidatorTest(ValidatorTest):
         expected_error = {
             "name": "Formato float incorrecto",
             "type": "formato",
-            "message": "Existe un valor en formato distinto a float en la fila 2, columna 6:29.",
-            "row": 2,
+            "message": "Existe un valor en formato distinto a float en la fila 3, columna 6:29.",
+            "row": 3,
             "cols": ["6:29"],
         }
 
@@ -1580,8 +1580,8 @@ class MultiValidatorTest(ValidatorTest):
         expected_error = {
             "name": "Valores distintos en archivos",
             "type": "valor",
-            "message": "Existe un valor en distinto en los archivos ['archivo_1', 'archivo_2'] en la fila 2, columna Código TS.",
-            "row": 2,
+            "message": "Existe un valor en distinto en los archivos ['archivo_1', 'archivo_2'] en la fila 3, columna Código TS.",
+            "row": 3,
             "cols": ["Código TS"],
         }
 
@@ -1710,9 +1710,9 @@ class CompareValueValidatorTest(ValidatorTest):
         expected_error = {
             "name": "Valor incorrecto",
             "type": "valor",
-            "message": "Existen valores incorrectos en la fila 1, columnas Ano, Fecha,"
+            "message": "Existen valores incorrectos en la fila 2, columnas Ano, Fecha,"
             " comparación incorrecta: 'año en fecha'.",
-            "row": 1,
+            "row": 2,
             "cols": ["Ano", "Fecha"],
         }
 
@@ -1765,10 +1765,10 @@ class DateConsistencyValidatorTest(ValidatorTest):
         self.assertFalse(validator.apply(row))
         expected_error = {
             "cols": "Fecha",
-            "message": "Fecha inconsistente en la fila 2, columna Fecha, fecha "
+            "message": "Fecha inconsistente en la fila 3, columna Fecha, fecha "
             "inconsistente respecto a la fecha anterior.",
             "name": "Fecha inconsistente",
-            "row": 2,
+            "row": 3,
             "type": "valor",
         }
         self.assertEqual(validator.get_error(), expected_error)
@@ -1812,8 +1812,8 @@ class CompleteYearFileConsistencyValidatorTest(ValidatorTest):
         expected_error = {
             "name": "Fechas faltantes",
             "type": "formato",
-            "message": "Fechas faltantes a partir de la fila 2, columna Fecha.",
-            "row": 2,
+            "message": "Fechas faltantes a partir de la fila 3, columna Fecha.",
+            "row": 3,
             "cols": "Fecha",
         }
         self.assertEqual(expected_error, validator.get_error())

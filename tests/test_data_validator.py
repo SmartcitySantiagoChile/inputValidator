@@ -238,9 +238,9 @@ class DataValidatorTest(TestCase):
         expected_error = [
             {
                 "cols": "",
-                "message": "El archivo posee una linea vacía en la fila 1.",
+                "message": "El archivo posee una linea vacía en la fila 2.",
                 "name": "Fila vacía",
-                "row": 1,
+                "row": 2,
                 "type": "formato",
             }
         ]
@@ -367,10 +367,10 @@ class DataValidatorTest(TestCase):
                     "cols": "ID",
                     "message": "La variable '0' "
                                "está duplicada en "
-                               "la fila 2, columna "
+                               "la fila 3, columna "
                                "ID.",
                     "name": "Valor duplicado",
-                    "row": 2,
+                    "row": 3,
                     "type": "formato",
                 },
                 {
@@ -378,10 +378,10 @@ class DataValidatorTest(TestCase):
                     "message": "La variable "
                                "'LAMPA' está "
                                "duplicada en la "
-                               "fila 2, columna "
+                               "fila 3, columna "
                                "NOMBRE.",
                     "name": "Valor duplicado",
-                    "row": 2,
+                    "row": 3,
                     "type": "formato",
                 },
             ]
@@ -434,10 +434,10 @@ class DataValidatorTest(TestCase):
                     "message": "La variable "
                                "'T207 00R' está "
                                "duplicada en la "
-                               "fila 40, columna "
+                               "fila 41, columna "
                                "COD_SINRUT.",
                     "name": "Valor duplicado",
-                    "row": 40,
+                    "row": 41,
                     "type": "formato",
                 },
                 {
@@ -445,11 +445,11 @@ class DataValidatorTest(TestCase):
                     "message": "La variable "
                                "'SCA' está "
                                "duplicada en la "
-                               "fila 414, "
+                               "fila 415, "
                                "columna "
                                "COD_SINRUT.",
                     "name": "Valor duplicado",
-                    "row": 414,
+                    "row": 415,
                     "type": "formato",
                 },
                 {
@@ -457,11 +457,11 @@ class DataValidatorTest(TestCase):
                     "message": "La variable "
                                "'SCA' está "
                                "duplicada en la "
-                               "fila 418, "
+                               "fila 419, "
                                "columna "
                                "COD_SINRUT.",
                     "name": "Valor duplicado",
-                    "row": 418,
+                    "row": 419,
                     "type": "formato",
                 },
                 {
@@ -469,11 +469,11 @@ class DataValidatorTest(TestCase):
                     "message": "La variable "
                                "'SCA' está "
                                "duplicada en la "
-                               "fila 580, "
+                               "fila 581, "
                                "columna "
                                "COD_SINRUT.",
                     "name": "Valor duplicado",
-                    "row": 580,
+                    "row": 581,
                     "type": "formato",
                 },
                 {
@@ -481,11 +481,11 @@ class DataValidatorTest(TestCase):
                     "message": "La variable "
                                "'SCA' está "
                                "duplicada en la "
-                               "fila 585, "
+                               "fila 586, "
                                "columna "
                                "COD_SINRUT.",
                     "name": "Valor duplicado",
-                    "row": 585,
+                    "row": 586,
                     "type": "formato",
                 },
                 {
@@ -493,11 +493,11 @@ class DataValidatorTest(TestCase):
                     "message": "La variable "
                                "'SCA' está "
                                "duplicada en la "
-                               "fila 1314, "
+                               "fila 1315, "
                                "columna "
                                "COD_SINRUT.",
                     "name": "Valor duplicado",
-                    "row": 1314,
+                    "row": 1315,
                     "type": "formato",
                 },
                 {
@@ -505,11 +505,11 @@ class DataValidatorTest(TestCase):
                     "message": "La variable "
                                "'SCA' está "
                                "duplicada en la "
-                               "fila 1405, "
+                               "fila 1406, "
                                "columna "
                                "COD_SINRUT.",
                     "name": "Valor duplicado",
-                    "row": 1405,
+                    "row": 1406,
                     "type": "formato",
                 },
             ]
@@ -626,7 +626,7 @@ class DataValidatorTest(TestCase):
             "Diccionario-PeriodosTS-Wrong.csv": [
                 {
                     "cols": ["HORAFIN", "HORAINI"],
-                    "message": "En la fila 1 el "
+                    "message": "En la fila 2 el "
                                "valor de la "
                                "columna HORAFIN "
                                "es menor al "
@@ -634,7 +634,7 @@ class DataValidatorTest(TestCase):
                                "columna "
                                "HORAINI.",
                     "name": "Inconsistencia " "entre valores",
-                    "row": 1,
+                    "row": 2,
                     "type": "formato",
                 }
             ]
@@ -689,10 +689,10 @@ class DataValidatorTest(TestCase):
                     "message": "La variable 'E06PRN' no se "
                                "encuentra en los valores "
                                "válidos para 'route_name' en "
-                               "la fila 1, columna "
+                               "la fila 2, columna "
                                "ROUTE_NAME.",
                     "name": "El valor no es válido",
-                    "row": 1,
+                    "row": 2,
                     "type": "valor",
                 }
             ]
@@ -743,13 +743,13 @@ class DataValidatorTest(TestCase):
                     "message": "Las coordenadas "
                                "'320439.3733', "
                                "'6299473.56' en "
-                               "la fila 149819 no "
+                               "la fila 149820 no "
                                "se encuentran en "
                                "el rango "
                                "geográfico "
                                "correcto.",
                     "name": "Coordenadas " "inválidas",
-                    "row": 149819,
+                    "row": 149820,
                     "type": "valor",
                 }
             ]
@@ -822,7 +822,7 @@ class DataValidatorTest(TestCase):
                     "cols": ["LINEA"],
                     "message": "Existe un valor "
                                "incorrecto en la "
-                               "fila 8, columna "
+                               "fila 9, columna "
                                "LINEA. Los "
                                "valores solo "
                                "pueden ser "
@@ -830,14 +830,14 @@ class DataValidatorTest(TestCase):
                                "'L3', 'L4', "
                                "'L4A', 'L5']'",
                     "name": "Valores incorrectos",
-                    "row": 8,
+                    "row": 9,
                     "type": "formato",
                 },
                 {
                     "cols": ["LINEA"],
                     "message": "Existe un valor "
                                "incorrecto en la "
-                               "fila 13, columna "
+                               "fila 14, columna "
                                "LINEA. Los "
                                "valores solo "
                                "pueden ser "
@@ -845,14 +845,14 @@ class DataValidatorTest(TestCase):
                                "'L3', 'L4', "
                                "'L4A', 'L5']'",
                     "name": "Valores incorrectos",
-                    "row": 13,
+                    "row": 14,
                     "type": "formato",
                 },
                 {
                     "cols": ["LINEA"],
                     "message": "Existe un valor "
                                "incorrecto en la "
-                               "fila 28, columna "
+                               "fila 29, columna "
                                "LINEA. Los "
                                "valores solo "
                                "pueden ser "
@@ -860,14 +860,14 @@ class DataValidatorTest(TestCase):
                                "'L3', 'L4', "
                                "'L4A', 'L5']'",
                     "name": "Valores incorrectos",
-                    "row": 28,
+                    "row": 29,
                     "type": "formato",
                 },
                 {
                     "cols": ["LINEA"],
                     "message": "Existe un valor "
                                "incorrecto en la "
-                               "fila 34, columna "
+                               "fila 35, columna "
                                "LINEA. Los "
                                "valores solo "
                                "pueden ser "
@@ -875,14 +875,14 @@ class DataValidatorTest(TestCase):
                                "'L3', 'L4', "
                                "'L4A', 'L5']'",
                     "name": "Valores incorrectos",
-                    "row": 34,
+                    "row": 35,
                     "type": "formato",
                 },
                 {
                     "cols": ["LINEA"],
                     "message": "Existe un valor "
                                "incorrecto en la "
-                               "fila 48, columna "
+                               "fila 49, columna "
                                "LINEA. Los "
                                "valores solo "
                                "pueden ser "
@@ -890,14 +890,14 @@ class DataValidatorTest(TestCase):
                                "'L3', 'L4', "
                                "'L4A', 'L5']'",
                     "name": "Valores incorrectos",
-                    "row": 48,
+                    "row": 49,
                     "type": "formato",
                 },
                 {
                     "cols": ["LINEA"],
                     "message": "Existe un valor "
                                "incorrecto en la "
-                               "fila 76, columna "
+                               "fila 77, columna "
                                "LINEA. Los "
                                "valores solo "
                                "pueden ser "
@@ -905,7 +905,7 @@ class DataValidatorTest(TestCase):
                                "'L3', 'L4', "
                                "'L4A', 'L5']'",
                     "name": "Valores incorrectos",
-                    "row": 76,
+                    "row": 77,
                     "type": "formato",
                 },
             ]
@@ -957,71 +957,71 @@ class DataValidatorTest(TestCase):
                 {
                     "name": "El valor no es válido",
                     "type": "valor",
-                    "message": "La variable 'Estacion Alameda' no se encuentra en los valores válidos para 'communes' en la fila 1, columna CODIGOTRX.",
-                    "row": 1,
-                    "cols": "CODIGOTRX",
-                },
-                {
-                    "name": "El valor no es válido",
-                    "type": "valor",
-                    "message": "La variable 'Estacion Lo Valledor' no se encuentra en los valores válidos para 'communes' en la fila 2, columna CODIGOTRX.",
+                    "message": "La variable 'Estacion Alameda' no se encuentra en los valores válidos para 'communes' en la fila 2, columna CODIGOTRX.",
                     "row": 2,
                     "cols": "CODIGOTRX",
                 },
                 {
                     "name": "El valor no es válido",
                     "type": "valor",
-                    "message": "La variable 'Estacion Pedro Aguirre Cerda' no se encuentra en los valores válidos para 'communes' en la fila 3, columna CODIGOTRX.",
+                    "message": "La variable 'Estacion Lo Valledor' no se encuentra en los valores válidos para 'communes' en la fila 3, columna CODIGOTRX.",
                     "row": 3,
                     "cols": "CODIGOTRX",
                 },
                 {
                     "name": "El valor no es válido",
                     "type": "valor",
-                    "message": "La variable 'Estacion Lo Espejo' no se encuentra en los valores válidos para 'communes' en la fila 4, columna CODIGOTRX.",
+                    "message": "La variable 'Estacion Pedro Aguirre Cerda' no se encuentra en los valores válidos para 'communes' en la fila 4, columna CODIGOTRX.",
                     "row": 4,
                     "cols": "CODIGOTRX",
                 },
                 {
                     "name": "El valor no es válido",
                     "type": "valor",
-                    "message": "La variable 'Estacion Lo Blanco' no se encuentra en los valores válidos para 'communes' en la fila 5, columna CODIGOTRX.",
+                    "message": "La variable 'Estacion Lo Espejo' no se encuentra en los valores válidos para 'communes' en la fila 5, columna CODIGOTRX.",
                     "row": 5,
                     "cols": "CODIGOTRX",
                 },
                 {
                     "name": "El valor no es válido",
                     "type": "valor",
-                    "message": "La variable 'Estacion Freire' no se encuentra en los valores válidos para 'communes' en la fila 6, columna CODIGOTRX.",
+                    "message": "La variable 'Estacion Lo Blanco' no se encuentra en los valores válidos para 'communes' en la fila 6, columna CODIGOTRX.",
                     "row": 6,
                     "cols": "CODIGOTRX",
                 },
                 {
                     "name": "El valor no es válido",
                     "type": "valor",
-                    "message": "La variable 'Estacion San Bernardo' no se encuentra en los valores válidos para 'communes' en la fila 7, columna CODIGOTRX.",
+                    "message": "La variable 'Estacion Freire' no se encuentra en los valores válidos para 'communes' en la fila 7, columna CODIGOTRX.",
                     "row": 7,
                     "cols": "CODIGOTRX",
                 },
                 {
                     "name": "El valor no es válido",
                     "type": "valor",
-                    "message": "La variable 'Estacion Maestranza' no se encuentra en los valores válidos para 'communes' en la fila 8, columna CODIGOTRX.",
+                    "message": "La variable 'Estacion San Bernardo' no se encuentra en los valores válidos para 'communes' en la fila 8, columna CODIGOTRX.",
                     "row": 8,
                     "cols": "CODIGOTRX",
                 },
                 {
                     "name": "El valor no es válido",
                     "type": "valor",
-                    "message": "La variable 'Estacion Cinco Pinos' no se encuentra en los valores válidos para 'communes' en la fila 9, columna CODIGOTRX.",
+                    "message": "La variable 'Estacion Maestranza' no se encuentra en los valores válidos para 'communes' en la fila 9, columna CODIGOTRX.",
                     "row": 9,
                     "cols": "CODIGOTRX",
                 },
                 {
                     "name": "El valor no es válido",
                     "type": "valor",
-                    "message": "La variable 'Estacion Nos' no se encuentra en los valores válidos para 'communes' en la fila 10, columna CODIGOTRX.",
+                    "message": "La variable 'Estacion Cinco Pinos' no se encuentra en los valores válidos para 'communes' en la fila 10, columna CODIGOTRX.",
                     "row": 10,
+                    "cols": "CODIGOTRX",
+                },
+                {
+                    "name": "El valor no es válido",
+                    "type": "valor",
+                    "message": "La variable 'Estacion Nos' no se encuentra en los valores válidos para 'communes' en la fila 11, columna CODIGOTRX.",
+                    "row": 11,
                     "cols": "CODIGOTRX",
                 },
             ]
