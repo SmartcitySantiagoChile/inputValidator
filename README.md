@@ -31,6 +31,23 @@ To run inputValidator you need to execute:
     python input_validator.py "input/Original_2020-07JulioUTF8.zip"
     > Archivos procesados, los resultados se encuentran en /home/bastianleaf/PycharmProjects/inputValidator/output/errores.csv
 
+#### download files from ftp
+
+Previous to execute validator you need to get the operation data, those files are in the DTPM FTP account, to download
+all data you can use the script "ftp.py" as follows:
+
+```shell
+python ftp.py ip user pass "/00Entrada/2022-12-03"
+```
+
+#### hint
+
+You can download and run validator in one call as follows:
+
+```shell
+set OP_DATE "2022-12-03";python .\ftp.py 200.29.15.112 fondef moneda975 "/00Entrada/$OP_DATE";python .\input_validator.py ".\input\00Entrada\$OP_DATE"
+```
+
 ## Configuration File
 
 The configuration file is a JSON file that has all the validation rules for each file.

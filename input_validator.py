@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import logging
 import os
 import pathlib
@@ -37,7 +38,7 @@ def main(argv):
     parser.add_argument("--parser", help="configuration json file to evaluate path")
     parser.add_argument(
         "--output",
-        default=OUTPUT_NAME,
+        default='{}.{}'.format(OUTPUT_NAME, datetime.datetime.now().strftime('%y_%m_%d_%H_%M_%S')),
         help="path where report will be saved, if it is not provided we will use output path",
     )
     parser.add_argument(
