@@ -1110,15 +1110,15 @@ class BoundingBoxValueValidator(ColumnValidator):
         y_is_not_float = False
         try:
             float(x)
-            x_is_not_float = True
         except ValueError:
+            x_is_not_float = True
             default_message = "La variable x ('{0}') en la fila {1} no se puede interpretar como un valor numérico". \
                 format(x, self.row_counter)
 
         try:
             float(y)
-            y_is_not_float = True
         except ValueError:
+            y_is_not_float = True
             default_message = "La variable y ('{0}') en la fila {1} no se puede interpretar como un valor numérico". \
                 format(y, self.row_counter)
 
