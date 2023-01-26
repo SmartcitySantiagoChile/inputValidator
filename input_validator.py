@@ -83,15 +83,14 @@ def main(argv):
             for error in value:
                 logger.error(error)
 
-    file_path = os.path.join(OUTPUT_PATH, OUTPUT_NAME)
+    file_path = os.path.join(OUTPUT_PATH, output_name)
     write_errors_to_csv(file_path, data_validator)
 
-    if not is_path_list:
-        shutil.rmtree(os.path.join(INPUTS_PATH, "tmp"))
-    logger.info(
-        f"Archivos procesados, los resultados se encuentran en"
-        f" {os.path.join(os.path.dirname(OUTPUT_PATH), output_name)}"
-    )
+    tmp_file_path = os.path.join(INPUTS_PATH, "tmp")
+    if not is_path_list and os.path.exists(tmp_file_path):
+        shutil.rmtree(tmp_file_path)
+
+    logger.info('Archivos procesados, los resultados se encuentran en {0}'.format(file_path))
 
 
 if __name__ == "__main__":
