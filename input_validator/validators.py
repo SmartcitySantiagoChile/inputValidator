@@ -1081,8 +1081,12 @@ class BoundingBoxValueValidator(ColumnValidator):
         self.args["row"] = args
         x_coordinate_index = self.args["x_coordinate_index"]
         y_coordinate_index = self.args["y_coordinate_index"]
-        x = float(args[x_coordinate_index])
-        y = float(args[y_coordinate_index])
+        try:
+            x = float(args[x_coordinate_index])
+            y = float(args[y_coordinate_index])
+        except ValueError:
+            return False
+
         if self.args["coordinate_system"] == "utm":
             x, y = utm_to_wsg84(x, y, 19)
             point = Point(x, y)
@@ -1096,14 +1100,36 @@ class BoundingBoxValueValidator(ColumnValidator):
     def get_error(self) -> dict:
         x_coordinate_index = self.args["x_coordinate_index"]
         y_coordinate_index = self.args["y_coordinate_index"]
-        x = float(self.args["row"][x_coordinate_index])
-        y = float(self.args["row"][y_coordinate_index])
+        x = self.args["row"][x_coordinate_index]
+        y = self.args["row"][y_coordinate_index]
+
+        default_message = "Las coordenadas ('{0}','{1}') en la fila {2} no se encuentran en el rango geográfico correcto.".format(
+            x, y, self.row_counter)
+
+        x_is_not_float = False
+        y_is_not_float = False
+        try:
+            float(x)
+            x_is_not_float = True
+        except ValueError:
+            default_message = "La variable x ('{0}') en la fila {1} no se puede interpretar como un valor numérico". \
+                format(x, self.row_counter)
+
+        try:
+            float(x)
+            y_is_not_float = True
+        except ValueError:
+            default_message = "La variable y ('{0}') en la fila {1} no se puede interpretar como un valor numérico". \
+                format(x, self.row_counter)
+
+        if x_is_not_float and y_is_not_float:
+            default_message = "Las coordenadas ('{0}','{1}') en la fila {2} no se pueden interpretar como valores numéricos.".format(
+                x, y, self.row_counter)
+
         return {
             "name": "Coordenadas inválidas",
             "type": "valor",
-            "message": "Las coordenadas '{0}', '{1}' en la fila {2} no se encuentran en el rango geográfico correcto.".format(
-                x, y, self.row_counter
-            ),
+            "message": default_message,
             "row": self.row_counter,
             "cols": [
                 self.args["header"][x_coordinate_index],
