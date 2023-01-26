@@ -1116,11 +1116,11 @@ class BoundingBoxValueValidator(ColumnValidator):
                 format(x, self.row_counter)
 
         try:
-            float(x)
+            float(y)
             y_is_not_float = True
         except ValueError:
             default_message = "La variable y ('{0}') en la fila {1} no se puede interpretar como un valor numérico". \
-                format(x, self.row_counter)
+                format(y, self.row_counter)
 
         if x_is_not_float and y_is_not_float:
             default_message = "Las coordenadas ('{0}','{1}') en la fila {2} no se pueden interpretar como valores numéricos.".format(
