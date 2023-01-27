@@ -45,7 +45,11 @@ python ftp.py ip user pass "/00Entrada/2022-12-03"
 You can download and run validator in one call as follows:
 
 ```shell
-set OP_DATE "2022-12-03";python .\ftp.py 200.29.15.112 fondef moneda975 "/00Entrada/$OP_DATE";python .\input_validator.py ".\input\00Entrada\$OP_DATE"
+# Windows SO
+set OP_DATE "2022-12-03";rmdir .\input\00entrada\$OP_DATE;python .\ftp.py <FTP_IP> <FTP_USER> <FTP_PASSWORD> "/00Entrada/$OP_DATE";python .\input_validator.py ".\input\00Entrada\$OP_DATE"
+
+# Linux SO
+export OP_DATE="2022-12-03";rmdir ./input/00entrada/$OP_DATE;python ./ftp.py <FTP_IP> <FTP_USER> <FTP_PASSWORD> "/00Entrada/$OP_DATE";python ./input_validator.py "./input/00Entrada/$OP_DATE"
 ```
 
 ## Configuration File
