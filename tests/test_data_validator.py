@@ -741,8 +741,8 @@ class DataValidatorTest(TestCase):
                 {
                     "cols": ["X", "Y"],
                     "message": "Las coordenadas "
-                               "'320439.3733', "
-                               "'6299473.56' en "
+                               "('320439.3733',"
+                               "'6299473.56') en "
                                "la fila 149820 no "
                                "se encuentran en "
                                "el rango "

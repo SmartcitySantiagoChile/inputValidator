@@ -856,7 +856,7 @@ class MultiValidatorTest(ValidatorTest):
         row = ["131985", "430I", "28029", "1006246"]
         expected_error = {
             "cols": ["X-Coordinate", "Y-Coordinate"],
-            "message": "Las coordenadas '28029.0', '1006246.0' en la fila 3 no se "
+            "message": "Las coordenadas ('28029','1006246') en la fila 3 no se "
             "encuentran en el rango geográfico correcto.",
             "name": "Coordenadas inválidas",
             "row": 3,
