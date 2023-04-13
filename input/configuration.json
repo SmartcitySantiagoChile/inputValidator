@@ -464,11 +464,15 @@
             "name": "Diccionario-EstacionesMetro_202[0-9][0-1][0-9][0-3][0-9].csv",
             "header": [
               "CODIGOTRX",
-              "ESTANDAR_ESTACION_UNICA",
               "COMUNA",
               "LATITUD",
               "LONGITUD",
-              "LINEA"
+              "LINEA",
+              "ESTANDAR",
+              "TIPO",
+              "ESTANDAR_ESTACION_UNICA",
+              "CODIGO",
+              "COLOR"
             ],
             "dependencies": [
               "Diccionario-Comunas*.csv",
@@ -486,7 +490,11 @@
                     2,
                     3,
                     4,
-                    5
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
                   ],
                   "conditions_to_ignore_row": []
                 }
@@ -501,7 +509,7 @@
                 "function": "string_domain",
                 "args": {
                   "col_indexes": [
-                    5
+                    4
                   ],
                   "domain": [
                     "L1",
@@ -519,7 +527,7 @@
               {
                 "function": "check_col_storage_value",
                 "args": {
-                  "col_index": 2,
+                  "col_index": 1,
                   "storage_name": "comunas"
                 }
               }
