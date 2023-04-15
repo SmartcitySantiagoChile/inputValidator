@@ -62,6 +62,7 @@ def main(argv):
 
     # date with file format
     date = pathlib.Path(args.path[0]).stem.replace("-", "")
+    output_name = f'{date}.{output_name}'
 
     if configuration_file_content is None:
         config_obj = ConfigFromFile(CONFIG_PATH)
