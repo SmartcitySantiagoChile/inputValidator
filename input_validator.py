@@ -1,5 +1,4 @@
 import argparse
-import datetime
 import logging
 import os
 import pathlib
@@ -38,7 +37,7 @@ def main(argv):
     parser.add_argument("--parser", help="configuration json file to evaluate path")
     parser.add_argument(
         "--output",
-        default='{}.{}'.format(OUTPUT_NAME, datetime.datetime.now().strftime('%y_%m_%d_%H_%M_%S')),
+        default='v1_{}'.format(OUTPUT_NAME),
         help="path where report will be saved, if it is not provided we will use output path",
     )
     parser.add_argument(
@@ -62,7 +61,7 @@ def main(argv):
 
     # date with file format
     date = pathlib.Path(args.path[0]).stem.replace("-", "")
-    output_name = f'{date}.{output_name}'
+    output_name = f'{date}_{output_name}'
 
     if configuration_file_content is None:
         config_obj = ConfigFromFile(CONFIG_PATH)
@@ -84,7 +83,16 @@ def main(argv):
             for error in value:
                 logger.error(error)
 
-    file_path = os.path.join(OUTPUT_PATH, output_name)
+    # increase validation version automatically
+    while True:
+        file_path = os.path.join(OUTPUT_PATH, output_name)
+        if os.path.isfile(file_path):
+            break
+        else:
+            date, version, name = output_name.split('_')
+            version = int(version.replace('v', '')) + 1
+            output_name = f'{date}_v{version}_{name}'
+
     write_errors_to_csv(file_path, data_validator)
 
     tmp_file_path = os.path.join(INPUTS_PATH, "tmp")
