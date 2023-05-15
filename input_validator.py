@@ -87,11 +87,11 @@ def main(argv):
     while True:
         file_path = os.path.join(OUTPUT_PATH, output_name)
         if os.path.isfile(file_path):
-            break
-        else:
             date, version, name = output_name.split('_')
             version = int(version.replace('v', '')) + 1
             output_name = f'{date}_v{version}_{name}'
+        else:
+            break
 
     write_errors_to_csv(file_path, data_validator)
 
